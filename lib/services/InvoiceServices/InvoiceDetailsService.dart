@@ -1,36 +1,26 @@
+// lib/services/InvoiceServices/InvoiceDetailsService.dart
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:pranomiapp/Models/InvoiceModels/InvoiceModel.dart';
+import 'package:pranomiapp/Models/InvoiceModels/InvoiceDetailsModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class IncomeInvoiceService {
+class InvoiceDetailsService {
   final Dio _dio = Dio();
 
-  Future<IncomeInvoiceResponseModel> fetchIncomeInvoice({
-    required int page,
-    required int size,
-    required int invoiceType,
-    String? search,
+  Future<InvoiceDetailsResponseModel> fetchInvoiceDetails({
+    required int invoiceId,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final apiKey = prefs.getString('apiKey');
     final apiSecret = prefs.getString('apiSecret');
 
     if (apiKey == null || apiSecret == null) {
-      throw Exception("API key veya secret bulunamadı");
+      throw Exception("API Key veya Secret Bulunamadı");
     }
 
     final String basicAuth =
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
-
-    // Eğer arama varsa, onu URL path içinde kullan
-    String baseUrl = "https://apitest.pranomi.com/Invoice";
-    if (search != null && search.isNotEmpty) {
-      baseUrl += "/$search";
-    }
-
-    final String url =
-        "$baseUrl?size=$size&page=$page&invoiceType=$invoiceType";
+    final String url = "https://apitest.pranomi.com/Invoice/Detail/$invoiceId";
 
     try {
       final response = await _dio.get(
@@ -43,14 +33,13 @@ class IncomeInvoiceService {
           },
         ),
       );
-
       if (response.statusCode == 200) {
-        return IncomeInvoiceResponseModel.fromJson(response.data);
+        return InvoiceDetailsResponseModel.fromJson(response.data);
       } else {
-        throw Exception("Fatura verisi alınamadı: ${response.statusCode}");
+        throw Exception("Fatura Detayları Gelmedi: ${response.statusCode}");
       }
     } on DioException catch (e) {
-      throw Exception("Dio hatası: ${e.message}");
+      throw Exception("Dio Hatası: ${e.message}");
     } catch (e) {
       throw Exception("Beklenmeyen hata: $e");
     }
