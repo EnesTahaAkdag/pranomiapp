@@ -1,9 +1,12 @@
-// lib/pages/IncomeInvoicePage.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancelModel.dart';
+import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancellationReversalModel.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceModel.dart';
-import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoiceDetails';
-import 'package:pranomiapp/services/InvoiceServices/invoiceservice.dart';
+import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoiceDetails.dart';
+import 'package:pranomiapp/services/InvoiceServices/InvoiceCancellationReversalService.dart';
+import 'package:pranomiapp/services/InvoiceServices/InvoiceCancelledService.dart';
+import 'package:pranomiapp/services/InvoiceServices/InvoiceService.dart';
 
 class IncomeInvoicePage extends StatefulWidget {
   const IncomeInvoicePage({super.key});
@@ -48,7 +51,7 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
         invoiceType: 1,
         search: _searchText.isNotEmpty ? _searchText : null,
       );
-      if (resp.invoices.isNotEmpty) {
+      if (resp!.invoices.isNotEmpty) {
         _invoices.addAll(resp.invoices);
         _page++;
         if (resp.invoices.length < _size) _hasMore = false;
@@ -93,14 +96,128 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
                     );
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.cancel),
-                  title: const Text('Faturayı İptal Et'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // İptal işlemi
-                  },
-                ),
+                if (invoice.invoiceStatus == "Cancelled") ...[
+                  ListTile(
+                    leading: const Icon(Icons.cancel),
+                    title: const Text('Fatura iptalini geri al'),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Fatura İptali Geri Alma'),
+                              content: const Text(
+                                'Faturayı iptal etmek istediğinize emin misiniz?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: const Text('Hayır'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Evet'),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (confirm != true) return;
+
+                      // API çağrısı
+                      final cancelModel = InvoiceCancellationReversalModel(
+                        documentNumber: invoice.documentNumber,
+                      );
+                      final result = await InvoiceCancellationReversalService()
+                          .invoiceCancel(cancelModel);
+
+                      if (result != null) {
+                        // Başarılıysa liste yenilenir
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Fatura iptali geri alındı."),
+                            ),
+                          );
+                          _fetchInvoices(reset: true);
+                        }
+                      } else {
+                        // Hata mesajı
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Fatura iptali geri alınamadı."),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ] else ...[
+                  ListTile(
+                    leading: const Icon(Icons.cancel),
+                    title: const Text('Faturayı İptal Et'),
+                    onTap: () async {
+                      Navigator.pop(context); // BottomSheet’i kapat
+
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Fatura İptali'),
+                              content: const Text(
+                                'Faturayı iptal etmek istediğinize emin misiniz?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: const Text('Hayır'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Evet'),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (confirm != true) return;
+
+                      // API çağrısı
+                      final cancelModel = InvoiceCancelModel(
+                        documentNumber: invoice.documentNumber,
+                      );
+                      final result = await InvoiceCancelledService()
+                          .invoiceCancel(cancelModel);
+
+                      if (result != null) {
+                        // Başarılıysa liste yenilenir
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Fatura başarıyla iptal edildi."),
+                            ),
+                          );
+                          _fetchInvoices(reset: true);
+                        }
+                      } else {
+                        // Hata mesajı
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Fatura iptal edilemedi."),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
                 ListTile(
                   leading: const Icon(Icons.send),
                   title: const Text('E-Fatura Gönder'),
@@ -117,6 +234,12 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
 
   Widget _buildInvoiceItem(IncomeInvoiceModel invoice) {
     final dateFormatted = DateFormat('dd.MM.yyyy').format(invoice.date);
+    final isCancelled = invoice.invoiceStatus == "Cancelled";
+    final textStyle = TextStyle(
+      decoration:
+          isCancelled ? TextDecoration.lineThrough : TextDecoration.none,
+    );
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 3,
@@ -124,16 +247,22 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
       child: ListTile(
         title: Text(
           invoice.documentNumber,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: textStyle.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            Text("Müşteri: ${invoice.customerName}"),
-            Text("Tarih: $dateFormatted"),
-            Text("Tutar: ₺${invoice.totalAmount.toStringAsFixed(2)}"),
-            Text("Ödenen: ₺${invoice.paidAmount.toStringAsFixed(2)}"),
+            Text("Müşteri: ${invoice.customerName}", style: textStyle),
+            Text("Tarih: $dateFormatted", style: textStyle),
+            Text(
+              "Tutar: ₺${invoice.totalAmount.toStringAsFixed(2)}",
+              style: textStyle,
+            ),
+            Text(
+              "Ödenen: ₺${invoice.paidAmount.toStringAsFixed(2)}",
+              style: textStyle,
+            ),
           ],
         ),
         trailing: IconButton(
@@ -165,26 +294,34 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
           ),
         ),
         Expanded(
-          child: RefreshIndicator(
-            onRefresh: () => _fetchInvoices(reset: true),
-            child:
-                _invoices.isEmpty && !_isLoading
-                    ? const Center(child: Text('Hiç fatura bulunamadı.'))
-                    : ListView.builder(
-                      controller: _scrollController,
-                      itemCount: _invoices.length + (_isLoading ? 1 : 0),
-                      itemBuilder: (context, idx) {
-                        if (idx < _invoices.length) {
-                          return _buildInvoiceItem(_invoices[idx]);
-                        } else {
-                          return const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                      },
-                    ),
-          ),
+          child:
+              _isLoading && _invoices.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : RefreshIndicator(
+                    onRefresh: () => _fetchInvoices(reset: true),
+                    child:
+                        _invoices.isEmpty
+                            ? const Center(
+                              child: Text('Hiç fatura bulunamadı.'),
+                            )
+                            : ListView.builder(
+                              controller: _scrollController,
+                              itemCount:
+                                  _invoices.length + (_isLoading ? 1 : 0),
+                              itemBuilder: (context, idx) {
+                                if (idx < _invoices.length) {
+                                  return _buildInvoiceItem(_invoices[idx]);
+                                } else {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                  ),
         ),
       ],
     );

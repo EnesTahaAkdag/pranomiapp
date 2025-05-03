@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IncomeInvoiceService {
   final Dio _dio = Dio();
 
-  Future<IncomeInvoiceResponseModel> fetchIncomeInvoice({
+  Future<IncomeInvoiceResponseModel?> fetchIncomeInvoice({
     required int page,
     required int size,
     required int invoiceType,
@@ -49,10 +50,12 @@ class IncomeInvoiceService {
       } else {
         throw Exception("Fatura verisi alınamadı: ${response.statusCode}");
       }
-    } on DioException catch (e) {
-      throw Exception("Dio hatası: ${e.message}");
+    } on DioException catch (dioError) {
+      debugPrint('DioError: ${dioError.response?.data ?? dioError.message}');
+      return null;
     } catch (e) {
-      throw Exception("Beklenmeyen hata: $e");
+      debugPrint('Stok güncelleme hatası: $e');
+      return null;
     }
   }
 }

@@ -34,6 +34,7 @@ class IncomeInvoiceModel {
   final DateTime date;
   final InvoiceTypeEnum type;
   final int id;
+  final String invoiceStatus;
   final String currencyCode;
   final double paidAmount;
   final double totalAmount;
@@ -46,6 +47,7 @@ class IncomeInvoiceModel {
     required this.date,
     required this.type,
     required this.id,
+    required this.invoiceStatus,
     required this.currencyCode,
     required this.paidAmount,
     required this.totalAmount,
@@ -60,6 +62,7 @@ class IncomeInvoiceModel {
       date: DateTime.parse(json['Date']),
       type: parseInvoiceType(json['Type']),
       id: json['Id'],
+      invoiceStatus: json['InvoiceStatus'] ?? '',
       currencyCode: json['CurrencyCode'] ?? '',
       paidAmount: (json['PaidAmount'] ?? 0).toDouble(),
       totalAmount: (json['TotalAmount'] ?? 0).toDouble(),

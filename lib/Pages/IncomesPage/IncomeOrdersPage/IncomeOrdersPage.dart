@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceModel.dart';
-import 'package:pranomiapp/services/InvoiceServices/invoiceservice.dart';
+import 'package:pranomiapp/services/InvoiceServices/InvoiceService.dart';
 
 class IncomeOrdersPage extends StatefulWidget {
   const IncomeOrdersPage({super.key});
@@ -46,7 +46,7 @@ class _IncomeOrdersPageState extends State<IncomeOrdersPage> {
         invoiceType: 3,
       );
 
-      if (response.invoices.isNotEmpty) {
+      if (response!.invoices.isNotEmpty) {
         setState(() {
           _invoices.addAll(response.invoices);
           _page++;
