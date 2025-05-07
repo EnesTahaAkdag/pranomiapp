@@ -1,30 +1,29 @@
-class InvoiceSendEInvoiceModel {
+class SendEInvoiceModel {
   final int invoiceId;
   final String email;
   final String invoiceNote;
 
-  InvoiceSendEInvoiceModel({
+  SendEInvoiceModel({
     required this.invoiceId,
     required this.email,
     required this.invoiceNote,
   });
-  factory InvoiceSendEInvoiceModel.fromJson(Map<String, dynamic> json) {
-    return InvoiceSendEInvoiceModel(
-      invoiceId: json['InvoiceId'],
-      email: json['Email'],
-      invoiceNote: json['InvoiceNote'],
-    );
-  }
+
+  Map<String, dynamic> toJson() => {
+    'InvoiceId': invoiceId,
+    'Email': email,
+    'InvoiceNote': invoiceNote,
+  };
 }
 
-class InvoiceSendEInvoiceResponseModel {
+class SendEInvoiceResponseModel {
   final bool success;
-  final int item;
+  final String item;
   final List<String> errorMessages;
   final List<String> successMessages;
   final List<String> warningMessages;
 
-  InvoiceSendEInvoiceResponseModel({
+  SendEInvoiceResponseModel({
     required this.success,
     required this.item,
     required this.errorMessages,
@@ -32,10 +31,10 @@ class InvoiceSendEInvoiceResponseModel {
     required this.warningMessages,
   });
 
-  factory InvoiceSendEInvoiceResponseModel.fromJson(Map<String, dynamic> json) {
-    return InvoiceSendEInvoiceResponseModel(
+  factory SendEInvoiceResponseModel.fromJson(Map<String, dynamic> json) {
+    return SendEInvoiceResponseModel(
       success: json['Success'],
-      item: json['Item'],
+      item: json['Item'].toString(),
       errorMessages: List<String>.from(json['ErrorMessages'] ?? []),
       successMessages: List<String>.from(json['SuccessMessages'] ?? []),
       warningMessages: List<String>.from(json['WarningMessages'] ?? []),

@@ -1,11 +1,10 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancelModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class InvoiceCancelledService {
+class InvoiceCancelService {
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: 'https://apitest.pranomi.com/',
@@ -27,7 +26,7 @@ class InvoiceCancelledService {
 
     try {
       final response = await _dio.post(
-        '/Invoice/UnCancelInvoice',
+        '/Invoice/CancelInvoice',
         data: model.toJson(),
         options: Options(
           headers: {
@@ -55,9 +54,7 @@ class InvoiceCancelledService {
         if (resp.success) {
           return resp.item;
         } else {
-          debugPrint(
-            'Sunucu döndürdü ama Success=false. Errors: ${resp.errorMessages}',
-          );
+          debugPrint('İşlem başarısız. Errors: ${resp.errorMessages}');
           return null;
         }
       } else {
@@ -68,7 +65,7 @@ class InvoiceCancelledService {
       debugPrint('DioError: ${dioError.response?.data ?? dioError.message}');
       return null;
     } catch (e) {
-      debugPrint('Stok güncelleme hatası: $e');
+      debugPrint('Beklenmeyen Hata: $e');
       return null;
     }
   }

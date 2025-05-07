@@ -27,7 +27,7 @@ class InvoiceCancellationReversalService {
 
     try {
       final response = await _dio.post(
-        '/Invoice/CancelInvoice',
+        '/Invoice/UnCancelInvoice',
         data: model.toJson(),
         options: Options(
           headers: {
@@ -51,7 +51,6 @@ class InvoiceCancellationReversalService {
       if (response.statusCode == 200 && response.data != null) {
         final jsonMap = Map<String, dynamic>.from(response.data);
         final resp = InvoiceCancellationReversalResponseModel.fromJson(jsonMap);
-
         if (resp.success) {
           return resp.item;
         } else {
@@ -68,7 +67,7 @@ class InvoiceCancellationReversalService {
       debugPrint('DioError: ${dioError.response?.data ?? dioError.message}');
       return null;
     } catch (e) {
-      debugPrint('Stok güncelleme hatası: $e');
+      debugPrint('Fatura iptal geri alma hatası: $e');
       return null;
     }
   }

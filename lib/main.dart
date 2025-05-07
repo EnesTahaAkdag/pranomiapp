@@ -22,6 +22,7 @@ import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeDisp
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await Future.delayed(Duration(milliseconds: 1500));
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(255, 41, 41, 41),
