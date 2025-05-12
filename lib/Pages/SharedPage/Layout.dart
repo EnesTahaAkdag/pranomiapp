@@ -1,3 +1,4 @@
+// lib/widgets/AppLayout.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,8 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppLayout extends StatefulWidget {
   final Widget body;
   final String title;
+  final bool showAppBar; // Yeni: üst AppBar'ı göster/gizle
 
-  const AppLayout({super.key, required this.body, required this.title});
+  const AppLayout({
+    super.key,
+    required this.body,
+    required this.title,
+    this.showAppBar = true, // Varsayılan olarak göster
+  });
 
   @override
   State<AppLayout> createState() => _AppLayoutState();
@@ -80,16 +87,19 @@ class _AppLayoutState extends State<AppLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: _buildDrawer(context),
-      appBar: AppBar(
-        title: Text(widget.title),
-        leading: Builder(
-          builder:
-              (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-        ),
-      ),
+      appBar:
+          widget.showAppBar
+              ? AppBar(
+                title: Text(widget.title),
+                leading: Builder(
+                  builder:
+                      (ctx) => IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () => Scaffold.of(ctx).openDrawer(),
+                      ),
+                ),
+              )
+              : null,
       body: widget.body,
     );
   }

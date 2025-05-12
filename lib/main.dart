@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
+import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoicePage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Pages/AuthenticationPage/LoginPage.dart';
@@ -10,9 +11,9 @@ import 'package:pranomiapp/Pages/IncomesPage/IncomeClaimPage/IncomeClaimPage.dar
 import 'package:pranomiapp/Pages/IncomesPage/IncomeOrdersPage/IncomeOrdersPage.dart';
 import 'package:pranomiapp/Pages/StockPages/IncomeWayBillPage/IncomeWayBillPage.dart';
 import 'package:pranomiapp/Pages/ExpensesPages/ExpenseClaimPage/ExpenseClaimPage.dart';
-import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoicePage.dart';
 import 'package:pranomiapp/Pages/StockPages/ExpenseWayBillPage/ExpenseWayBillPage.dart';
 import 'package:pranomiapp/Pages/ExpensesPages/ExpenseOrdersPage/ExpenseOrdersPage.dart';
+import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoiceDetails.dart';
 import 'package:pranomiapp/Pages/ExpensesPages/ExpenseInvoicePage/ExpenseInvoicePage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeInvoicePage/IncomeeInvoicePage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeDispatchPage/IncomeeDispatchPage.dart';
@@ -140,6 +141,13 @@ class MyApp extends StatelessWidget {
                   builder: (_, __) => const ExpenseEInvoicePage(),
                 ),
               ],
+            ),
+            GoRoute(
+              path: '/invoice-detail/:id',
+              builder: (context, state) {
+                final invoiceId = int.parse(state.pathParameters['id']!);
+                return InvoiceDetailPage(invoiceId: invoiceId);
+              },
             ),
           ],
         );
