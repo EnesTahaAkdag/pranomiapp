@@ -5,7 +5,6 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceClaimService.dart';
 
 class IncomeClaimPage extends StatefulWidget {
   const IncomeClaimPage({super.key});
-
   @override
   State<IncomeClaimPage> createState() => _IncomeClaimPageState();
 }

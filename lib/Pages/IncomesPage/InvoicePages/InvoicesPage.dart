@@ -10,14 +10,16 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceCancelledService.dart
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancellationReversalModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceCancellationReversalService.dart';
 
-class IncomeInvoicePage extends StatefulWidget {
-  const IncomeInvoicePage({super.key});
+class InvoicesPage extends StatefulWidget {
+  final int invoiceType;
+
+  const InvoicesPage({super.key, required this.invoiceType});
 
   @override
-  State<IncomeInvoicePage> createState() => _IncomeInvoicePageState();
+  State<InvoicesPage> createState() => _InvoicesPageState();
 }
 
-class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
+class _InvoicesPageState extends State<InvoicesPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final List<IncomeInvoiceModel> _invoices = [];
@@ -52,6 +54,7 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
   }
 
   Future<void> _fetchInvoices({bool reset = false}) async {
+    int type = widget.invoiceType;
     if (reset) {
       _page = 0;
       _invoices.clear();
@@ -64,7 +67,7 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
       final resp = await IncomeInvoiceService().fetchIncomeInvoice(
         page: _page,
         size: _size,
-        invoiceType: 1,
+        invoiceType: type,
         search: _searchText.isNotEmpty ? _searchText : null,
       );
 
@@ -96,70 +99,74 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey.shade300,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Fatura numarası veya müşteri ara...',
-                  suffixIcon:
-                      _searchText.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _searchText = '');
-                              _fetchInvoices(reset: true);
-                            },
-                          )
-                          : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                onChanged: (val) => setState(() => _searchText = val),
-                onSubmitted: (_) => _fetchInvoices(reset: true),
-              ),
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => _fetchInvoices(reset: true),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount:
-                      _invoices.isEmpty
-                          ? 1
-                          : _invoices.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (ctx, idx) {
-                    if (_invoices.isEmpty) {
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.6,
-                        child: const Center(
-                          child: Text('Hiç fatura bulunamadı.'),
+        child:
+            _isLoading && _invoices.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey.shade300,
+                          prefixIcon: const Icon(Icons.search),
+                          hintText: 'Fatura numarası veya müşteri ara...',
+                          suffixIcon:
+                              _searchText.isNotEmpty
+                                  ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      setState(() => _searchText = '');
+                                      _fetchInvoices(reset: true);
+                                    },
+                                  )
+                                  : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
-                      );
-                    }
+                        onChanged: (val) => setState(() => _searchText = val),
+                        onSubmitted: (_) => _fetchInvoices(reset: true),
+                      ),
+                    ),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () => _fetchInvoices(reset: true),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount:
+                              _invoices.isEmpty
+                                  ? 1
+                                  : _invoices.length + (_isLoading ? 1 : 0),
+                          itemBuilder: (ctx, idx) {
+                            if (_invoices.isEmpty) {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.6,
+                                child: const Center(
+                                  child: Text('Hiç fatura bulunamadı.'),
+                                ),
+                              );
+                            }
 
-                    if (idx < _invoices.length) {
-                      return _buildInvoiceItem(_invoices[idx]);
-                    }
+                            if (idx < _invoices.length) {
+                              return _buildInvoiceItem(_invoices[idx]);
+                            }
 
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  },
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -168,8 +175,7 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
     final dateFormatted = DateFormat('dd.MM.yyyy').format(invoice.date);
     final isCancelled = invoice.invoiceStatus == "Cancelled";
     final currencyFormatter = NumberFormat.currency(
-      locale: 'tr_TR',
-      symbol: '₺',
+      locale: 'tr_TR ',
       decimalDigits: 2,
     );
     final textStyle = TextStyle(
@@ -214,7 +220,7 @@ class _IncomeInvoicePageState extends State<IncomeInvoicePage> {
               Text('Tarih: $dateFormatted', style: textStyle),
               const SizedBox(height: 6),
               Text(
-                'Toplam Tutar: ${currencyFormatter.format(invoice.totalAmount)}',
+                'Toplam Tutar: ${currencyFormatter.format(invoice.totalAmount)}₺',
                 style: textStyle.copyWith(fontWeight: FontWeight.w500),
               ),
               Row(

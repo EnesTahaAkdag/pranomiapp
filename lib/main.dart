@@ -2,19 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
-import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoicePage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Pages/AuthenticationPage/LoginPage.dart';
 import 'package:pranomiapp/Pages/StockPages/ProductPage/ProductPage.dart';
+import 'package:pranomiapp/Pages/IncomesPage/InvoicePages/InvoicesPage.dart';
+import 'package:pranomiapp/Pages/IncomesPage/InvoicePages/InvoiceDetails.dart';
 import 'package:pranomiapp/Pages/IncomesPage/IncomeClaimPage/IncomeClaimPage.dart';
-import 'package:pranomiapp/Pages/IncomesPage/IncomeOrdersPage/IncomeOrdersPage.dart';
-import 'package:pranomiapp/Pages/StockPages/IncomeWayBillPage/IncomeWayBillPage.dart';
 import 'package:pranomiapp/Pages/ExpensesPages/ExpenseClaimPage/ExpenseClaimPage.dart';
-import 'package:pranomiapp/Pages/StockPages/ExpenseWayBillPage/ExpenseWayBillPage.dart';
-import 'package:pranomiapp/Pages/ExpensesPages/ExpenseOrdersPage/ExpenseOrdersPage.dart';
-import 'package:pranomiapp/Pages/IncomesPage/IncomeInvoicePage/IncomeInvoiceDetails.dart';
-import 'package:pranomiapp/Pages/ExpensesPages/ExpenseInvoicePage/ExpenseInvoicePage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeInvoicePage/IncomeeInvoicePage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeDispatchPage/IncomeeDispatchPage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeArchivePage/ExpenseeArchivePage.dart';
@@ -83,17 +78,17 @@ class MyApp extends StatelessWidget {
 
                 GoRoute(
                   path: '/expenseinvoice',
-                  builder: (_, __) => const ExpenseInvoicePage(),
+                  builder: (_, __) => const InvoicesPage(invoiceType: 2),
                 ),
 
                 GoRoute(
                   path: '/expenseorder',
-                  builder: (_, __) => const ExpenseOrdersPage(),
+                  builder: (_, __) => const InvoicesPage(invoiceType: 4),
                 ),
 
                 GoRoute(
-                  path: '/incomeorder',
-                  builder: (_, __) => const IncomeOrdersPage(),
+                  path: '/expensewaybill',
+                  builder: (_, __) => const InvoicesPage(invoiceType: 6),
                 ),
 
                 GoRoute(
@@ -103,17 +98,17 @@ class MyApp extends StatelessWidget {
 
                 GoRoute(
                   path: '/incomeinvoice',
-                  builder: (_, __) => const IncomeInvoicePage(),
+                  builder: (_, __) => const InvoicesPage(invoiceType: 1),
                 ),
 
                 GoRoute(
-                  path: '/expensewaybill',
-                  builder: (_, __) => const ExpenseWillBillPage(),
+                  path: '/incomeorder',
+                  builder: (_, __) => const InvoicesPage(invoiceType: 3),
                 ),
 
                 GoRoute(
                   path: '/incomewaybill',
-                  builder: (_, __) => const IncomeWayBillPage(),
+                  builder: (_, __) => const InvoicesPage(invoiceType: 5),
                 ),
 
                 GoRoute(

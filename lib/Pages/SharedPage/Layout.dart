@@ -1,4 +1,3 @@
-// lib/widgets/AppLayout.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,13 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppLayout extends StatefulWidget {
   final Widget body;
   final String title;
-  final bool showAppBar; // Yeni: üst AppBar'ı göster/gizle
+  final bool showAppBar;
 
   const AppLayout({
     super.key,
     required this.body,
     required this.title,
-    this.showAppBar = true, // Varsayılan olarak göster
+    this.showAppBar = true,
   });
 
   @override

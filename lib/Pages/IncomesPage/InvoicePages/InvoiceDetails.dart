@@ -13,7 +13,7 @@ class InvoiceDetailPage extends StatefulWidget {
 
 class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   late Future<InvoiceDetailsResponseModel> _futureDetails;
-  int? _openPanelIndex; // 🔁 Şu anda açık olan panelin indexi
+  int? _openPanelIndex;
 
   @override
   void initState() {
@@ -108,7 +108,6 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   ExpansionPanel _buildLinePanel(InvoiceLineModel line, int index) {
     final currencyFormatter = NumberFormat.currency(
       locale: 'tr_TR',
-      symbol: '₺',
       decimalDigits: 2,
     );
 
@@ -120,7 +119,9 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
             line.productName,
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
-          subtitle: Text(currencyFormatter.format(line.lineAmountIncVatRate)),
+          subtitle: Text(
+            '${currencyFormatter.format(line.lineAmountIncVatRate)}₺',
+          ),
           trailing: Text(
             '${line.quantity.toStringAsFixed(0)} ${line.unitType}',
             style: const TextStyle(fontWeight: FontWeight.w500),
@@ -132,19 +133,19 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoTile(line.unitType, line.quantity.toStringAsFixed(2)),
+            _infoTile(line.unitType, '${line.quantity.toStringAsFixed(2)}₺'),
             _infoTile(
               'Birim Fiyat',
-              currencyFormatter.format(line.unitPriceExcVat),
+              '${currencyFormatter.format(line.unitPriceExcVat)}₺',
             ),
             _infoTile('KDV', currencyFormatter.format(line.vatRateLineAmount)),
             _infoTile(
               'İletişim Vergisi',
-              currencyFormatter.format(line.communicationTaxLineAmount),
+              '${currencyFormatter.format(line.communicationTaxLineAmount)}₺',
             ),
             _infoTile(
               'Tüketim Vergisi',
-              currencyFormatter.format(line.consumptionTaxLineAmount),
+              '${currencyFormatter.format(line.consumptionTaxLineAmount)}₺',
             ),
           ],
         ),
