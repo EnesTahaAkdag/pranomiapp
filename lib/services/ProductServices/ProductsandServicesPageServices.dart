@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:pranomiapp/Models/ProductsModels/productmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductServices {
+class ProductsandServicesPageServices {
   final Dio _dio = Dio();
 
   Future<List<ProductResponseModel>> fetchProducts({

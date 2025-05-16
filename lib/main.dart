@@ -5,11 +5,10 @@ import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Pages/AuthenticationPage/LoginPage.dart';
-import 'package:pranomiapp/Pages/StockPages/ProductPage/ProductPage.dart';
-import 'package:pranomiapp/Pages/IncomesPage/InvoicePages/InvoicesPage.dart';
-import 'package:pranomiapp/Pages/IncomesPage/InvoicePages/InvoiceDetails.dart';
-import 'package:pranomiapp/Pages/IncomesPage/IncomeClaimPage/IncomeClaimPage.dart';
-import 'package:pranomiapp/Pages/ExpensesPages/ExpenseClaimPage/ExpenseClaimPage.dart';
+import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesPage.dart';
+import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoiceDetails.dart';
+import 'package:pranomiapp/Pages/InvocesPages/InvoicesClaimPage/InvoicesClaimPage.dart';
+import 'package:pranomiapp/Pages/StockPages/ProductsAndServicesPage/ProductsandServicesPage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeInvoicePage/IncomeeInvoicePage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeDispatchPage/IncomeeDispatchPage.dart';
 import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeArchivePage/ExpenseeArchivePage.dart';
@@ -18,7 +17,7 @@ import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeDisp
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Future.delayed(Duration(milliseconds: 1500));
+  await Future.delayed(Duration(milliseconds: 1500));
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(255, 41, 41, 41),
@@ -68,12 +67,12 @@ class MyApp extends StatelessWidget {
 
                 GoRoute(
                   path: '/products',
-                  builder: (_, __) => const ProductPage(),
+                  builder: (_, __) => const ProductsandServicesPage(),
                 ),
 
                 GoRoute(
                   path: '/expenseclaim',
-                  builder: (_, __) => const ExpenseClaimPage(),
+                  builder: (_, __) => const InvoicesClaimPage(claimType: 2),
                 ),
 
                 GoRoute(
@@ -93,7 +92,7 @@ class MyApp extends StatelessWidget {
 
                 GoRoute(
                   path: '/incomeclaim',
-                  builder: (_, __) => const IncomeClaimPage(),
+                  builder: (_, __) => const InvoicesClaimPage(claimType: 1),
                 ),
 
                 GoRoute(
@@ -181,13 +180,13 @@ class MyApp extends StatelessWidget {
       case '/incomeinvoice':
         return 'Gelen Faturalar';
 
-      case '/expenseinvoices':
+      case '/expenseinvoice':
         return 'Giden Faturalar';
 
-      case '/incomeorders':
+      case '/incomeorder':
         return 'Gelen Siparişler';
 
-      case '/expenseorders':
+      case '/expenseorder':
         return 'Giden Siparişler';
 
       case '/incomewaybill':

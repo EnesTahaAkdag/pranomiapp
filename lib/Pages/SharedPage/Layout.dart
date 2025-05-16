@@ -19,10 +19,13 @@ class AppLayout extends StatefulWidget {
 }
 
 class _AppLayoutState extends State<AppLayout> {
+  // ignore: unused_field
+  String? _selectedIncomeSubMenuRoute;
   Set<String> openMenus = {};
   bool showIncomeExpense = true;
   bool showEDocuments = true;
   String _currentRoute = '/';
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -37,6 +40,7 @@ class _AppLayoutState extends State<AppLayout> {
         GoRouter.of(context).routeInformationProvider.value.uri.toString();
     setState(() {
       _currentRoute = uri;
+      _currentIndex = getIndexFromRoute(uri);
     });
   }
 
@@ -53,6 +57,25 @@ class _AppLayoutState extends State<AppLayout> {
         showEDocuments = false;
       }
     });
+  }
+
+  int getIndexFromRoute(String route) {
+    switch (route) {
+      case '/':
+        return 0;
+      case '/products':
+        return 1;
+      case '/incomeorder':
+      case '/incomeinvoice':
+      case '/incomeclaim':
+        return 2;
+      case '/expenseorder':
+      case '/expenseinvoice':
+      case '/expenseclaim':
+        return 3;
+      default:
+        return 0;
+    }
   }
 
   void toggleMenu(String menuId) {
@@ -82,6 +105,73 @@ class _AppLayoutState extends State<AppLayout> {
     });
   }
 
+  void _navigateTo(String route) {
+    if (route != _currentRoute) {
+      setState(() {
+        _currentRoute = route;
+        _currentIndex = getIndexFromRoute(route);
+        _selectedIncomeSubMenuRoute = null;
+      });
+      context.go(route);
+    }
+  }
+
+  Future<void> _showIncomeSubMenu(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF2C2C2C),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _incomeListTile("Alınan Siparişler", '/incomeorder'),
+            _incomeListTile("Satış Faturası", '/incomeinvoice'),
+            _incomeListTile("Satış İade Faturası", '/incomeclaim'),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showExpenseSubMenu(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF2C2C2C),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _incomeListTile("Verilen Siparişler", '/expenseorder'),
+            _incomeListTile("Alış Faturası", '/expenseinvoice'),
+            _incomeListTile("Alış İade Faturası", '/expenseclaim'),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _incomeListTile(String title, String route) {
+    final bool isSelected = _currentRoute == route;
+
+    return Container(
+      color: isSelected ? const Color(0xFFB00034) : Colors.transparent,
+      child: ListTile(
+        leading: const Icon(Icons.arrow_right, color: Colors.white),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        onTap: () {
+          Navigator.pop(context);
+          _navigateTo(route);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +180,7 @@ class _AppLayoutState extends State<AppLayout> {
           widget.showAppBar
               ? AppBar(
                 title: Text(widget.title),
+                backgroundColor: const Color(0xFF2C2C2C),
                 leading: Builder(
                   builder:
                       (ctx) => IconButton(
@@ -100,6 +191,54 @@ class _AppLayoutState extends State<AppLayout> {
               )
               : null,
       body: widget.body,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) async {
+          switch (index) {
+            case 0:
+              setState(() => _currentIndex = index);
+              _navigateTo('/');
+              break;
+            case 1:
+              setState(() => _currentIndex = index);
+              _navigateTo('/products');
+              break;
+            case 2:
+              await _showIncomeSubMenu(context);
+              setState(() {
+                _currentIndex = getIndexFromRoute(_currentRoute);
+              });
+              break;
+            case 3:
+              await _showExpenseSubMenu(context);
+              setState(() {
+                _currentIndex = getIndexFromRoute(_currentRoute);
+              });
+              break;
+          }
+        },
+        backgroundColor: const Color(0xFF2C2C2C),
+        selectedItemColor: const Color(0xFFB00034),
+        unselectedItemColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Ana Sayfa'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: 'Ürünler',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.attach_money_sharp),
+            label: 'Gelirler',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.money_off),
+            label: 'Giderler',
+          ),
+        ],
+      ),
     );
   }
 
@@ -109,13 +248,13 @@ class _AppLayoutState extends State<AppLayout> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 65, bottom: 20),
+            padding: const EdgeInsets.only(top: 50, bottom: 30),
             width: double.infinity,
             color: const Color(0xFFB00034),
             child: Center(
               child: Image.asset(
                 'lib/assets/images/PranomiLogo.png',
-                height: 60,
+                height: 70,
               ),
             ),
           ),
@@ -129,7 +268,7 @@ class _AppLayoutState extends State<AppLayout> {
                 ]),
                 _buildExpandableTile("Stok", "stock", [
                   _drawerItem("Ürünler ve Hizmetler", '/products'),
-                  _drawerItem("Masraflar", '/products'),
+                  _drawerItem("Masraflar", '/zsdxcf'),
                   _drawerItem("Gelir İrsaliyeleri", '/incomewaybill'),
                   _drawerItem("Gider İrsaliyeleri", '/expensewaybill'),
                 ]),
@@ -206,6 +345,7 @@ class _AppLayoutState extends State<AppLayout> {
         onTap: () {
           setState(() {
             _currentRoute = route;
+            _currentIndex = getIndexFromRoute(route);
           });
           Navigator.pop(context);
           context.go(route);

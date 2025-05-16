@@ -23,12 +23,12 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     );
   }
 
-  Widget _infoTile(String label, final value) {
+  Widget _infoTile(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(Icons.label, size: 18, color: Colors.grey.shade600),
+          Icon(Icons.label_outline, size: 18, color: Colors.grey.shade600),
           const SizedBox(width: 8),
           Expanded(
             child: Text.rich(
@@ -49,7 +49,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     );
   }
 
-  Widget _buildGeneralCard(InvoiceDetailsModel item) {
+  Widget _buildInvoiceCard(InvoiceDetailsModel item) {
     final dateFmt =
         // ignore: unnecessary_null_comparison
         item.date != null ? DateFormat('dd.MM.yyyy').format(item.date) : '-';
@@ -66,19 +66,20 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     );
 
     return Card(
+      color: Colors.white,
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Fatura No: ${item.documentNumber}',
+              item.documentNumber,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const Divider(height: 24),
+            const SizedBox(height: 8),
             _infoTile('Tarih', dateFmt),
             _infoTile('Vade', dueFmt),
             _infoTile('Müşteri', item.customerName),
@@ -108,45 +109,73 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   ExpansionPanel _buildLinePanel(InvoiceLineModel line, int index) {
     final currencyFormatter = NumberFormat.currency(
       locale: 'tr_TR',
+      symbol: '₺',
       decimalDigits: 2,
     );
 
     return ExpansionPanelRadio(
       value: index,
+      backgroundColor: Colors.white,
+      canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
-        return ListTile(
-          title: Text(
-            line.productName,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Text(
-            '${currencyFormatter.format(line.lineAmountIncVatRate)}₺',
-          ),
-          trailing: Text(
-            '${line.quantity.toStringAsFixed(0)} ${line.unitType}',
-            style: const TextStyle(fontWeight: FontWeight.w500),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  line.productName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    currencyFormatter.format(line.lineAmountIncVatRate),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.green,
+                    ),
+                  ),
+                  Text(
+                    '${line.quantity.toStringAsFixed(0)} ${line.unitType}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoTile(line.unitType, '${line.quantity.toStringAsFixed(2)}₺'),
+            _infoTile(
+              'Miktar',
+              '${line.quantity.toStringAsFixed(2)} ${line.unitType}',
+            ),
             _infoTile(
               'Birim Fiyat',
-              '${currencyFormatter.format(line.unitPriceExcVat)}₺',
+              currencyFormatter.format(line.unitPriceExcVat),
             ),
             _infoTile('KDV', currencyFormatter.format(line.vatRateLineAmount)),
-            _infoTile(
-              'İletişim Vergisi',
-              '${currencyFormatter.format(line.communicationTaxLineAmount)}₺',
-            ),
-            _infoTile(
-              'Tüketim Vergisi',
-              '${currencyFormatter.format(line.consumptionTaxLineAmount)}₺',
-            ),
+            if (line.communicationTaxLineAmount > 0)
+              _infoTile(
+                'İletişim Vergisi',
+                currencyFormatter.format(line.communicationTaxLineAmount),
+              ),
+            if (line.consumptionTaxLineAmount > 0)
+              _infoTile(
+                'Tüketim Vergisi',
+                currencyFormatter.format(line.consumptionTaxLineAmount),
+              ),
           ],
         ),
       ),
@@ -175,34 +204,36 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
 
           final item = snapshot.data!.item;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildGeneralCard(item),
-                const SizedBox(height: 16),
-                Text('Kalemler', style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 8),
-                ExpansionPanelList.radio(
-                  elevation: 2,
-                  expandedHeaderPadding: const EdgeInsets.symmetric(
-                    vertical: 4,
-                  ),
-                  animationDuration: const Duration(milliseconds: 300),
-                  initialOpenPanelValue: _openPanelIndex,
-                  children: [
-                    for (int i = 0; i < item.invoiceLines.length; i++)
-                      _buildLinePanel(item.invoiceLines[i], i),
-                  ],
-                  expansionCallback: (int index, bool isExpanded) {
-                    setState(() {
-                      _openPanelIndex = isExpanded ? null : index;
-                    });
-                  },
+          return ListView(
+            padding: const EdgeInsets.only(bottom: 24),
+            children: [
+              _buildInvoiceCard(item),
+
+              // Kalem başlık
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Text(
+                  'Kalemler',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-              ],
-            ),
+              ),
+
+              ExpansionPanelList.radio(
+                elevation: 2,
+                expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 4),
+                animationDuration: const Duration(milliseconds: 300),
+                initialOpenPanelValue: _openPanelIndex,
+                children: [
+                  for (int i = 0; i < item.invoiceLines.length; i++)
+                    _buildLinePanel(item.invoiceLines[i], i),
+                ],
+                expansionCallback: (index, isExpanded) {
+                  setState(() {
+                    _openPanelIndex = isExpanded ? null : index;
+                  });
+                },
+              ),
+            ],
           );
         },
       ),

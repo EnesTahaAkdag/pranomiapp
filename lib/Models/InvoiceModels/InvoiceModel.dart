@@ -1,13 +1,13 @@
 import 'package:pranomiapp/Models/TypeEnums/InvoiceTypeEnums.dart';
 
-class IncomeInvoiceResponseModel {
+class InvoicesResponseModel {
   final int count;
   final int currentPage;
   final int currentSize;
   final int totalPages;
-  final List<IncomeInvoiceModel> invoices;
+  final List<InvoicesModel> invoices;
 
-  IncomeInvoiceResponseModel({
+  InvoicesResponseModel.invoicesResponseModel({
     required this.count,
     required this.currentPage,
     required this.currentSize,
@@ -15,25 +15,25 @@ class IncomeInvoiceResponseModel {
     required this.invoices,
   });
 
-  factory IncomeInvoiceResponseModel.fromJson(Map<String, dynamic> json) {
+  factory InvoicesResponseModel.fromJson(Map<String, dynamic> json) {
     final List invoicesJson = json['Invoices'] ?? [];
-    return IncomeInvoiceResponseModel(
+    return InvoicesResponseModel.invoicesResponseModel(
       count: json['Count'],
       currentPage: json['CurrentPage'],
       currentSize: json['CurrentSize'],
       totalPages: json['TotalPages'],
-      invoices:
-          invoicesJson.map((e) => IncomeInvoiceModel.fromJson(e)).toList(),
+      invoices: invoicesJson.map((e) => InvoicesModel.fromJson(e)).toList(),
     );
   }
 }
 
-class IncomeInvoiceModel {
+class InvoicesModel {
   final String documentNumber;
   final String customerName;
   final DateTime date;
   final InvoiceTypeEnum type;
   final int id;
+  final String eCommerceCode;
   final String invoiceStatus;
   final String currencyCode;
   final double paidAmount;
@@ -41,13 +41,14 @@ class IncomeInvoiceModel {
   final bool? isInvoiced;
   final bool isEInvoiced;
 
-  IncomeInvoiceModel({
+  InvoicesModel({
     required this.documentNumber,
     required this.customerName,
     required this.date,
     required this.type,
     required this.id,
     required this.invoiceStatus,
+    required this.eCommerceCode,
     required this.currencyCode,
     required this.paidAmount,
     required this.totalAmount,
@@ -55,14 +56,15 @@ class IncomeInvoiceModel {
     required this.isEInvoiced,
   });
 
-  factory IncomeInvoiceModel.fromJson(Map<String, dynamic> json) {
-    return IncomeInvoiceModel(
+  factory InvoicesModel.fromJson(Map<String, dynamic> json) {
+    return InvoicesModel(
       documentNumber: json['DocumentNumber'] ?? '',
       customerName: json['CustomerName'] ?? '',
       date: DateTime.parse(json['Date']),
       type: parseInvoiceType(json['Type']),
       id: json['Id'],
       invoiceStatus: json['InvoiceStatus'] ?? '',
+      eCommerceCode: json['ECommerceCode'] ?? '',
       currencyCode: json['CurrencyCode'] ?? '',
       paidAmount: (json['PaidAmount'] ?? 0).toDouble(),
       totalAmount: (json['TotalAmount'] ?? 0).toDouble(),

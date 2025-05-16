@@ -39,6 +39,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.10
+  loading_animation_widget: ^1.2.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -98,11 +99,12 @@ flutter:
 flutter_icons:
   image_path: "lib/assets/icons/AppLogo.png"
   min_sdk_android: 21
-# flutter_native_splash:
-#   color: "#a10c35" # Arkaplan rengi: logonun arkaplanına uygun bordo tonu
-#   image: "lib/assets/images/SplashLogo.png"
-#   android: true
-#   ios: true
-#   fullscreen: true
-#   android_gravity: center
-#   ios_content_mode: center
+
+flutter_native_splash:
+  color: "#a10c35"
+  image: "lib/assets/images/SplashLogo.png"
+  android: true
+  ios: true
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center

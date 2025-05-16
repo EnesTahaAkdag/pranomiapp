@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class IncomeInvoiceService {
+class InvoiceService {
   final Dio _dio = Dio();
 
-  Future<IncomeInvoiceResponseModel?> fetchIncomeInvoice({
+  Future<InvoicesResponseModel?> fetchInvoice({
     required int page,
     required int size,
     required int invoiceType,
@@ -24,7 +24,6 @@ class IncomeInvoiceService {
     final String basicAuth =
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
 
-    // Eğer arama varsa, onu URL path içinde kullan
     String baseUrl = "https://apitest.pranomi.com/Invoice";
     if (search != null && search.isNotEmpty) {
       baseUrl += "/$search";
@@ -46,7 +45,7 @@ class IncomeInvoiceService {
       );
 
       if (response.statusCode == 200) {
-        return IncomeInvoiceResponseModel.fromJson(response.data);
+        return InvoicesResponseModel.fromJson(response.data);
       } else {
         throw Exception("Fatura verisi alınamadı: ${response.statusCode}");
       }

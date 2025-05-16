@@ -10,6 +10,7 @@ class InvoiceClaimService {
     required int page,
     required int size,
     required int invoiceType,
+    String? search, // Search parametresi eklendi
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final apiKey = prefs.getString('apiKey');
@@ -22,8 +23,12 @@ class InvoiceClaimService {
     final String basicAuth =
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
 
+    final bool hasSearch = search != null && search.trim().isNotEmpty;
+    final String baseUrl = 'https://apitest.pranomi.com/Claim';
     final String url =
-        "https://apitest.pranomi.com/Claim?size=$size&page=$page&invoiceType=$invoiceType";
+        hasSearch
+            ? "$baseUrl/${Uri.encodeComponent(search)}?size=$size&page=$page&invoiceType=$invoiceType"
+            : "$baseUrl?size=$size&page=$page&invoiceType=$invoiceType";
 
     try {
       final response = await _dio.get(

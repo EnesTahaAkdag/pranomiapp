@@ -22,7 +22,7 @@ class InvoicesPage extends StatefulWidget {
 class _InvoicesPageState extends State<InvoicesPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  final List<IncomeInvoiceModel> _invoices = [];
+  final List<InvoicesModel> _invoices = [];
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -64,7 +64,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     setState(() => _isLoading = true);
 
     try {
-      final resp = await IncomeInvoiceService().fetchIncomeInvoice(
+      final resp = await InvoiceService().fetchInvoice(
         page: _page,
         size: _size,
         invoiceType: type,
@@ -98,113 +98,119 @@ class _InvoicesPageState extends State<InvoicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
-        child:
-            _isLoading && _invoices.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey.shade300,
-                          prefixIcon: const Icon(Icons.search),
-                          hintText: 'Fatura numarası veya müşteri ara...',
-                          suffixIcon:
-                              _searchText.isNotEmpty
-                                  ? IconButton(
-                                    icon: const Icon(Icons.clear),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() => _searchText = '');
-                                      _fetchInvoices(reset: true);
-                                    },
-                                  )
-                                  : null,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.search),
+                  hintText: 'Belge numarası veya Barkod ara...',
+                  suffixIcon:
+                      _searchText.isNotEmpty
+                          ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchText = '');
+                              _fetchInvoices(reset: true);
+                            },
+                          )
+                          : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                onChanged: (val) => setState(() => _searchText = val),
+                onSubmitted: (_) => _fetchInvoices(reset: true),
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => _fetchInvoices(reset: true),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount:
+                      _invoices.isEmpty && !_isLoading
+                          ? 1
+                          : _invoices.length + (_isLoading ? 1 : 0),
+                  itemBuilder: (ctx, idx) {
+                    if (_invoices.isEmpty && !_isLoading) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: Center(
+                          child: Text(
+                            'Hiç fatura bulunamadı.',
+                            style: TextStyle(color: Colors.grey[600]),
                           ),
                         ),
-                        onChanged: (val) => setState(() => _searchText = val),
-                        onSubmitted: (_) => _fetchInvoices(reset: true),
-                      ),
-                    ),
-                    Expanded(
-                      child: RefreshIndicator(
-                        onRefresh: () => _fetchInvoices(reset: true),
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          itemCount:
-                              _invoices.isEmpty
-                                  ? 1
-                                  : _invoices.length + (_isLoading ? 1 : 0),
-                          itemBuilder: (ctx, idx) {
-                            if (_invoices.isEmpty) {
-                              return SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.6,
-                                child: const Center(
-                                  child: Text('Hiç fatura bulunamadı.'),
-                                ),
-                              );
-                            }
+                      );
+                    }
 
-                            if (idx < _invoices.length) {
-                              return _buildInvoiceItem(_invoices[idx]);
-                            }
+                    if (idx < _invoices.length) {
+                      return _buildInvoiceItem(_invoices[idx]);
+                    }
 
-                            return const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(child: CircularProgressIndicator()),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  },
                 ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildInvoiceItem(IncomeInvoiceModel invoice) {
+  Widget _buildInvoiceItem(InvoicesModel invoice) {
     final dateFormatted = DateFormat('dd.MM.yyyy').format(invoice.date);
     final isCancelled = invoice.invoiceStatus == "Cancelled";
     final currencyFormatter = NumberFormat.currency(
-      locale: 'tr_TR ',
+      locale: 'tr_TR',
       decimalDigits: 2,
+      symbol: '',
     );
-    final textStyle = TextStyle(
-      decoration: isCancelled ? TextDecoration.lineThrough : null,
-      color: isCancelled ? Colors.grey.shade600 : Colors.black87,
-      fontSize: 14,
-    );
+    final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
+    final eCommerceImageUrl =
+        // ignore: unnecessary_null_comparison
+        invoice.eCommerceCode != null
+            ? "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png"
+            : null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
+        elevation: 4,
+        shadowColor: Colors.black12,
         color: Colors.white,
-        elevation: 3,
-        shadowColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
                       invoice.documentNumber,
-                      style: textStyle.copyWith(
-                        fontWeight: FontWeight.bold,
+                      style: TextStyle(
                         fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        decoration:
+                            isCancelled ? TextDecoration.lineThrough : null,
+                        color: baseColor,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -215,23 +221,44 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
-              Text('Müşteri: ${invoice.customerName}', style: textStyle),
-              Text('Tarih: $dateFormatted', style: textStyle),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Text(
-                'Toplam Tutar: ${currencyFormatter.format(invoice.totalAmount)}₺',
-                style: textStyle.copyWith(fontWeight: FontWeight.w500),
+                'Müşteri: ${invoice.customerName}',
+                style: TextStyle(color: baseColor),
               ),
+              Text('Tarih: $dateFormatted', style: TextStyle(color: baseColor)),
+              const SizedBox(height: 8),
+              Text(
+                'Toplam Tutar: ${currencyFormatter.format(invoice.totalAmount)} ₺',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: baseColor,
+                ),
+              ),
+              const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Ödenen Tutar: ${currencyFormatter.format(invoice.paidAmount)}₺',
-                    style: textStyle.copyWith(fontWeight: FontWeight.w500),
+                    'Ödenen Tutar: ${currencyFormatter.format(invoice.paidAmount)} ₺',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: baseColor,
+                    ),
                   ),
-                  if (invoice.isEInvoiced)
-                    Image.asset("lib/assets/icons/pdficon.png", height: 50),
+                  Row(
+                    children: [
+                      if (invoice.isEInvoiced)
+                        Image.asset("lib/assets/icons/pdficon.png", height: 40),
+                      if (eCommerceImageUrl != null)
+                        Image.network(
+                          eCommerceImageUrl,
+                          height: 40,
+                          errorBuilder: (_, __, ___) => const SizedBox(),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -241,7 +268,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     );
   }
 
-  void _showSimpleBottomSheet(IncomeInvoiceModel invoice) {
+  void _showSimpleBottomSheet(InvoicesModel invoice) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -259,7 +286,6 @@ class _InvoicesPageState extends State<InvoicesPage> {
                     context.push('/invoice-detail/${invoice.id}');
                   },
                 ),
-
                 invoice.invoiceStatus == "Cancelled"
                     ? ListTile(
                       leading: const Icon(Icons.undo),
@@ -282,7 +308,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     );
   }
 
-  Future<void> _handleInvoiceCancel(IncomeInvoiceModel invoice) async {
+  Future<void> _handleInvoiceCancel(InvoicesModel invoice) async {
     Navigator.pop(context);
     final confirm = await _showConfirmDialog(
       title: 'Fatura İptali',
@@ -306,7 +332,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     }
   }
 
-  Future<void> _handleReversal(IncomeInvoiceModel invoice) async {
+  Future<void> _handleReversal(InvoicesModel invoice) async {
     Navigator.pop(context);
     final confirm = await _showConfirmDialog(
       title: 'Fatura İptali Geri Alma',
@@ -365,7 +391,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     );
   }
 
-  void _showSendDialog(IncomeInvoiceModel invoice) {
+  void _showSendDialog(InvoicesModel invoice) {
     final emailController = TextEditingController();
     final noteController = TextEditingController();
 
