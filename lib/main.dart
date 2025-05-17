@@ -7,13 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Pages/AuthenticationPage/LoginPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoiceDetails.dart';
+import 'package:pranomiapp/Pages/EInvoicesPages/EInvoicePage/EInvoicePage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicesClaimPage/InvoicesClaimPage.dart';
 import 'package:pranomiapp/Pages/StockPages/ProductsAndServicesPage/ProductsandServicesPage.dart';
-import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeInvoicePage/IncomeeInvoicePage.dart';
-import 'package:pranomiapp/Pages/EInvoicePages/IncomeeEInvoicePages/IncomeeDispatchPage/IncomeeDispatchPage.dart';
-import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeArchivePage/ExpenseeArchivePage.dart';
-import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeInvoicePage/ExpenseeInvoicePage.dart';
-import 'package:pranomiapp/Pages/EInvoicePages/ExpenseEInvoicePages/ExpenseeDispatchPage/ExopenseeDispatchPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,28 +107,38 @@ class MyApp extends StatelessWidget {
                 ),
 
                 GoRoute(
-                  path: '/incomeedispatch',
-                  builder: (_, __) => const IncomeEDispatchPage(),
+                  path: '/approvededispatch',
+                  builder:
+                      (_, __) =>
+                          const EInvoicesPage(invoiceType: 3, ansverType: 1),
                 ),
 
                 GoRoute(
-                  path: '/incomeeinvoice',
-                  builder: (_, __) => const IncomeEInvoicePage(),
+                  path: '/approvedeinvoice',
+                  builder:
+                      (_, __) =>
+                          const EInvoicesPage(invoiceType: 1, ansverType: 1),
                 ),
 
                 GoRoute(
-                  path: '/expenseedispatch',
-                  builder: (_, __) => const ExpenseEDispatchPage(),
+                  path: '/outgoingedispatch',
+                  builder:
+                      (_, __) =>
+                          const EInvoicesPage(invoiceType: 3, ansverType: 2),
                 ),
 
                 GoRoute(
-                  path: '/expenseearchive',
-                  builder: (_, __) => const ExpenseEArchivePage(),
+                  path: '/outgoingearchive',
+                  builder:
+                      (_, __) =>
+                          const EInvoicesPage(invoiceType: 2, ansverType: 2),
                 ),
 
                 GoRoute(
-                  path: '/expenseeinvoice',
-                  builder: (_, __) => const ExpenseEInvoicePage(),
+                  path: '/outgoingeinvoice',
+                  builder:
+                      (_, __) =>
+                          const EInvoicesPage(invoiceType: 1, ansverType: 2),
                 ),
               ],
             ),
