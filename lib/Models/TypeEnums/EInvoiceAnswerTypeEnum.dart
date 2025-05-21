@@ -1,13 +1,14 @@
-enum EInvoiceAnswerTypeEnum { approved, outgoing }
+// ignore: file_names, constant_identifier_names
+enum EInvoiceAnswerTypeEnum { Approved, Outgoing }
 
 EInvoiceAnswerTypeEnum parseInvoiceType(dynamic value) {
   switch (value) {
-    case 'Approved':
+    case 'outgoing':
     case 1:
-      return EInvoiceAnswerTypeEnum.approved;
-    case 'Rejected':
+      return EInvoiceAnswerTypeEnum.Outgoing;
+    case 'approved':
     case 2:
-      return EInvoiceAnswerTypeEnum.outgoing;
+      return EInvoiceAnswerTypeEnum.Approved;
     default:
       throw Exception("Bilinmeyen Fatura Tipi: $value");
   }

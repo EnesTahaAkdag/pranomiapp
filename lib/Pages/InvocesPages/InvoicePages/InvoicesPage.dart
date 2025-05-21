@@ -411,6 +411,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
+
                 TextField(
                   controller: noteController,
                   decoration: const InputDecoration(

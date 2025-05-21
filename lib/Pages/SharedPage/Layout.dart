@@ -287,13 +287,13 @@ class _AppLayoutState extends State<AppLayout> {
                 if (showEDocuments)
                   _buildExpandableTile("E-Belgeler", "edoc", [
                     _buildExpandableTile("Giden", "edoc_out", [
-                      _drawerItem("E-Faturalar", '/expenseeinvoice'),
-                      _drawerItem("E-Arşiv Faturalar", '/expenseearchive'),
-                      _drawerItem("E-İrsaliyeler", '/expenseedispatch'),
+                      _drawerItem("E-Faturalar", '/outgoingeinvoice'),
+                      _drawerItem("E-Arşiv Faturalar", '/outgoingearchive'),
+                      _drawerItem("E-İrsaliyeler", '/outgoingedispatch'),
                     ]),
                     _buildExpandableTile("Gelen", "edoc_in", [
-                      _drawerItem("E-Faturalar", '/incomeeinvoice'),
-                      _drawerItem("E-İrsaliyeler", '/incomeedispatch'),
+                      _drawerItem("E-Faturalar", '/approvedeinvoice'),
+                      _drawerItem("E-İrsaliyeler", '/approvededispatch'),
                     ]),
                   ]),
               ],

@@ -109,36 +109,46 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/approvededispatch',
                   builder:
-                      (_, __) =>
-                          const EInvoicesPage(invoiceType: 3, ansverType: 1),
+                      (_, __) => const EInvoicesPage(
+                        invoiceType: "eDespacth",
+                        recordType: "approved",
+                      ),
                 ),
 
                 GoRoute(
                   path: '/approvedeinvoice',
                   builder:
-                      (_, __) =>
-                          const EInvoicesPage(invoiceType: 1, ansverType: 1),
+                      (_, __) => const EInvoicesPage(
+                        invoiceType: "eInvoice",
+                        recordType: "approved",
+                      ),
                 ),
 
                 GoRoute(
                   path: '/outgoingedispatch',
                   builder:
-                      (_, __) =>
-                          const EInvoicesPage(invoiceType: 3, ansverType: 2),
+                      (_, __) => const EInvoicesPage(
+                        invoiceType: "eDespacth",
+                        recordType: "outgoing",
+                      ),
                 ),
 
                 GoRoute(
                   path: '/outgoingearchive',
                   builder:
-                      (_, __) =>
-                          const EInvoicesPage(invoiceType: 2, ansverType: 2),
+                      (_, __) => const EInvoicesPage(
+                        invoiceType: "eArchive",
+                        recordType: "outgoing",
+                      ),
                 ),
 
                 GoRoute(
                   path: '/outgoingeinvoice',
                   builder:
-                      (_, __) =>
-                          const EInvoicesPage(invoiceType: 1, ansverType: 2),
+                      (_, __) => const EInvoicesPage(
+                        invoiceType: "eInvoice",
+                        recordType: "outgoing",
+                      ),
                 ),
               ],
             ),
@@ -207,19 +217,19 @@ class MyApp extends StatelessWidget {
       case '/expensewaybill':
         return 'Giden İrsaliyeler';
 
-      case '/incomeedispatch':
+      case '/approvededispatch':
         return 'E-İrsaliyeler';
 
-      case '/incomeeinvoice':
+      case '/approvedeinvoice':
         return 'E-Faturalar';
 
-      case '/expenseedispatch':
+      case '/outgoingedispatch':
         return 'E-İrsaliyeler';
 
-      case '/expenseearchive':
+      case '/outgoingearchive':
         return 'E-Arşiv Faturalar';
 
-      case '/expenseeinvoice':
+      case '/outgoingeinvoice':
         return 'E-Faturalar';
 
       default:
