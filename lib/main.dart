@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
                     title: _getTitleForRoute(state.uri.path),
                   ),
               routes: [
-                GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
+                GoRoute(path: '/', builder: (_, __) => const HomePage()),
 
                 GoRoute(
                   path: '/products',
@@ -179,6 +179,8 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
+          localizationsDelegates: const [],
+          supportedLocales: const [Locale('tr')],
           routerConfig: router,
         );
       },
@@ -218,19 +220,19 @@ class MyApp extends StatelessWidget {
         return 'Giden İrsaliyeler';
 
       case '/approvededispatch':
-        return 'E-İrsaliyeler';
+        return 'Gelen E-İrsaliyeler';
 
       case '/approvedeinvoice':
-        return 'E-Faturalar';
+        return 'Gelen E-Faturalar';
 
       case '/outgoingedispatch':
-        return 'E-İrsaliyeler';
+        return 'Gide E-İrsaliyeler';
 
       case '/outgoingearchive':
-        return 'E-Arşiv Faturalar';
+        return 'Giden E-Arşiv Faturalar';
 
       case '/outgoingeinvoice':
-        return 'E-Faturalar';
+        return 'Giden E-Faturalar';
 
       default:
         return 'Sayfa';

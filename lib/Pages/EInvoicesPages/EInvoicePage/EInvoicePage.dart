@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pranomiapp/Models/EInvoiceModels/EInvocieModel.dart';
+import 'package:pranomiapp/services/EInvoiceService/EInvoiceOpenAsPdfService.dart';
 import 'package:pranomiapp/services/EInvoiceService/EInvoiceService.dart';
 
 class EInvoicesPage extends StatefulWidget {
@@ -103,74 +108,50 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Belge numarası ara...',
-                  suffixIcon:
-                      _searchText.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _searchText = '');
-                              _fetchEInvoices(reset: true);
-                            },
-                          )
-                          : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
-                onChanged: (val) => setState(() => _searchText = val),
-                onSubmitted: (_) => _fetchEInvoices(reset: true),
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      _selectedDate != null
-                          ? 'Tarih: ${DateFormat('dd.MM.yyyy').format(_selectedDate!)}'
-                          : 'Tarih seçilmedi',
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: 'Belge numarası ara...',
+                        suffixIcon:
+                            _searchText.isNotEmpty
+                                ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() => _searchText = '');
+                                    _fetchEInvoices(reset: true);
+                                  },
+                                )
+                                : null,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                      ),
+                      onChanged: (val) => setState(() => _searchText = val),
+                      onSubmitted: (_) => _fetchEInvoices(reset: true),
                     ),
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDate ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime.now(),
-                      );
-                      if (picked != null) {
-                        setState(() => _selectedDate = picked);
-                        _fetchEInvoices(reset: true);
-                      }
-                    },
-                    icon: const Icon(Icons.date_range),
-                    label: const Text("Tarih Seç"),
+
+                  const SizedBox(width: 12),
+
+                  IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: () => _showFilterModal(),
+                    tooltip: 'Filtrele',
                   ),
-                  if (_selectedDate != null)
-                    IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() => _selectedDate = null);
-                        _fetchEInvoices(reset: true);
-                      },
-                    ),
                 ],
               ),
             ),
-
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => _fetchEInvoices(reset: true),
@@ -211,16 +192,97 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     );
   }
 
+  void _showFilterModal() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Filtreleme",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(height: 16),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate != null
+                          ? 'Tarih: ${DateFormat('dd.MM.yyyy', 'tr_TR').format(_selectedDate!)}'
+                          : 'Tarih seçilmedi',
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+
+                        initialDate: _selectedDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setState(() => _selectedDate = picked);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                        _fetchEInvoices(reset: true);
+                      }
+                    },
+                    icon: const Icon(Icons.date_range),
+                    label: const Text("Tarih Seç"),
+                  ),
+                ],
+              ),
+              if (_selectedDate != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      setState(() => _selectedDate = null);
+                      Navigator.pop(context);
+                      _fetchEInvoices(reset: true);
+                    },
+                    icon: const Icon(Icons.clear),
+                    label: const Text("Tarihi Temizle"),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildInvoiceItem(EInvoiceModel invoice) {
     final dateFormatted =
         invoice.date != null
             ? DateFormat('dd.MM.yyyy').format(invoice.date!)
             : "Tarih Yok";
 
+    final isCancelled =
+        invoice.status.toLowerCase() == "iptal" ||
+        invoice.status.toLowerCase() == "cancelled";
+
+    // final currencyFormatter = NumberFormat.currency(
+    //   locale: 'tr_TR',
+    //   decimalDigits: 2,
+    //   symbol: '',
+    // );
+
+    final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         elevation: 4,
+        shadowColor: Colors.black12,
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
@@ -228,23 +290,92 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                invoice.documentNumber,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      invoice.documentNumber,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        decoration:
+                            isCancelled ? TextDecoration.lineThrough : null,
+                        color: baseColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () => _showSimpleBottomSheet(invoice),
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
-              Text('Müşteri: ${invoice.customerName}'),
-              Text('Tarih: $dateFormatted'),
-              const SizedBox(height: 4),
-              Text('Durum: ${invoice.status}'),
+
+              Text(
+                'Müşteri: ${invoice.customerName}',
+                style: TextStyle(color: baseColor),
+              ),
+              Text('Tarih: $dateFormatted', style: TextStyle(color: baseColor)),
+
+              const SizedBox(height: 8),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _openBase64Pdf(String base64Str) async {
+    try {
+      final bytes = base64Decode(base64Str);
+      final dir = await getTemporaryDirectory();
+      final file = File(
+        '${dir.path}/invoice_${DateTime.now().millisecondsSinceEpoch}.pdf',
+      );
+      await file.writeAsBytes(bytes);
+      await OpenFile.open(file.path);
+    } catch (e) {
+      _showSnackBar('PDF gösterilemedi: $e', Colors.red);
+    }
+  }
+
+  void _showSimpleBottomSheet(EInvoiceModel invoice) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder:
+          (_) => SafeArea(
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.picture_as_pdf),
+                  title: const Text('Fatura Çıktısı Al'),
+                  onTap: () async {
+                    Navigator.pop(context);
+
+                    setState(() => _isLoading = true);
+
+                    final response = await EInvoiceOpenAsPdfService()
+                        .fetchEInvoicePdf(invoice.uuId);
+
+                    setState(() => _isLoading = false);
+
+                    if (response != null &&
+                        response.success &&
+                        response.item.isNotEmpty) {
+                      await _openBase64Pdf(response.item);
+                    } else {
+                      _showSnackBar("PDF alınamadı.", Colors.red);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
     );
   }
 }
