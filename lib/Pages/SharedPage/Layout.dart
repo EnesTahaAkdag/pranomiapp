@@ -19,9 +19,7 @@ class AppLayout extends StatefulWidget {
 }
 
 class _AppLayoutState extends State<AppLayout> {
-  // ignore: unused_field
-  String? _selectedIncomeSubMenuRoute;
-  Set<String> openMenus = {};
+  String? openMenuId;
   bool showIncomeExpense = true;
   bool showEDocuments = true;
   String _currentRoute = '/';
@@ -80,37 +78,22 @@ class _AppLayoutState extends State<AppLayout> {
 
   void toggleMenu(String menuId) {
     setState(() {
-      if (openMenus.contains(menuId)) {
-        openMenus.remove(menuId);
+      if (openMenuId == menuId) {
+        openMenuId = null; // Aynı menüyü tekrar tıklayınca kapat
       } else {
-        final isParent = [
-          'current',
-          'stock',
-          'income',
-          'expense',
-          'edoc',
-        ].contains(menuId);
-        if (isParent) {
-          openMenus.removeWhere((id) => isParent);
-        }
-
-        if (menuId == 'edoc_out') {
-          openMenus.remove('edoc_in');
-        } else if (menuId == 'edoc_in') {
-          openMenus.remove('edoc_out');
-        }
-
-        openMenus.add(menuId);
+        openMenuId = menuId; // Yeni menüyü aç, diğerlerini kapat
       }
     });
   }
 
   void _navigateTo(String route) {
     if (route != _currentRoute) {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context); // Sadece geri gidilebilecekse pop et
+      }
       setState(() {
         _currentRoute = route;
         _currentIndex = getIndexFromRoute(route);
-        _selectedIncomeSubMenuRoute = null;
       });
       context.go(route);
     }
@@ -165,10 +148,158 @@ class _AppLayoutState extends State<AppLayout> {
         leading: const Icon(Icons.arrow_right, color: Colors.white),
         title: Text(title, style: const TextStyle(color: Colors.white)),
         onTap: () {
-          Navigator.pop(context);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
           _navigateTo(route);
         },
       ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color(0xFF1E1E1E),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 50, bottom: 30),
+            width: double.infinity,
+            color: const Color(0xFFB00034),
+            child: Center(
+              child: Image.asset(
+                'lib/assets/images/PranomiLogo.png',
+                height: 90,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                _buildExpandableTile("Güncel Durum", "current", [
+                  _drawerItem("Genel Bakış", '/'),
+                  _drawerItem("Analizler", '/graphs'),
+                  _drawerItem("Ödemeler ve Tahsilatlar", '/sayfaC'),
+                ]),
+                _buildExpandableTile("Stok", "stock", [
+                  _drawerItem("Ürünler ve Hizmetler", '/products'),
+                  _drawerItem("Masraflar", '/zsdxcf'),
+                  _drawerItem("Gelir İrsaliyeleri", '/incomewaybill'),
+                  _drawerItem("Gider İrsaliyeleri", '/expensewaybill'),
+                ]),
+                _drawerItems("Cari Hesaplar", '/aasdd'),
+                _drawerItems("Çalışanlar", '/adsds'),
+                if (showIncomeExpense)
+                  _buildExpandableTile("Gelirler", "income", [
+                    _drawerItem("Alınan Siparişler", '/incomeorder'),
+                    _drawerItem("Satış Faturası", '/incomeinvoice'),
+                    _drawerItem("Satış İade Faturası", '/incomeclaim'),
+                  ]),
+                if (showIncomeExpense)
+                  _buildExpandableTile("Giderler", "u", [
+                    _drawerItem("Verilen Siparişler", '/expenseorder'),
+                    _drawerItem("Alış Faturası", '/expenseinvoice'),
+                    _drawerItem("Alış İade Faturası", '/expenseclaim'),
+                  ]),
+                if (showEDocuments)
+                  _buildExpandableTile("E-Belgeler", "ğ", [
+                    _buildExpandableTile("Giden", "edoc_out", [
+                      _drawerItem("E-Faturalar", '/outgoingeinvoice'),
+                      _drawerItem("E-Arşiv Faturalar", '/outgoingearchive'),
+                      _drawerItem("E-İrsaliyeler", '/outgoingedispatch'),
+                    ]),
+                    _buildExpandableTile("Gelen", "g", [
+                      _drawerItem("E-Faturalar", '/approvedeinvoice'),
+                      _drawerItem("E-İrsaliyeler", '/approvededispatch'),
+                    ]),
+                  ]),
+                if (showIncomeExpense)
+                  _buildExpandableTile("Nakit", "f", [
+                    _drawerItem("Kasa ve Bankalar", '/a'),
+                    _drawerItem("Çekler", '/ab'),
+                    _drawerItem("Senetler", '/ac'),
+                  ]),
+                _drawerItems("Fiziki Mağaza", '/ad'),
+                _drawerItems("Kontör", '/ae'),
+                _drawerItems("Fiyatlar", '/af'),
+                if (showIncomeExpense)
+                  _buildExpandableTile("Toplu işlemler", "e", [
+                    _drawerItem("İşlem Durumları", '/ag'),
+                    _drawerItem("Toplu Ürün Sil", '/aq'),
+                  ]),
+                if (showIncomeExpense)
+                  _buildExpandableTile("Entegrasyon", "d", [
+                    _drawerItem("Mağazalarım", '/aa'),
+                  ]),
+                _drawerItems("Bildirimler", '/av'),
+                if (showEDocuments)
+                  _buildExpandableTile("Ayarlar", "c", [
+                    _drawerItem("Kullanıcılar", '/an'),
+                    _buildExpandableTile("Ana Cari Ayarları", "b", [
+                      _drawerItem("Ana Cariler", '/am'),
+                      _drawerItem("Ana Cari Kaynağı", '/aö'),
+                    ]),
+                    _drawerItem("API Anahtarım", '/aç'),
+                    _drawerItem("Kategoriler", '/ai'),
+                    _drawerItem("Talepler", '/aı'),
+                    _drawerItem("Genel Ayarlar", '/ao'),
+                    _buildExpandableTile("E-Belge Ayarları", "a", [
+                      _drawerItem("E-Belge Ekle - Güncelle", '/at'),
+                      _drawerItem("E-Belge Bildirimlerim", '/ar'),
+                      _drawerItem("E-Belge Serileri", '/aw'),
+                      _drawerItem("E-Belge Şablon", '/aü'),
+                    ]),
+                  ]),
+                _drawerItems("Duyurularım", '/aas'),
+                _drawerItems("Profilim", '/aasd'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _drawerItems(String title, String route) {
+    final isActive = route == _currentRoute;
+    return Container(
+      color: isActive ? const Color(0xFFB00034) : Colors.transparent,
+      child: ListTile(
+        title: Text(title, style: TextStyle(color: Colors.white)),
+        tileColor:
+            _currentRoute == route
+                ? const Color(0xFFB00034)
+                : Colors.transparent,
+        onTap: () => _navigateTo(route),
+      ),
+    );
+  }
+
+  Widget _drawerItem(String title, String route) {
+    final isActive = route == _currentRoute;
+    return Container(
+      color: isActive ? const Color(0xFFB00034) : Colors.transparent,
+      child: ListTile(
+        title: Text(title, style: TextStyle(color: Colors.white)),
+        tileColor:
+            _currentRoute == route
+                ? const Color(0xFFB00034)
+                : Colors.transparent,
+        onTap: () => _navigateTo(route),
+      ),
+    );
+  }
+
+  Widget _buildExpandableTile(String title, String id, List<Widget> children) {
+    return ExpansionTile(
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      backgroundColor: const Color(0xFF2C2C2C),
+      collapsedBackgroundColor: const Color(0xFF1E1E1E),
+      iconColor: Colors.white,
+      collapsedIconColor: Colors.white,
+      initiallyExpanded: openMenuId == id,
+      onExpansionChanged: (_) => toggleMenu(id),
+      children: children,
     );
   }
 
@@ -196,11 +327,9 @@ class _AppLayoutState extends State<AppLayout> {
         onTap: (index) async {
           switch (index) {
             case 0:
-              setState(() => _currentIndex = index);
               _navigateTo('/');
               break;
             case 1:
-              setState(() => _currentIndex = index);
               _navigateTo('/products');
               break;
             case 2:
@@ -238,118 +367,6 @@ class _AppLayoutState extends State<AppLayout> {
             label: 'Giderler',
           ),
         ],
-      ),
-    );
-  }
-
-  Drawer _buildDrawer(BuildContext context) {
-    return Drawer(
-      backgroundColor: const Color(0xFF2C2C2C),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 50, bottom: 30),
-            width: double.infinity,
-            color: const Color(0xFFB00034),
-            child: Center(
-              child: Image.asset(
-                'lib/assets/images/PranomiLogo.png',
-                height: 70,
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                _buildExpandableTile("Güncel Durum", "current", [
-                  _drawerItem("Genel Bakış", '/'),
-                  _drawerItem("Analizler", '/graphs'),
-                  _drawerItem("Ödemeler ve Tahsilatlar", '/sayfaC'),
-                ]),
-                _buildExpandableTile("Stok", "stock", [
-                  _drawerItem("Ürünler ve Hizmetler", '/products'),
-                  _drawerItem("Masraflar", '/zsdxcf'),
-                  _drawerItem("Gelir İrsaliyeleri", '/incomewaybill'),
-                  _drawerItem("Gider İrsaliyeleri", '/expensewaybill'),
-                ]),
-                if (showIncomeExpense)
-                  _buildExpandableTile("Gelirler", "income", [
-                    _drawerItem("Alınan Siparişler", '/incomeorder'),
-                    _drawerItem("Satış Faturası", '/incomeinvoice'),
-                    _drawerItem("Satış İade Faturası", '/incomeclaim'),
-                  ]),
-                if (showIncomeExpense)
-                  _buildExpandableTile("Giderler", "expense", [
-                    _drawerItem("Verilen Siparişler", '/expenseorder'),
-                    _drawerItem("Alış Faturası", '/expenseinvoice'),
-                    _drawerItem("Alış İade Faturası", '/expenseclaim'),
-                  ]),
-                if (showEDocuments)
-                  _buildExpandableTile("E-Belgeler", "edoc", [
-                    _buildExpandableTile("Giden", "edoc_out", [
-                      _drawerItem("E-Faturalar", '/outgoingeinvoice'),
-                      _drawerItem("E-Arşiv Faturalar", '/outgoingearchive'),
-                      _drawerItem("E-İrsaliyeler", '/outgoingedispatch'),
-                    ]),
-                    _buildExpandableTile("Gelen", "edoc_in", [
-                      _drawerItem("E-Faturalar", '/approvedeinvoice'),
-                      _drawerItem("E-İrsaliyeler", '/approvededispatch'),
-                    ]),
-                  ]),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildExpandableTile(String title, String id, List<Widget> children) {
-    final isOpen = openMenus.contains(id);
-    return Column(
-      children: [
-        Container(
-          color: isOpen ? const Color(0xFFB00034) : Colors.transparent,
-          child: ListTile(
-            leading: Icon(
-              isOpen ? Icons.expand_less : Icons.expand_more,
-              color: Colors.white70,
-            ),
-            title: Text(title, style: const TextStyle(color: Colors.white)),
-            onTap: () => toggleMenu(id),
-          ),
-        ),
-        if (isOpen)
-          ...children.map(
-            (widget) => Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: widget,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _drawerItem(String title, String route) {
-    final isActive = route == _currentRoute;
-    return Container(
-      color: isActive ? Colors.white12 : Colors.transparent,
-      child: ListTile(
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isActive ? Colors.white : Colors.white70,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        onTap: () {
-          setState(() {
-            _currentRoute = route;
-            _currentIndex = getIndexFromRoute(route);
-          });
-          Navigator.pop(context);
-          context.go(route);
-        },
       ),
     );
   }
