@@ -1,12 +1,15 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pranomiapp/Models/EInvoiceModels/EInvocieModel.dart';
-import 'package:pranomiapp/services/EInvoiceService/EInvoiceOpenAsPdfService.dart';
 import 'package:pranomiapp/services/EInvoiceService/EInvoiceService.dart';
+import 'package:pranomiapp/Models/EInvoiceModels/EInvoiceCancelModel.dart';
+import 'package:pranomiapp/services/EInvoiceService/EInvoiceCancelService.dart';
+import 'package:pranomiapp/services/EInvoiceService/EInvoiceOpenAsPdfService.dart';
 
 class EInvoicesPage extends StatefulWidget {
   final String invoiceType;
@@ -266,17 +269,24 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
             ? DateFormat('dd.MM.yyyy').format(invoice.date!)
             : "Tarih Yok";
 
-    final isCancelled =
-        invoice.status.toLowerCase() == "iptal" ||
-        invoice.status.toLowerCase() == "cancelled";
-
-    // final currencyFormatter = NumberFormat.currency(
-    //   locale: 'tr_TR',
-    //   decimalDigits: 2,
-    //   symbol: '',
-    // );
+    final isCancelled = invoice.status.toLowerCase() == "canceled";
 
     final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
+    final textDecoration =
+        isCancelled ? TextDecoration.lineThrough : TextDecoration.none;
+
+    final baseTextStyle = TextStyle(
+      color: baseColor,
+      decoration: textDecoration,
+    );
+
+    final boldTitleStyle = baseTextStyle.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    );
+
+    final String eInvoiceLinkCopy =
+        "https://panel.pranomi.com/einvoice/geteinvoices?uuids=${invoice.uuId}";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -295,13 +305,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                   Expanded(
                     child: Text(
                       invoice.documentNumber,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        decoration:
-                            isCancelled ? TextDecoration.lineThrough : null,
-                        color: baseColor,
-                      ),
+                      style: boldTitleStyle,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -313,13 +317,35 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
               ),
               const SizedBox(height: 4),
 
-              Text(
-                'Müşteri: ${invoice.customerName}',
-                style: TextStyle(color: baseColor),
-              ),
-              Text('Tarih: $dateFormatted', style: TextStyle(color: baseColor)),
+              Text('Müşteri: ${invoice.customerName}', style: baseTextStyle),
+              Text('Tarih: $dateFormatted', style: baseTextStyle),
 
               const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: eInvoiceLinkCopy));
+                      _showSnackBar('Fatura Linki kopyalandı', Colors.green);
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(Icons.copy, size: 16, color: Colors.blue),
+                        const SizedBox(width: 4),
+                        Text(
+                          "Fatura Linki",
+                          style: baseTextStyle.copyWith(
+                            fontSize: 12,
+                            color: Colors.blue[700],
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -351,30 +377,151 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
           (_) => SafeArea(
             child: Wrap(
               children: [
-                ListTile(
-                  leading: const Icon(Icons.picture_as_pdf),
-                  title: const Text('Fatura Çıktısı Al'),
-                  onTap: () async {
-                    Navigator.pop(context);
-
-                    setState(() => _isLoading = true);
-
-                    final response = await EInvoiceOpenAsPdfService()
-                        .fetchEInvoicePdf(invoice.uuId);
-
-                    setState(() => _isLoading = false);
-
-                    if (response != null &&
-                        response.success &&
-                        response.item.isNotEmpty) {
-                      await _openBase64Pdf(response.item);
-                    } else {
-                      _showSnackBar("PDF alınamadı.", Colors.red);
-                    }
-                  },
-                ),
+                if (invoice.status == "Canceled") ...[
+                  ListTile(
+                    leading: const Icon(Icons.picture_as_pdf),
+                    title: const Text('Fatura Çıktısı'),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      setState(() => _isLoading = true);
+                      final response = await EInvoiceOpenAsPdfService()
+                          .fetchEInvoicePdf(invoice.uuId);
+                      setState(() => _isLoading = false);
+                      if (response != null &&
+                          response.success &&
+                          response.item.isNotEmpty) {
+                        await _openBase64Pdf(response.item);
+                      } else {
+                        _showSnackBar("PDF alınamadı.", Colors.red);
+                      }
+                    },
+                  ),
+                ] else ...[
+                  ListTile(
+                    leading: const Icon(Icons.picture_as_pdf),
+                    title: const Text('Fatura Çıktısı'),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      setState(() => _isLoading = true);
+                      final response = await EInvoiceOpenAsPdfService()
+                          .fetchEInvoicePdf(invoice.uuId);
+                      setState(() => _isLoading = false);
+                      if (response != null &&
+                          response.success &&
+                          response.item.isNotEmpty) {
+                        await _openBase64Pdf(response.item);
+                      } else {
+                        _showSnackBar("PDF alınamadı.", Colors.red);
+                      }
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.cancel),
+                    title: const Text('Faturayı İptal Et'),
+                    onTap: () => _showCancelReasonDialog(invoice),
+                  ),
+                ],
               ],
             ),
+          ),
+    );
+  }
+
+  void _showCancelReasonDialog(EInvoiceModel invoice) {
+    final TextEditingController reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text("İptal Nedeni"),
+            content: TextField(
+              controller: reasonController,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                hintText: "İptal nedenini giriniz...",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text("İptal"),
+                onPressed: () => Navigator.pop(ctx),
+              ),
+              ElevatedButton(
+                child: const Text("Gönder"),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _handleInvoiceCancel(invoice, reasonController.text);
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
+  Future<void> _handleInvoiceCancel(
+    EInvoiceModel invoice,
+    String reason,
+  ) async {
+    final confirm = await _showConfirmDialog(
+      title: 'Fatura İptali',
+      content: 'Faturayı iptal etmek istediğinize emin misiniz?',
+    );
+    if (confirm != true) return;
+
+    try {
+      final result = await EInvoiceCancelService().invoiceCancel(
+        EInvoiceCancelModel(
+          uuId: invoice.uuId,
+          rejectedNote: reason,
+          answerCode: invoice.status,
+          documentNumber: invoice.documentNumber,
+        ),
+      );
+
+      _showSnackBar(
+        result != null
+            ? 'Fatura başarıyla iptal edildi.'
+            : 'Fatura iptal edilemedi.',
+        result != null ? Colors.green : Colors.red,
+      );
+
+      if (result != null) _fetchEInvoices(reset: true);
+    } catch (e) {
+      _showSnackBar('Hata oluştu: $e', Colors.red);
+    }
+  }
+
+  Future<bool?> _showConfirmDialog({
+    required String title,
+    required String content,
+  }) {
+    return showDialog<bool>(
+      context: context,
+      builder:
+          (c) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(c, false),
+                child: const Text('İptal'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => Navigator.pop(c, true),
+                child: const Text('Evet'),
+              ),
+            ],
           ),
     );
   }
