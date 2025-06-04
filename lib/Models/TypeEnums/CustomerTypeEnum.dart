@@ -1,14 +1,15 @@
-enum CustomerTypeEnum { customer, supplier, employee }
+// ignore: file_names, constant_identifier_names
+enum CustomerTypeEnum { Customer, Supplier, Employee }
 
-CustomerTypeEnum parseCustomerType(final value) {
-  switch (value) {
-    case 1:
-      return CustomerTypeEnum.customer;
-    case 2:
-      return CustomerTypeEnum.supplier;
-    case 3:
-      return CustomerTypeEnum.employee;
-    default:
-      throw Exception("Bilinmeyen Kullanıcı Tipi: $value");
+extension CustomerTypeExtension on CustomerTypeEnum {
+  String get name {
+    switch (this) {
+      case CustomerTypeEnum.Customer:
+        return "Customer";
+      case CustomerTypeEnum.Supplier:
+        return "Supplier";
+      case CustomerTypeEnum.Employee:
+        return "Employee";
+    }
   }
 }

@@ -1,0 +1,134 @@
+[
+    {
+        "il": "Adana",
+        "ilceler": [
+            "Seyhan",
+            "Yüreğir",
+            "Çukurova",
+            "Aladağ",
+            "Ceyhan",
+            "Feke",
+            "İmamoğlu",
+            "Karaisalı",
+            "Karataş",
+            "Kozan",
+            "Pozantı",
+            "Saimbeyli",
+            "Tufanbeyli",
+            "Yumurtalık"
+        ]
+    },
+    {
+        "il": "Adıyaman",
+        "ilceler": [
+            "Besni",
+            "Çelikhan",
+            "Gerger",
+            "Gölbaşı",
+            "Kahta",
+            "Samsat",
+            "Sincik",
+            "Tut"
+        ]
+    },
+    {
+        "il": "Afyonkarahisar",
+        "ilceler": [
+            "Başmakçı",
+            "Bayat",
+            "Bolvadin",
+            "Çay",
+            "Çobanlar",
+            "Dazkırı",
+            "Dinar",
+            "Emirdağ",
+            "Evciler",
+            "Hocalar",
+            "İhsaniye",
+            "İscehisar",
+            "Kızılören",
+            "Sandıklı",
+            "Sinanpaşa",
+            "Sultandağı",
+            "Şuhut"
+        ]
+    },
+    {
+        "il": "Ağrı",
+        "ilceler": [
+            "Diyadin",
+            "Doğubayazıt",
+            "Eleşkirt",
+            "Hamur",
+            "Patnos",
+            "Taşlıçay",
+            "Tutak"
+        ]
+    },
+    {
+        "il": "Amasya",
+        "ilceler": [
+            "Göynücek",
+            "Gümüşhacıköy",
+            "Hamamözü",
+            "Merzifon",
+            "Suluova",
+            "Taşova"
+        ]
+    },
+    {
+        "il": "Ankara",
+        "ilceler": [
+            "Akyurt",
+            "Altındağ",
+            "Ayaş",
+            "Bala",
+            "Beypazarı",
+            "Çamlıdere",
+            "Çankaya",
+            "Çubuk",
+            "Elmadağ",
+            "Etimesgut",
+            "Evren",
+            "Gölbaşı",
+            "Güdül",
+            "Haymana",
+            "Kahramankazan",
+            "Kalecik",
+            "Keçiören",
+            "Kızılcahamam",
+            "Mamak",
+            "Nallıhan",
+            "Polatlı",
+            "Pursaklar",
+            "Sincan",
+            "Şereflikoçhisar",
+            "Yenimahalle"
+        ]
+    },
+    {
+        "il": "Antalya",
+        "ilceler": [
+            "Akseki",
+            "Aksu",
+            "Alanya",
+            "Demre",
+            "Döşemealtı",
+            "Elmalı",
+            "Finike",
+            "Gazipaşa",
+            "Gündoğmuş",
+            "İbradı",
+            "Kale",
+            "Kaş",
+            "Kemer",
+            "Kepez",
+            "Konyaaltı",
+            "Korkuteli",
+            "Kumluca",
+            "Manavgat",
+            "Muratpaşa",
+            "Serik"
+        ]
+    }
+]

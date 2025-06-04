@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerAddPage/CustomerAddPage.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerPage.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,52 +65,52 @@ class MyApp extends StatelessWidget {
                 GoRoute(path: '/', builder: (_, __) => const HomePage()),
 
                 GoRoute(
-                  path: '/products',
+                  path: '/ProductsandServices',
                   builder: (_, __) => const ProductsandServicesPage(),
                 ),
 
                 GoRoute(
-                  path: '/expenseclaim',
+                  path: '/ExpenseClaim',
                   builder: (_, __) => const InvoicesClaimPage(claimType: 2),
                 ),
 
                 GoRoute(
-                  path: '/expenseinvoice',
+                  path: '/ExpenseInvoice',
                   builder: (_, __) => const InvoicesPage(invoiceType: 2),
                 ),
 
                 GoRoute(
-                  path: '/expenseorder',
+                  path: '/ExpenseOrder',
                   builder: (_, __) => const InvoicesPage(invoiceType: 4),
                 ),
 
                 GoRoute(
-                  path: '/expensewaybill',
+                  path: '/ExpenseWayBill',
                   builder: (_, __) => const InvoicesPage(invoiceType: 6),
                 ),
 
                 GoRoute(
-                  path: '/incomeclaim',
+                  path: '/InComeClaim',
                   builder: (_, __) => const InvoicesClaimPage(claimType: 1),
                 ),
 
                 GoRoute(
-                  path: '/incomeinvoice',
+                  path: '/InComeInvoice',
                   builder: (_, __) => const InvoicesPage(invoiceType: 1),
                 ),
 
                 GoRoute(
-                  path: '/incomeorder',
+                  path: '/InComeOrder',
                   builder: (_, __) => const InvoicesPage(invoiceType: 3),
                 ),
 
                 GoRoute(
-                  path: '/incomewaybill',
+                  path: '/IncomeWayBill',
                   builder: (_, __) => const InvoicesPage(invoiceType: 5),
                 ),
 
                 GoRoute(
-                  path: '/approvededispatch',
+                  path: '/ApprovedE-Dispatch',
                   builder:
                       (_, __) => const EInvoicesPage(
                         invoiceType: "eDespacth",
@@ -116,7 +119,7 @@ class MyApp extends StatelessWidget {
                 ),
 
                 GoRoute(
-                  path: '/approvedeinvoice',
+                  path: '/ApprovedE-Invoice',
                   builder:
                       (_, __) => const EInvoicesPage(
                         invoiceType: "eInvoice",
@@ -125,7 +128,7 @@ class MyApp extends StatelessWidget {
                 ),
 
                 GoRoute(
-                  path: '/outgoingedispatch',
+                  path: '/OutGoingE-Dispatch',
                   builder:
                       (_, __) => const EInvoicesPage(
                         invoiceType: "eDespacth",
@@ -134,7 +137,7 @@ class MyApp extends StatelessWidget {
                 ),
 
                 GoRoute(
-                  path: '/outgoingearchive',
+                  path: '/OutGoingE-Archive',
                   builder:
                       (_, __) => const EInvoicesPage(
                         invoiceType: "eArchive",
@@ -143,20 +146,40 @@ class MyApp extends StatelessWidget {
                 ),
 
                 GoRoute(
-                  path: '/outgoingeinvoice',
+                  path: '/OutGoingE-Invoice',
                   builder:
                       (_, __) => const EInvoicesPage(
                         invoiceType: "eInvoice",
                         recordType: "outgoing",
                       ),
                 ),
+
+                GoRoute(
+                  path: '/CurrentAccounts',
+                  builder:
+                      (_, __) => const CustomerPage(customerType: "customer"),
+                ),
               ],
             ),
+
             GoRoute(
               path: '/invoice-detail/:id',
               builder: (context, state) {
                 final invoiceId = int.parse(state.pathParameters['id']!);
                 return InvoiceDetailPage(invoiceId: invoiceId);
+              },
+            ),
+
+            GoRoute(
+              path: '/CustomerAddPage',
+              builder: (context, state) {
+                return CustomerAddPage(customerType: CustomerTypeEnum.Customer);
+              },
+            ),
+            GoRoute(
+              path: '/CustomerEditPage',
+              builder: (context, state) {
+                return CustomerAddPage(customerType: CustomerTypeEnum.Customer);
               },
             ),
           ],
@@ -192,47 +215,50 @@ class MyApp extends StatelessWidget {
       case '/':
         return 'Genel Bakış';
 
-      case '/products':
+      case '/ProductsandServices':
         return 'Ürünler ve Hizmetler';
 
-      case '/incomeinvoice':
+      case '/InComeInvoice':
         return 'Gelen Faturalar';
 
-      case '/expenseinvoice':
+      case '/ExpenseInvoice':
         return 'Giden Faturalar';
 
-      case '/incomeorder':
+      case '/InComeOrder':
         return 'Gelen Siparişler';
 
-      case '/expenseorder':
+      case '/ExpenseOrder':
         return 'Giden Siparişler';
 
-      case '/incomewaybill':
+      case '/IncomeWayBill':
         return 'Gelen İrsaliyeler';
 
-      case '/incomeclaim':
+      case '/InComeClaim':
         return 'Satış İade Faturası';
 
-      case '/expenseclaim':
+      case '/ExpenseClaim':
         return 'Alış İade Faturası';
 
-      case '/expensewaybill':
+      case '/ExpenseWayBill':
         return 'Giden İrsaliyeler';
 
-      case '/approvededispatch':
+      case '/ApprovedE-Dispatch':
         return 'Gelen E-İrsaliyeler';
 
-      case '/approvedeinvoice':
+      case '/ApprovedE-Invoice':
         return 'Gelen E-Faturalar';
 
-      case '/outgoingedispatch':
+      case '/OutGoingE-Dispatch':
         return 'Gide E-İrsaliyeler';
 
-      case '/outgoingearchive':
+      case '/OutGoingE-Archive':
         return 'Giden E-Arşiv Faturalar';
 
-      case '/outgoingeinvoice':
+      case '/OutGoingE-Invoice':
         return 'Giden E-Faturalar';
+
+      case '/CurrentAccounts':
+        return 'Cari Hesaplar';
 
       default:
         return 'Sayfa';

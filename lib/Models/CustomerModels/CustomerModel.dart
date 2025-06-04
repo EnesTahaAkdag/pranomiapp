@@ -3,14 +3,14 @@ class CustomerResponseModel {
   final int currentPage;
   final int currentSize;
   final int totalPages;
-  final List<CustomerModel> customer;
+  final List<CustomerModel> customers;
 
   CustomerResponseModel({
     required this.count,
     required this.currentPage,
     required this.currentSize,
     required this.totalPages,
-    required this.customer,
+    required this.customers,
   });
 
   factory CustomerResponseModel.fromJson(Map<String, dynamic> json) {
@@ -18,12 +18,11 @@ class CustomerResponseModel {
       count: json['Count'] ?? 0,
       currentPage: json['CurrentPage'] ?? 0,
       currentSize: json['CurrentSize'] ?? 0,
-      totalPages: json['TotalPage'] ?? 0,
-      customer:
-          (json['Customer'] as List<dynamic>?)
-              ?.map((e) => CustomerModel.fromJson(e))
-              .toList() ??
-          [],
+      totalPages: json['TotalPages'] ?? 0,
+      customers:
+          (json['Customers'] as List<dynamic>? ?? [])
+              .map((e) => CustomerModel.fromJson(e))
+              .toList(),
     );
   }
 }
@@ -31,10 +30,10 @@ class CustomerResponseModel {
 class CustomerModel {
   final int customerId;
   final String customerName;
-  final int taxNumber;
-  final int phone;
+  final String taxNumber;
+  final String phone;
   final String mail;
-  final int balance;
+  final double balance;
 
   CustomerModel({
     required this.customerId,
@@ -48,11 +47,14 @@ class CustomerModel {
   factory CustomerModel.fromJson(Map<String, dynamic> json) {
     return CustomerModel(
       customerId: json['CustomerId'] ?? 0,
-      customerName: json['CustomerName'] ?? "",
-      taxNumber: json['TaxNumber'] ?? 0,
-      phone: json['Phone'] ?? 0,
-      mail: json['Mail'] ?? "",
-      balance: json['Balance'] ?? 0,
+      customerName: json['CustomerName'] ?? '',
+      taxNumber: json['TaxNumber'] ?? '',
+      phone: json['Phone'] ?? '',
+      mail: json['Mail'] ?? '',
+      balance:
+          (json['Balance'] is int)
+              ? (json['Balance'] as int).toDouble()
+              : (double.tryParse(json['Balance'].toString()) ?? 0.0),
     );
   }
 }

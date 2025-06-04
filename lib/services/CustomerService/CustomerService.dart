@@ -24,13 +24,12 @@ class CustomerService {
     final String basicAuth =
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
 
-    String baseUrl = "https://apitest.pranomi.com/Customer";
-    if (search != null && search.isNotEmpty) {
-      baseUrl += "/$search";
+    String url = "https://apitest.pranomi.com/Customer";
+    if (search != null && search.trim().isNotEmpty) {
+      url += "/${Uri.encodeComponent(search)}";
     }
-    String url =
-        "$baseUrl?size=$size&page=$page"
-        "&customerType=$customerType";
+
+    url += "?size=$size&page=$page&customerType=$customerType";
 
     try {
       final response = await _dio.get(
@@ -43,18 +42,19 @@ class CustomerService {
           },
         ),
       );
+
       if (response.statusCode == 200) {
         return CustomerResponseModel.fromJson(response.data);
       } else {
-        throw Exception(
-          "Kullanıcılar Verisi Alınamadı: ${response.statusCode}",
-        );
+        throw Exception("Veri alınamadı: ${response.statusCode}");
       }
     } on DioException catch (dioError) {
-      debugPrint('DioError: ${dioError.response?.data ?? dioError.message}');
+      debugPrint(
+        'DioException: ${dioError.response?.data ?? dioError.message}',
+      );
       return null;
     } catch (e) {
-      debugPrint('!!HATA:$e');
+      debugPrint('Genel Hata: $e');
       return null;
     }
   }

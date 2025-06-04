@@ -79,9 +79,9 @@ class _AppLayoutState extends State<AppLayout> {
   void toggleMenu(String menuId) {
     setState(() {
       if (openMenuId == menuId) {
-        openMenuId = null; // Aynı menüyü tekrar tıklayınca kapat
+        openMenuId = null;
       } else {
-        openMenuId = menuId; // Yeni menüyü aç, diğerlerini kapat
+        openMenuId = menuId;
       }
     });
   }
@@ -89,7 +89,7 @@ class _AppLayoutState extends State<AppLayout> {
   void _navigateTo(String route) {
     if (route != _currentRoute) {
       if (Navigator.canPop(context)) {
-        Navigator.pop(context); // Sadece geri gidilebilecekse pop et
+        Navigator.pop(context);
       }
       setState(() {
         _currentRoute = route;
@@ -176,41 +176,41 @@ class _AppLayoutState extends State<AppLayout> {
           Expanded(
             child: ListView(
               children: [
-                _buildExpandableTile("Güncel Durum", "current", [
+                _buildExpandableTile("Güncel Durum", "Current", [
                   _drawerItem("Genel Bakış", '/'),
                   _drawerItem("Analizler", '/graphs'),
                   _drawerItem("Ödemeler ve Tahsilatlar", '/sayfaC'),
                 ]),
                 _buildExpandableTile("Stok", "stock", [
-                  _drawerItem("Ürünler ve Hizmetler", '/products'),
+                  _drawerItem("Ürünler ve Hizmetler", '/ProductsandServices'),
                   _drawerItem("Masraflar", '/zsdxcf'),
-                  _drawerItem("Gelir İrsaliyeleri", '/incomewaybill'),
-                  _drawerItem("Gider İrsaliyeleri", '/expensewaybill'),
+                  _drawerItem("Gelir İrsaliyeleri", '/IncomeWayBill'),
+                  _drawerItem("Gider İrsaliyeleri", '/ExpenseWayBill'),
                 ]),
-                _drawerItems("Cari Hesaplar", '/aasdd'),
+                _drawerItems("Cari Hesaplar", '/CurrentAccounts'),
                 _drawerItems("Çalışanlar", '/adsds'),
                 if (showIncomeExpense)
                   _buildExpandableTile("Gelirler", "income", [
-                    _drawerItem("Alınan Siparişler", '/incomeorder'),
-                    _drawerItem("Satış Faturası", '/incomeinvoice'),
-                    _drawerItem("Satış İade Faturası", '/incomeclaim'),
+                    _drawerItem("Alınan Siparişler", '/InComeOrder'),
+                    _drawerItem("Satış Faturası", '/InComeInvoice'),
+                    _drawerItem("Satış İade Faturası", '/InComeClaim'),
                   ]),
                 if (showIncomeExpense)
                   _buildExpandableTile("Giderler", "u", [
-                    _drawerItem("Verilen Siparişler", '/expenseorder'),
-                    _drawerItem("Alış Faturası", '/expenseinvoice'),
-                    _drawerItem("Alış İade Faturası", '/expenseclaim'),
+                    _drawerItem("Verilen Siparişler", '/ExpenseOrder'),
+                    _drawerItem("Alış Faturası", '/ExpenseInvoice'),
+                    _drawerItem("Alış İade Faturası", '/ExpenseClaim'),
                   ]),
                 if (showEDocuments)
                   _buildExpandableTile("E-Belgeler", "ğ", [
                     _buildExpandableTile("Giden", "edoc_out", [
-                      _drawerItem("E-Faturalar", '/outgoingeinvoice'),
-                      _drawerItem("E-Arşiv Faturalar", '/outgoingearchive'),
-                      _drawerItem("E-İrsaliyeler", '/outgoingedispatch'),
+                      _drawerItem("E-Faturalar", '/OutGoingE-Invoice'),
+                      _drawerItem("E-Arşiv Faturalar", '/OutGoingE-Archive'),
+                      _drawerItem("E-İrsaliyeler", '/OutGoingE-Dispatch'),
                     ]),
                     _buildExpandableTile("Gelen", "g", [
-                      _drawerItem("E-Faturalar", '/approvedeinvoice'),
-                      _drawerItem("E-İrsaliyeler", '/approvededispatch'),
+                      _drawerItem("E-Faturalar", '/ApprovedE-Invoice'),
+                      _drawerItem("E-İrsaliyeler", '/ApprovedE-Dispatch'),
                     ]),
                   ]),
                 if (showIncomeExpense)

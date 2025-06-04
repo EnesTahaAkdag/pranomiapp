@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pranomiapp/services/InvoiceServices/InvoiceDetailsService.dart';
+import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceDetailsModel.dart';
+import 'package:pranomiapp/services/InvoiceServices/InvoiceDetailsService.dart';
 
 class InvoiceDetailPage extends StatefulWidget {
   final int invoiceId;
