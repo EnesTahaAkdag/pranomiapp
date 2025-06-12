@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
 
 class CustomerAddPage extends StatefulWidget {
@@ -16,16 +17,16 @@ class CustomerAddPage extends StatefulWidget {
 class _CustomerAddPageState extends State<CustomerAddPage> {
   final _formKey = GlobalKey<FormState>();
   late CustomerAddModel _model;
+
+  List<Country> _countries = [];
+  List<City> _cities = [];
+  List<District> _districts = [];
+
+  Country? _selectedCountry;
+  City? _selectedCity;
+  District? _selectedDistrict;
+
   bool _isSubmitting = false;
-
-  List<String> _countries = [];
-  List<String> _turkishCities = [];
-  Map<String, List<String>> _turkishDistricts = {};
-
-  String? _selectedCountry;
-  String? _selectedCity;
-  // ignore: unused_field
-  String? _selectedDistrict;
 
   @override
   void initState() {
@@ -41,46 +42,48 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       phone: '',
       city: '',
       district: '',
-      isActive: false,
-      type: CustomerTypeEnum.Customer,
+      isActive: true,
+      type: widget.customerType,
       hasOpeningBalance: false,
-      openingBalance: 2147483647,
+      openingBalance: 0,
     );
-
-    _loadCountryData();
+    _loadData();
   }
 
-  Future<void> _loadCountryData() async {
+  Future<void> _loadData() async {
     final countryData = await rootBundle.loadString(
       'lib/assets/json/countries.json',
     );
-    final turkeyData = await rootBundle.loadString(
-      'lib/assets/json/turkey_provinces.json',
+    final cityData = await rootBundle.loadString('lib/assets/json/il.json');
+    final districtData = await rootBundle.loadString(
+      'lib/assets/json/ilce.json',
     );
 
     setState(() {
-      final List<dynamic> countryList = json.decode(countryData);
-      _countries = countryList.map((e) => e['name'] as String).toList();
-
-      final List<dynamic> turkeyJson = json.decode(turkeyData);
-      _turkishDistricts = {
-        for (var province in turkeyJson)
-          province['il'] as String: List<String>.from(province['ilceler']),
-      };
-      _turkishCities = _turkishDistricts.keys.toList();
+      _countries =
+          (json.decode(countryData) as List)
+              .map((e) => Country.fromJson(e))
+              .toList();
+      _cities =
+          (json.decode(cityData)[2]['data'] as List)
+              .map((e) => City.fromJson(e))
+              .toList();
+      _districts =
+          (json.decode(districtData)[2]['data'] as List)
+              .map((e) => District.fromJson(e))
+              .toList();
     });
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
-
     setState(() => _isSubmitting = true);
+
     final success = await CustomerAddService().addCustomer(_model);
     setState(() => _isSubmitting = false);
 
-    if (success) {
-      // ignore: use_build_context_synchronously
+    if (success && mounted) {
       Navigator.of(context).pop('refresh');
     } else {
       // ignore: use_build_context_synchronously
@@ -96,120 +99,147 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Yeni Cari Ekle')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text('Yeni Cari Hesap Ekle'),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF2C2C2C),
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextField(
-                label: 'Ad Soyad / Ünvan *',
-                onSaved: (val) => _model.name = val!,
-                validator:
-                    (val) => val == null || val.isEmpty ? 'Zorunlu alan' : null,
+              _sectionTitle('1. Temel Bilgiler'),
+              _modernTextField(
+                'Ad Soyad / Firma Adı *',
+                onSaved: (v) => _model.name = v!,
+                validator: _requiredValidator,
               ),
-              _buildCheckbox(
-                label: 'Şirket Mi?',
-                value: _model.isCompany,
-                onChanged: (val) => setState(() => _model.isCompany = val!),
+              _companySwitch(),
+              _modernTextField(
+                _model.isCompany ? 'Vergi Dairesi' : 'Doğum Yeri',
+                onSaved: (v) => _model.taxOffice = v ?? '',
               ),
-              _buildTextField(
-                label: 'Vergi Dairesi',
-                onSaved: (val) => _model.taxOffice = val!,
+              _modernTextField(
+                _model.isCompany ? 'Vergi No' : 'TC Kimlik No',
+                keyboardType: TextInputType.number,
+                onSaved: (v) => _model.taxNumber = v ?? '',
               ),
-              _buildTextField(
-                label: 'Vergi No',
-                onSaved: (val) => _model.taxNumber = val!,
-              ),
-              _buildTextField(
-                label: 'E-posta',
-                keyboardType: TextInputType.emailAddress,
-                onSaved: (val) => _model.email = val!,
-              ),
-              _buildTextField(
-                label: 'IBAN',
-                onSaved: (val) => _model.iban = val!,
-              ),
-              _buildTextField(
-                label: 'Adres',
-                onSaved: (val) => _model.address = val!,
-              ),
-              _buildTextField(
-                label: 'Telefon',
-                keyboardType: TextInputType.phone,
-                onSaved: (val) => _model.phone = val!,
-              ),
-              _buildAutocompleteField(
-                label: 'Ülke *',
-                options: _countries,
-                onSaved: (val) {
-                  _selectedCountry = val;
-                  _model.city = '';
-                  _model.district = '';
-                },
-                validator:
-                    (val) => val == null || val.isEmpty ? 'Zorunlu alan' : null,
-              ),
-              if (_selectedCountry == 'Turkey') ...[
-                _buildAutocompleteField(
-                  label: 'İl',
-                  options: _turkishCities,
-                  onSaved: (val) {
-                    _selectedCity = val;
-                    _model.city = val ?? '';
+
+              _sectionTitle('2. Adres Bilgileri'),
+              _dropdown<Country>(
+                'Ülke',
+                _selectedCountry,
+                _countries,
+                (c) => c.name,
+                (val) {
+                  setState(() {
+                    _selectedCountry = val;
+                    _selectedCity = null;
                     _selectedDistrict = null;
+                  });
+                },
+              ),
+              if (_selectedCountry?.name.toLowerCase() == 'türkiye')
+                _dropdown<City>(
+                  'Şehir',
+                  _selectedCity,
+                  _cities,
+                  (c) => c.name,
+                  (val) {
+                    setState(() {
+                      _selectedCity = val;
+                      _model.city = val?.name ?? '';
+                      _selectedDistrict = null;
+                    });
                   },
                 ),
-                if (_selectedCity != null)
-                  _buildAutocompleteField(
-                    label: 'İlçe',
-                    options: _turkishDistricts[_selectedCity!] ?? [],
-                    onSaved: (val) {
+              if (_selectedCity != null)
+                _dropdown<District>(
+                  'İlçe',
+                  _selectedDistrict,
+                  _districts
+                      .where((d) => d.cityId == _selectedCity!.id)
+                      .toList(),
+                  (d) => d.name,
+                  (val) {
+                    setState(() {
                       _selectedDistrict = val;
-                      _model.district = val ?? '';
-                    },
-                  ),
-              ] else ...[
-                _buildTextField(
-                  label: 'Şehir',
-                  onSaved: (val) => _model.city = val!,
+                      _model.district = val?.name ?? '';
+                    });
+                  },
                 ),
-                _buildTextField(
-                  label: 'İlçe',
-                  onSaved: (val) => _model.district = val!,
-                ),
-              ],
-              _buildCheckbox(
-                label: 'Aktif Mi?',
-                value: _model.isActive,
-                onChanged: (val) => setState(() => _model.isActive = val!),
+              _modernTextField(
+                'Açık Adres',
+                maxLines: 3,
+                onSaved: (v) => _model.address = v ?? '',
               ),
-              _buildCheckbox(
-                label: 'Açılış Bakiyesi Var mı?',
-                value: _model.hasOpeningBalance,
-                onChanged:
-                    (val) => setState(() => _model.hasOpeningBalance = val!),
+
+              _sectionTitle('3. İletişim ve Finans'),
+              _modernTextField(
+                'E-Posta Adresi',
+                keyboardType: TextInputType.emailAddress,
+                onSaved: (v) => _model.email = v ?? '',
+              ),
+              _modernTextField(
+                'Telefon Numarası',
+                keyboardType: TextInputType.phone,
+                onSaved: (v) => _model.phone = v ?? '',
+              ),
+              _modernTextField(
+                'IBAN Numarası',
+                onSaved: (v) => _model.iban = v ?? '',
+              ),
+
+              _sectionTitle('4. Diğer'),
+              _modernSwitch(
+                'Aktif mi?',
+                _model.isActive,
+                (val) => setState(() => _model.isActive = val),
+              ),
+              _modernSwitch(
+                'Açılış Bakiyesi Var mı?',
+                _model.hasOpeningBalance,
+                (val) => setState(() => _model.hasOpeningBalance = val),
               ),
               if (_model.hasOpeningBalance)
-                _buildTextField(
-                  label: 'Açılış Bakiyesi',
+                _modernTextField(
+                  'Açılış Bakiyesi (₺)',
                   keyboardType: TextInputType.number,
                   onSaved:
-                      (val) =>
-                          _model.openingBalance = int.tryParse(val ?? '') ?? 0,
+                      (v) => _model.openingBalance = int.tryParse(v ?? '') ?? 0,
                 ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submit,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: _isSubmitting ? null : _submit,
+                  icon:
+                      _isSubmitting
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Icon(Icons.save),
+                  label: const Text('Kaydet'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFB00034),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 16,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                child:
-                    _isSubmitting
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Kaydet'),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -217,75 +247,96 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     );
   }
 
-  Widget _buildTextField({
-    required String label,
+  Widget _modernTextField(
+    String label, {
     required void Function(String?) onSaved,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
+    int maxLines = 1,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          fillColor: Colors.white,
           filled: true,
-          fillColor: Colors.grey.shade100,
         ),
         keyboardType: keyboardType,
+        maxLines: maxLines,
         validator: validator,
         onSaved: onSaved,
       ),
     );
   }
 
-  Widget _buildCheckbox({
-    required String label,
-    required bool value,
-    required void Function(bool?) onChanged,
-  }) {
-    return CheckboxListTile(
-      title: Text(label),
-      value: value,
-      onChanged: onChanged,
+  Widget _dropdown<T>(
+    String label,
+    T? value,
+    List<T> items,
+    String Function(T) display,
+    void Function(T?) onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: DropdownButtonFormField<T>(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          fillColor: Colors.white,
+          filled: true,
+        ),
+        value: value,
+        items:
+            items
+                .map((e) => DropdownMenuItem(value: e, child: Text(display(e))))
+                .toList(),
+        onChanged: onChanged,
+        validator: (val) => val == null ? 'Zorunlu alan' : null,
+      ),
     );
   }
 
-  Widget _buildAutocompleteField({
-    required String label,
-    required List<String> options,
-    required void Function(String?) onSaved,
-    String? Function(String?)? validator,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Autocomplete<String>(
-        optionsBuilder: (TextEditingValue textEditingValue) {
-          return options.where(
-            (option) => option.toLowerCase().contains(
-              textEditingValue.text.toLowerCase(),
-            ),
-          );
-        },
-        fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
-          return TextFormField(
-            controller: controller,
-            focusNode: focusNode,
-            onEditingComplete: onEditingComplete,
-            decoration: InputDecoration(
-              labelText: label,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              fillColor: Colors.grey.shade100,
-            ),
-            validator: validator,
-            onSaved: onSaved,
-          );
-        },
-        onSelected: (val) => onSaved(val),
+  Widget _modernSwitch(
+    String label,
+    bool value,
+    void Function(bool) onChanged,
+  ) {
+    return SwitchListTile(
+      title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+      value: value,
+      onChanged: onChanged,
+      activeColor: Color(0xFFB00034),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+  }
+
+  Widget _companySwitch() {
+    return ListTile(
+      title: Text(
+        _model.isCompany ? 'Tüzel Kişi' : 'Gerçek Kişi',
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      trailing: Switch(
+        value: _model.isCompany,
+        onChanged: (val) => setState(() => _model.isCompany = val),
+        activeColor: Color(0xFFB00034),
       ),
     );
+  }
+
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  String? _requiredValidator(String? val) {
+    return (val == null || val.trim().isEmpty) ? 'Zorunlu alan' : null;
   }
 }
