@@ -1,3 +1,4 @@
+import 'package:pranomiapp/Helpers/Methods/StringExtensions/StringExtensions.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 
 class CustomerAddModel {
@@ -9,6 +10,7 @@ class CustomerAddModel {
   String iban;
   String address;
   String phone;
+  String cuontryIso2;
   String city;
   String district;
   bool isActive;
@@ -25,6 +27,7 @@ class CustomerAddModel {
     required this.iban,
     required this.address,
     required this.phone,
+    required this.cuontryIso2,
     required this.city,
     required this.district,
     required this.isActive,
@@ -32,6 +35,7 @@ class CustomerAddModel {
     required this.hasOpeningBalance,
     required this.openingBalance,
   });
+
   Map<String, dynamic> toJson() {
     return {
       'Name': name,
@@ -42,6 +46,7 @@ class CustomerAddModel {
       'Iban': iban,
       'Address': address,
       'Phone': phone,
+      'CountryIso2': cuontryIso2.toEnglishUpper(),
       'City': city,
       'District': district,
       'IsActive': isActive,

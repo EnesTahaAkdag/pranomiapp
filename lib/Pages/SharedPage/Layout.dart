@@ -61,7 +61,7 @@ class _AppLayoutState extends State<AppLayout> {
     switch (route) {
       case '/':
         return 0;
-      case '/products':
+      case '/ProductsandServices':
         return 1;
       case '/incomeorder':
       case '/incomeinvoice':
@@ -330,7 +330,7 @@ class _AppLayoutState extends State<AppLayout> {
               _navigateTo('/');
               break;
             case 1:
-              _navigateTo('/products');
+              _navigateTo('/ProductsandServices');
               break;
             case 2:
               await _showIncomeSubMenu(context);

@@ -1,12 +1,17 @@
+import 'package:pranomiapp/Helpers/Methods/StringExtensions/StringExtensions.dart';
+
 class Country {
   final int id;
   final String name;
+  final String alpha2;
 
-  Country({required this.id, required this.name});
+  Country({required this.id, required this.name, required this.alpha2});
 
   factory Country.fromJson(Map<String, dynamic> json) {
-    return Country(id: json['id'], name: json['name']);
+    return Country(id: json['id'], name: json['name'], alpha2: json['alpha2']);
   }
+
+  String get alpha2Formatted => alpha2.toEnglishUpper();
 }
 
 class City {

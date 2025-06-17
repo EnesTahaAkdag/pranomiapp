@@ -5,6 +5,7 @@ import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
@@ -40,6 +41,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       iban: '',
       address: '',
       phone: '',
+      cuontryIso2: '',
       city: '',
       district: '',
       isActive: true,
@@ -113,73 +115,40 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _sectionTitle('1. Temel Bilgiler'),
+              _companySwitch(),
               _modernTextField(
-                'Ad Soyad / Firma Adı *',
+                'İsim *',
                 onSaved: (v) => _model.name = v!,
                 validator: _requiredValidator,
               ),
-              _companySwitch(),
               _modernTextField(
-                _model.isCompany ? 'Vergi Dairesi' : 'Doğum Yeri',
+                'Vergi Dairesi',
                 onSaved: (v) => _model.taxOffice = v ?? '',
               ),
               _modernTextField(
-                _model.isCompany ? 'Vergi No' : 'TC Kimlik No',
+                'TC/Vergi Numarası',
                 keyboardType: TextInputType.number,
                 onSaved: (v) => _model.taxNumber = v ?? '',
               ),
-
-              _sectionTitle('2. Adres Bilgileri'),
-              _dropdown<Country>(
-                'Ülke',
-                _selectedCountry,
-                _countries,
-                (c) => c.name,
-                (val) {
-                  setState(() {
-                    _selectedCountry = val;
-                    _selectedCity = null;
-                    _selectedDistrict = null;
-                  });
+              const SizedBox(height: 15),
+              _countryDropdown(),
+              if (_selectedCountry?.name.toLowerCase() == 'türkiye') ...{
+                const SizedBox(height: 10),
+                _cityDropdown(),
+                if (_selectedCountry?.name.toLowerCase() == 'türkiye' &&
+                    _selectedCity != null) ...{
+                  const SizedBox(height: 10),
+                  _districtDropdown(),
+                } else if (_model.city.isNotEmpty) ...{
+                  const SizedBox(height: 10),
+                  _customDistrictInput(),
                 },
-              ),
-              if (_selectedCountry?.name.toLowerCase() == 'türkiye')
-                _dropdown<City>(
-                  'Şehir',
-                  _selectedCity,
-                  _cities,
-                  (c) => c.name,
-                  (val) {
-                    setState(() {
-                      _selectedCity = val;
-                      _model.city = val?.name ?? '';
-                      _selectedDistrict = null;
-                    });
-                  },
-                ),
-              if (_selectedCity != null)
-                _dropdown<District>(
-                  'İlçe',
-                  _selectedDistrict,
-                  _districts
-                      .where((d) => d.cityId == _selectedCity!.id)
-                      .toList(),
-                  (d) => d.name,
-                  (val) {
-                    setState(() {
-                      _selectedDistrict = val;
-                      _model.district = val?.name ?? '';
-                    });
-                  },
-                ),
+              },
               _modernTextField(
                 'Açık Adres',
                 maxLines: 3,
                 onSaved: (v) => _model.address = v ?? '',
               ),
-
-              _sectionTitle('3. İletişim ve Finans'),
               _modernTextField(
                 'E-Posta Adresi',
                 keyboardType: TextInputType.emailAddress,
@@ -194,8 +163,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
                 'IBAN Numarası',
                 onSaved: (v) => _model.iban = v ?? '',
               ),
-
-              _sectionTitle('4. Diğer'),
               _modernSwitch(
                 'Aktif mi?',
                 _model.isActive,
@@ -213,27 +180,33 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
                   onSaved:
                       (v) => _model.openingBalance = int.tryParse(v ?? '') ?? 0,
                 ),
-
               const SizedBox(height: 30),
               Center(
                 child: ElevatedButton.icon(
                   onPressed: _isSubmitting ? null : _submit,
                   icon:
                       _isSubmitting
-                          ? const CircularProgressIndicator(color: Colors.white)
+                          ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
                           : const Icon(Icons.save),
                   label: const Text('Kaydet'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFB00034),
+                    backgroundColor: const Color(0xFFB00034),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
-                      vertical: 16,
+                      vertical: 18,
                     ),
                     textStyle: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -247,6 +220,134 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     );
   }
 
+  Widget _countryDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownSearch<Country>(
+          popupProps: PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+          dropdownDecoratorProps: DropDownDecoratorProps(
+            dropdownSearchDecoration: InputDecoration(
+              labelText: 'Ülke',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          items: _countries,
+          itemAsString: (Country? c) => c?.name ?? '',
+          selectedItem: _selectedCountry,
+          onChanged: (val) {
+            setState(() {
+              _selectedCountry = val;
+              _selectedCity = null;
+              _selectedDistrict = null;
+            });
+          },
+          validator: (val) => val == null ? 'Zorunlu alan' : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _cityDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownSearch<City>(
+          popupProps: PopupProps.menu(showSearchBox: true),
+          dropdownDecoratorProps: DropDownDecoratorProps(
+            dropdownSearchDecoration: InputDecoration(
+              labelText: 'Şehir',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          items: _cities,
+          itemAsString: (City? c) => c?.name ?? '',
+          selectedItem: _selectedCity,
+          onChanged: (val) {
+            setState(() {
+              _selectedCity = val;
+              _model.city = val?.name ?? '';
+              _selectedDistrict = null;
+            });
+          },
+          validator: (val) => val == null ? 'Zorunlu alan' : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _districtDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownSearch<District>(
+          popupProps: PopupProps.menu(showSearchBox: true),
+          dropdownDecoratorProps: DropDownDecoratorProps(
+            dropdownSearchDecoration: InputDecoration(
+              labelText: 'İlçe',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          items:
+              _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
+          itemAsString: (District? d) => d?.name ?? '',
+          selectedItem: _selectedDistrict,
+          onChanged: (val) {
+            setState(() {
+              _selectedDistrict = val;
+              _model.district = val?.name ?? '';
+            });
+          },
+          validator: (val) => val == null ? 'Zorunlu alan' : null,
+        ),
+      ],
+    );
+  }
+
+  // ignore: unused_element
+  Widget _customCityInput() {
+    return DropdownSearch<String>(
+      popupProps: PopupProps.dialog(showSearchBox: true),
+      dropdownDecoratorProps: DropDownDecoratorProps(
+        dropdownSearchDecoration: InputDecoration(
+          labelText: 'Şehir',
+          border: OutlineInputBorder(),
+        ),
+      ),
+      selectedItem: _model.city.isNotEmpty ? _model.city : null,
+      onChanged: (val) => setState(() => _model.city = val ?? ''),
+      validator: _requiredValidator,
+      asyncItems: (String filter) async => [filter],
+    );
+  }
+
+  Widget _customDistrictInput() {
+    return DropdownSearch<String>(
+      popupProps: PopupProps.dialog(showSearchBox: true),
+      dropdownDecoratorProps: DropDownDecoratorProps(
+        dropdownSearchDecoration: InputDecoration(
+          labelText: 'İlçe',
+          border: OutlineInputBorder(),
+        ),
+      ),
+      selectedItem: _model.district.isNotEmpty ? _model.district : null,
+      onChanged: (val) => setState(() => _model.district = val ?? ''),
+      asyncItems: (String filter) async => [filter],
+    );
+  }
+
   Widget _modernTextField(
     String label, {
     required void Function(String?) onSaved,
@@ -255,13 +356,17 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     int maxLines = 1,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          fillColor: Colors.white,
           filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
         keyboardType: keyboardType,
         maxLines: maxLines,
@@ -271,44 +376,29 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     );
   }
 
-  Widget _dropdown<T>(
-    String label,
-    T? value,
-    List<T> items,
-    String Function(T) display,
-    void Function(T?) onChanged,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: DropdownButtonFormField<T>(
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          fillColor: Colors.white,
-          filled: true,
-        ),
-        value: value,
-        items:
-            items
-                .map((e) => DropdownMenuItem(value: e, child: Text(display(e))))
-                .toList(),
-        onChanged: onChanged,
-        validator: (val) => val == null ? 'Zorunlu alan' : null,
-      ),
-    );
-  }
-
   Widget _modernSwitch(
     String label,
     bool value,
     void Function(bool) onChanged,
   ) {
-    return SwitchListTile(
-      title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-      value: value,
-      onChanged: onChanged,
-      activeColor: Color(0xFFB00034),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: SwitchListTile(
+          title: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          value: value,
+          onChanged: onChanged,
+          activeColor: const Color(0xFFB00034),
+        ),
+      ),
     );
   }
 
@@ -322,16 +412,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
         value: _model.isCompany,
         onChanged: (val) => setState(() => _model.isCompany = val),
         activeColor: Color(0xFFB00034),
-      ),
-    );
-  }
-
-  Widget _sectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
