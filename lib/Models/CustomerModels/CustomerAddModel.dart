@@ -10,7 +10,7 @@ class CustomerAddModel {
   String iban;
   String address;
   String phone;
-  String cuontryIso2;
+  String countryIso2;
   String city;
   String district;
   bool isActive;
@@ -27,7 +27,7 @@ class CustomerAddModel {
     required this.iban,
     required this.address,
     required this.phone,
-    required this.cuontryIso2,
+    required this.countryIso2,
     required this.city,
     required this.district,
     required this.isActive,
@@ -40,19 +40,19 @@ class CustomerAddModel {
     return {
       'Name': name,
       'IsCompany': isCompany,
-      'TaxOffice': taxOffice,
-      'TaxNumber': taxNumber,
-      'Email': email,
-      'Iban': iban,
-      'Address': address,
-      'Phone': phone,
-      'CountryIso2': cuontryIso2.toEnglishUpper(),
-      'City': city,
-      'District': district,
+      'TaxOffice': taxOffice.isEmpty ? null : taxOffice,
+      'TaxNumber': taxNumber.isEmpty ? null : taxNumber,
+      'Email': email.isEmpty ? null : email,
+      'Iban': iban.isEmpty ? null : iban,
+      'Address': address.isEmpty ? null : address,
+      'Phone': phone.isEmpty ? null : phone,
+      'CountryIso2': countryIso2.toEnglishUpper(),
+      'City': city.isEmpty ? null : city,
+      'District': district.isEmpty ? null : district,
       'IsActive': isActive,
-      'Type': type.toString(),
+      'Type': type.name,
       'HasOpeningBalance': hasOpeningBalance,
-      'OpeningBalance': openingBalance,
+      'OpeningBalance': hasOpeningBalance ? openingBalance : null,
     };
   }
 }

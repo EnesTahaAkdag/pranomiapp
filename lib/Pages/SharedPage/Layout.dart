@@ -187,8 +187,8 @@ class _AppLayoutState extends State<AppLayout> {
                   _drawerItem("Gelir İrsaliyeleri", '/IncomeWayBill'),
                   _drawerItem("Gider İrsaliyeleri", '/ExpenseWayBill'),
                 ]),
-                _drawerItems("Cari Hesaplar", '/CurrentAccounts'),
-                _drawerItems("Çalışanlar", '/adsds'),
+                _drawerItems("Cari Hesaplar", '/CustomerAccounts'),
+                _drawerItems("Çalışanlar", '/EmployeAccounts'),
                 if (showIncomeExpense)
                   _buildExpandableTile("Gelirler", "income", [
                     _drawerItem("Alınan Siparişler", '/InComeOrder'),

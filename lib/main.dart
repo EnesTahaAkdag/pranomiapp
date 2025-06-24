@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerAddPage/CustomerAddPage.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerPage.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
@@ -155,9 +156,21 @@ class MyApp extends StatelessWidget {
                 ),
 
                 GoRoute(
-                  path: '/CurrentAccounts',
+                  path: '/CustomerAccounts',
                   builder:
                       (_, __) => const CustomerPage(customerType: "customer"),
+                ),
+
+                GoRoute(
+                  path: '/EmployeAccounts',
+                  builder:
+                      (_, __) => const CustomerPage(customerType: "employe"),
+                ),
+
+                GoRoute(
+                  path: '/SupplierAccounts',
+                  builder:
+                      (_, __) => const CustomerPage(customerType: "supplier"),
                 ),
               ],
             ),
@@ -177,9 +190,10 @@ class MyApp extends StatelessWidget {
               },
             ),
             GoRoute(
-              path: '/CustomerEditPage',
+              path: '/CustomerEditPage/:id',
               builder: (context, state) {
-                return CustomerAddPage(customerType: CustomerTypeEnum.Customer);
+                final id = state.pathParameters['id']!;
+                return CustomerEditPage(customerId: id);
               },
             ),
           ],
@@ -257,8 +271,14 @@ class MyApp extends StatelessWidget {
       case '/OutGoingE-Invoice':
         return 'Giden E-Faturalar';
 
-      case '/CurrentAccounts':
+      case '/CustomerAccounts':
         return 'Cari Hesaplar';
+
+      case '/EmployeAccounts':
+        return 'Çalışanlar';
+
+      case '/SupplierAccounts':
+        return 'Tedarikçiler';
 
       default:
         return 'Sayfa';

@@ -3,7 +3,6 @@ extension EnglishUpperCase on String {
     return toLowerCase()
         .replaceAll('ı', 'i')
         .replaceAll('İ', 'i')
-        .replaceAll('I', 'i')
         .toUpperCase();
   }
 }

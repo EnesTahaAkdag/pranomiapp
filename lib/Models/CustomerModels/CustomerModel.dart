@@ -30,6 +30,10 @@ class CustomerResponseModel {
 class CustomerModel {
   final int customerId;
   final String customerName;
+  final String customerCode;
+
+  //        "CustomerCode": "2025000010",
+
   final String taxNumber;
   final String phone;
   final String mail;
@@ -38,6 +42,7 @@ class CustomerModel {
   CustomerModel({
     required this.customerId,
     required this.customerName,
+    required this.customerCode,
     required this.taxNumber,
     required this.phone,
     required this.mail,
@@ -48,6 +53,7 @@ class CustomerModel {
     return CustomerModel(
       customerId: json['CustomerId'] ?? 0,
       customerName: json['CustomerName'] ?? '',
+      customerCode: json['CustomerCode'] ?? '',
       taxNumber: json['TaxNumber'] ?? '',
       phone: json['Phone'] ?? '',
       mail: json['Mail'] ?? '',

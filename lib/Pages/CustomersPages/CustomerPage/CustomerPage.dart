@@ -175,47 +175,64 @@ class _CustomerPageState extends State<CustomerPage> {
       decimalDigits: 2,
       symbol: '',
     );
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: 4,
-        shadowColor: Colors.black12,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      customers.customerName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text('Müşteri: ${customers.customerName}'),
-              Text('Tarih: ${customers.mail}'),
-              const SizedBox(height: 8),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Ödenen Tutar: ${currencyFormatter.format(customers.balance)} ₺',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ],
+    return GestureDetector(
+      onTap: () async {
+        final result = await context.push(
+          '/CustomerEditPage/${customers.customerId}',
+        );
+        // Eğer edit başarılı olursa sayfa refresh
+        if (result == true) {
+          _fetchCustomers(reset: true);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Card(
+          elevation: 4,
+          shadowColor: Colors.black12,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        customers.customerName,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(Icons.edit, color: Colors.grey),
+                  ],
+                ),
+                const SizedBox(height: 4),
+
+                if (customers.customerCode.isNotEmpty)
+                  Text('Cari Hesap Kodu: ${customers.customerCode}'),
+
+                const SizedBox(height: 8),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Ödenen Tutar: ${currencyFormatter.format(customers.balance)} ₺',
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
