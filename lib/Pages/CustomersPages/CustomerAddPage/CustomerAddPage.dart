@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
