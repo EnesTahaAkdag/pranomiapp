@@ -12,4 +12,17 @@ extension CustomerTypeExtension on CustomerTypeEnum {
         return "Employee";
     }
   }
+
+  static CustomerTypeEnum fromString(String value) {
+    switch (value) {
+      case "Customer":
+        return CustomerTypeEnum.Customer;
+      case "Supplier":
+        return CustomerTypeEnum.Supplier;
+      case "Employee":
+        return CustomerTypeEnum.Employee;
+      default:
+        throw ArgumentError("Invalid CustomerTypeEnum value: $value");
+    }
+  }
 }

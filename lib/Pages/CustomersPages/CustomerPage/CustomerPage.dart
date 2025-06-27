@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
+import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerService.dart';
 
 class CustomerPage extends StatefulWidget {
-  final String customerType;
+  final CustomerTypeEnum customerType;
 
   const CustomerPage({super.key, required this.customerType});
 
@@ -28,7 +29,7 @@ class _CustomerPageState extends State<CustomerPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _fetchCustomers();
+    _fetchCustomers(reset: true);
   }
 
   @override
@@ -42,7 +43,9 @@ class _CustomerPageState extends State<CustomerPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      if (_hasMore && !_isLoading) _fetchCustomers();
+      if (_hasMore && !_isLoading) {
+        _fetchCustomers();
+      }
     }
   }
 
@@ -65,26 +68,41 @@ class _CustomerPageState extends State<CustomerPage> {
 
     if (response != null) {
       setState(() {
-        _currentPage = response.currentPage + 1;
-        _totalPages = response.totalPages;
-        _customers.addAll(response.customers);
+        _currentPage = (response.currentPage ?? 0) + 1;
+        _totalPages = response.totalPages ?? 1;
+        _customers.addAll(response.customers ?? []);
       });
     }
 
     setState(() => _isLoading = false);
   }
 
+  void _clearSearch() {
+    _searchController.clear();
+    _searchText = '';
+    _fetchCustomers(reset: true);
+  }
+
+  void _submitSearch(String val) {
+    setState(() => _searchText = val.trim());
+    _fetchCustomers(reset: true);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currencyFormatter = NumberFormat.currency(
+      locale: 'tr_TR',
+      decimalDigits: 2,
+      symbol: '',
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFFB00034),
+        backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30, color: Colors.white),
-        onPressed: () {
-          context.push('/CustomerAddPage');
-        },
+        onPressed: () => context.push('/CustomerAddPage'),
       ),
       body: SafeArea(
         child: Column(
@@ -99,14 +117,10 @@ class _CustomerPageState extends State<CustomerPage> {
                   prefixIcon: const Icon(Icons.search),
                   hintText: 'Müşteri ara...',
                   suffixIcon:
-                      _searchText.isNotEmpty
+                      _searchController.text.isNotEmpty
                           ? IconButton(
                             icon: const Icon(Icons.close),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _searchText = '');
-                              _fetchCustomers(reset: true);
-                            },
+                            onPressed: _clearSearch,
                           )
                           : null,
                   border: OutlineInputBorder(
@@ -115,24 +129,14 @@ class _CustomerPageState extends State<CustomerPage> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-                onChanged: (val) => setState(() => _searchText = val),
-                onSubmitted: (_) => _fetchCustomers(reset: true),
+                onSubmitted: _submitSearch,
               ),
             ),
-
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => _fetchCustomers(reset: true),
                 child: ListView.builder(
-                  controller:
-                      _scrollController..addListener(() {
-                        if (_scrollController.position.pixels >=
-                                _scrollController.position.maxScrollExtent &&
-                            !_isLoading &&
-                            _currentPage < _totalPages) {
-                          _fetchCustomers();
-                        }
-                      }),
+                  controller: _scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemCount:
                       _customers.isEmpty && !_isLoading
@@ -144,7 +148,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         height: MediaQuery.of(context).size.height * 0.5,
                         child: Center(
                           child: Text(
-                            'Hiç fatura bulunamadı.',
+                            'Hiç müşteri bulunamadı.',
                             style: TextStyle(color: Colors.grey[600]),
                           ),
                         ),
@@ -152,7 +156,70 @@ class _CustomerPageState extends State<CustomerPage> {
                     }
 
                     if (idx < _customers.length) {
-                      return _buildInvoiceItem(_customers[idx]);
+                      final customer = _customers[idx];
+                      return GestureDetector(
+                        onTap: () async {
+                          final result = await context.push(
+                            '/CustomerEditPage',
+                            extra: customer.customerId,
+                          );
+                          if (result == true) {
+                            _fetchCustomers(reset: true);
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: Card(
+                            elevation: 4,
+                            shadowColor: Colors.black12,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          customer.customerName,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.edit,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  if (customer.customerCode.isNotEmpty)
+                                    Text(
+                                      'Cari Hesap Kodu: ${customer.customerCode}',
+                                    ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Ödenen Tutar: ${currencyFormatter.format(customer.balance)} ₺',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
                     }
 
                     return const Padding(
@@ -164,76 +231,6 @@ class _CustomerPageState extends State<CustomerPage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInvoiceItem(CustomerModel customers) {
-    final currencyFormatter = NumberFormat.currency(
-      locale: 'tr_TR',
-      decimalDigits: 2,
-      symbol: '',
-    );
-
-    return GestureDetector(
-      onTap: () async {
-        final result = await context.push(
-          '/CustomerEditPage/${customers.customerId}',
-        );
-        // Eğer edit başarılı olursa sayfa refresh
-        if (result == true) {
-          _fetchCustomers(reset: true);
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          elevation: 4,
-          shadowColor: Colors.black12,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        customers.customerName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const Icon(Icons.edit, color: Colors.grey),
-                  ],
-                ),
-                const SizedBox(height: 4),
-
-                if (customers.customerCode.isNotEmpty)
-                  Text('Cari Hesap Kodu: ${customers.customerCode}'),
-
-                const SizedBox(height: 8),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Ödenen Tutar: ${currencyFormatter.format(customers.balance)} ₺',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

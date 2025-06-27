@@ -159,7 +159,7 @@ class _AppLayoutState extends State<AppLayout> {
 
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF3F3F3F),
       child: Column(
         children: [
           Container(
@@ -294,7 +294,7 @@ class _AppLayoutState extends State<AppLayout> {
     return ExpansionTile(
       title: Text(title, style: const TextStyle(color: Colors.white)),
       backgroundColor: const Color(0xFF2C2C2C),
-      collapsedBackgroundColor: const Color(0xFF1E1E1E),
+      collapsedBackgroundColor: const Color(0xFF3F3F3F),
       iconColor: Colors.white,
       collapsedIconColor: Colors.white,
       initiallyExpanded: openMenuId == id,
@@ -311,7 +311,7 @@ class _AppLayoutState extends State<AppLayout> {
           widget.showAppBar
               ? AppBar(
                 title: Text(widget.title),
-                backgroundColor: const Color(0xFF2C2C2C),
+                backgroundColor: const Color(0xFF3F3F3F),
                 leading: Builder(
                   builder:
                       (ctx) => IconButton(
@@ -346,7 +346,7 @@ class _AppLayoutState extends State<AppLayout> {
               break;
           }
         },
-        backgroundColor: const Color(0xFF2C2C2C),
+        backgroundColor: const Color(0xFF3F3F3F),
         selectedItemColor: const Color(0xFFB00034),
         unselectedItemColor: Colors.white,
         type: BottomNavigationBarType.fixed,

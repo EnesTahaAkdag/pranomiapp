@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
+import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
 
 class CustomerEditPage extends StatefulWidget {
-  final String customerId;
-
+  final int customerId;
   const CustomerEditPage({super.key, required this.customerId});
 
   @override
@@ -12,165 +12,168 @@ class CustomerEditPage extends StatefulWidget {
 }
 
 class _CustomerEditPageState extends State<CustomerEditPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  CustomerEditModel? _model;
+  final _formKey = GlobalKey<FormState>();
+  CustomerEditModel? _editModel;
   bool _isLoading = true;
-  bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    _loadCustomerDetail();
+    _loadCustomer();
   }
 
-  Future<void> _loadCustomerDetail() async {
-    final id = int.parse(widget.customerId);
-    final detail = await CustomerEditService().getCustomerDetail(id);
+  Future<void> _loadCustomer() async {
+    final detail = await CustomerEditService().fetchCustomerDetails(
+      widget.customerId,
+    );
+
     if (detail != null) {
       setState(() {
-        _model = detail;
+        _editModel = CustomerEditModel(
+          id: detail.id,
+          name: detail.name,
+          isCompany: detail.isCompany,
+          taxOffice: detail.taxOffice ?? '',
+          taxNumber: detail.taxNumber ?? '',
+          email: detail.email ?? '',
+          iban: detail.iban ?? '',
+          address: detail.address ?? '',
+          phone: detail.phone ?? '',
+          countryIso2: detail.countryIso2,
+          city: detail.city ?? '',
+          district: detail.district ?? '',
+          isActive: detail.active,
+          type: CustomerTypeExtension.fromString(detail.type),
+        );
         _isLoading = false;
       });
     } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Müşteri bilgileri alınamadı.')),
-        );
-        Navigator.pop(context);
-      }
-    }
-  }
-
-  Future<void> _submit() async {
-    final form = _formKey.currentState;
-    if (form == null || !form.validate()) return;
-    form.save();
-
-    setState(() => _isSubmitting = true);
-    final success = await CustomerEditService().editCustomer(_model!);
-    setState(() => _isSubmitting = false);
-
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Müşteri başarıyla güncellendi.')),
-      );
-      Navigator.pop(context, true);
-    } else {
+      setState(() {
+        _isLoading = false;
+      });
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hata oluştu, tekrar deneyin.')),
+        const SnackBar(content: Text("Müşteri bilgisi alınamadı.")),
       );
     }
   }
 
-  Widget _modernTextField(
-    String label, {
-    required String initialValue,
-    required void Function(String?) onSaved,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-    int maxLines = 1,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: TextFormField(
-        initialValue: initialValue,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-        ),
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-        validator: validator,
-        onSaved: onSaved,
-      ),
-    );
-  }
+  Future<void> _saveCustomer() async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
 
-  String? _requiredValidator(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Zorunlu alan' : null;
+    final success = await CustomerEditService().editCustomer(_editModel!);
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(success ? 'Müşteri güncellendi' : 'Hata oluştu')),
+    );
+    if (success) Navigator.pop(context, true);
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading || _model == null) {
+    if (_isLoading || _editModel == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Müşteri Düzenle')),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
-              _modernTextField(
-                'Adı Soyadı',
-                initialValue: _model!.name,
-                validator: _requiredValidator,
-                onSaved: (v) => _model!.name = v?.trim() ?? '',
+              _buildTextField(
+                'Ad',
+                _editModel!.name,
+                (v) => _editModel?.name = v ?? '',
               ),
-              _modernTextField(
-                'Email',
-                initialValue: _model!.email,
-                onSaved: (v) => _model!.email = v?.trim() ?? '',
+              _buildSwitch(
+                'Şirket mi?',
+                _editModel!.isCompany,
+                (v) => setState(() => _editModel?.isCompany = v),
               ),
-              _modernTextField(
-                'Telefon',
-                initialValue: _model!.phone,
-                onSaved: (v) => _model!.phone = v?.trim() ?? '',
-              ),
-              _modernTextField(
-                'Vergi No',
-                initialValue: _model!.taxNumber,
-                onSaved: (v) => _model!.taxNumber = v?.trim() ?? '',
-              ),
-              _modernTextField(
+              _buildTextField(
                 'Vergi Dairesi',
-                initialValue: _model!.taxOffice,
-                onSaved: (v) => _model!.taxOffice = v?.trim() ?? '',
+                _editModel!.taxOffice,
+                (v) => _editModel?.taxOffice = v ?? '',
               ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _isSubmitting ? null : _submit,
-                icon:
-                    _isSubmitting
-                        ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                        : const Icon(Icons.save),
-                label: const Text('Kaydet'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFB00034),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 18,
-                  ),
-                  textStyle: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              _buildTextField(
+                'Vergi Numarası',
+                _editModel!.taxNumber,
+                (v) => _editModel?.taxNumber = v ?? '',
+              ),
+              _buildTextField(
+                'Email',
+                _editModel!.email,
+                (v) => _editModel!.email = v ?? '',
+              ),
+              _buildTextField(
+                'Telefon',
+                _editModel!.phone,
+                (v) => _editModel!.phone = v ?? '',
+              ),
+              _buildTextField(
+                'IBAN',
+                _editModel!.iban,
+                (v) => _editModel!.iban = v ?? '',
+              ),
+              _buildTextField(
+                'Adres',
+                _editModel!.address,
+                (v) => _editModel!.address = v ?? '',
+              ),
+              _buildTextField(
+                'Ülke (ISO2)',
+                _editModel!.countryIso2,
+                (v) => _editModel!.countryIso2 = v ?? '',
+              ),
+              _buildTextField(
+                'Şehir',
+                _editModel!.city,
+                (v) => _editModel!.city = v ?? '',
+              ),
+              _buildTextField(
+                'İlçe',
+                _editModel!.district,
+                (v) => _editModel!.district = v ?? '',
+              ),
+              _buildSwitch(
+                'Aktif',
+                _editModel!.isActive,
+                (v) => setState(() => _editModel!.isActive = v),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveCustomer,
+                child: const Text('Kaydet'),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(
+    String label,
+    String initial,
+    FormFieldSetter<String?> onSave,
+  ) {
+    return TextFormField(
+      initialValue: initial,
+      decoration: InputDecoration(labelText: label),
+      onSaved: onSave,
+    );
+  }
+
+  Widget _buildSwitch(String label, bool value, Function(bool) onChanged) {
+    return SwitchListTile(
+      title: Text(label),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }

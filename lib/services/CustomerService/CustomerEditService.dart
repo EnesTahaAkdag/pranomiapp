@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerDetailModel.dart';
 
 class CustomerEditService {
-  static final Dio _dio = Dio(
+  final Dio _dio = Dio(
     BaseOptions(
       baseUrl: 'https://apitest.pranomi.com/',
       connectTimeout: const Duration(seconds: 10),
@@ -14,20 +15,20 @@ class CustomerEditService {
     ),
   );
 
-  Future<CustomerEditModel?> getCustomerDetail(int id) async {
+  Future<CustomerDetailModel?> fetchCustomerDetails(int customerId) async {
     final prefs = await SharedPreferences.getInstance();
     final apiKey = prefs.getString('apiKey');
     final apiSecret = prefs.getString('apiSecret');
-    if (apiKey == null || apiSecret == null) {
-      throw Exception('API anahtarları bulunamadı.');
-    }
+
+    if (apiKey == null || apiSecret == null) return null;
 
     final basicAuth =
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
 
     try {
       final response = await _dio.get(
-        '/Customer/Customer/Get/$id',
+        '/Customer/Customer/Detail',
+        data: jsonEncode({'Id': customerId}),
         options: Options(
           headers: {
             'ApiKey': apiKey,
@@ -37,25 +38,22 @@ class CustomerEditService {
         ),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
-        return CustomerEditModel.fromJson(response.data);
-      } else {
-        debugPrint('Sunucu hatası: ${response.statusCode}');
-        return null;
+      if (response.statusCode == 200) {
+        return CustomerDetailModel.fromJson(response.data['Item']);
       }
-    } on DioException catch (dioError) {
-      debugPrint('DioError: ${dioError.response?.data ?? dioError.message}');
-      return null;
+    } on DioException catch (e) {
+      debugPrint('Fetch Error: ${e.message}');
     }
+
+    return null;
   }
 
   Future<bool> editCustomer(CustomerEditModel model) async {
     final prefs = await SharedPreferences.getInstance();
     final apiKey = prefs.getString('apiKey');
     final apiSecret = prefs.getString('apiSecret');
-    if (apiKey == null || apiSecret == null) {
-      throw Exception('API anahtarları bulunamadı.');
-    }
+
+    if (apiKey == null || apiSecret == null) return false;
 
     final basicAuth =
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
@@ -72,16 +70,9 @@ class CustomerEditService {
           },
         ),
       );
-
-      if (response.statusCode == 200 && response.data != null) {
-        return true;
-      } else {
-        debugPrint('Sunucu hatası: ${response.statusCode}');
-        return false;
-      }
-    } on DioException catch (dioError) {
-      debugPrint('Payload: ${jsonEncode(model.toJson())}');
-      debugPrint('DioError: ${dioError.response?.data ?? dioError.message}');
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Edit Error: $e');
       return false;
     }
   }

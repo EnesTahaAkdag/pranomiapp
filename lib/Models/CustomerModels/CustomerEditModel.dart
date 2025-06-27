@@ -47,27 +47,25 @@ class CustomerEditModel {
       city: json['City'] ?? '',
       district: json['District'] ?? '',
       isActive: json['IsActive'] ?? true,
-      type: CustomerTypeEnum.values.firstWhere((e) => e.name == json['Type']),
+      type: CustomerTypeExtension.fromString(json['Type'] ?? 'Customer'),
       id: json['Id'] ?? 0,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'Name': name,
-      'IsCompany': isCompany,
-      'TaxOffice': taxOffice,
-      'TaxNumber': taxNumber,
-      'Email': email,
-      'Iban': iban,
-      'Address': address,
-      'Phone': phone,
-      'CountryIso2': countryIso2,
-      'City': city,
-      'District': district,
-      'IsActive': isActive,
-      'Type': type.name,
-      'Id': id,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'Name': name,
+    'IsCompany': isCompany,
+    'TaxOffice': taxOffice,
+    'TaxNumber': taxNumber,
+    'Email': email,
+    'Iban': iban,
+    'Address': address,
+    'Phone': phone,
+    'CountryIso2': countryIso2,
+    'City': city,
+    'District': district,
+    'IsActive': isActive,
+    'Type': type.name,
+    'Id': id,
+  };
 }

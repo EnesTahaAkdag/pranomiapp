@@ -158,19 +158,25 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/CustomerAccounts',
                   builder:
-                      (_, __) => const CustomerPage(customerType: "customer"),
+                      (_, __) => const CustomerPage(
+                        customerType: CustomerTypeEnum.Customer,
+                      ),
                 ),
 
                 GoRoute(
                   path: '/EmployeAccounts',
                   builder:
-                      (_, __) => const CustomerPage(customerType: "employe"),
+                      (_, __) => const CustomerPage(
+                        customerType: CustomerTypeEnum.Employee,
+                      ),
                 ),
 
                 GoRoute(
                   path: '/SupplierAccounts',
                   builder:
-                      (_, __) => const CustomerPage(customerType: "supplier"),
+                      (_, __) => const CustomerPage(
+                        customerType: CustomerTypeEnum.Supplier,
+                      ),
                 ),
               ],
             ),
@@ -189,11 +195,17 @@ class MyApp extends StatelessWidget {
                 return CustomerAddPage(customerType: CustomerTypeEnum.Customer);
               },
             ),
+
             GoRoute(
-              path: '/CustomerEditPage/:id',
+              path: '/CustomerEditPage',
               builder: (context, state) {
-                final id = state.pathParameters['id']!;
-                return CustomerEditPage(customerId: id);
+                final customerId = state.extra as int?;
+                if (customerId == null) {
+                  return const Scaffold(
+                    body: Center(child: Text('Geçersiz müşteri ID')),
+                  );
+                }
+                return CustomerEditPage(customerId: customerId);
               },
             ),
           ],
