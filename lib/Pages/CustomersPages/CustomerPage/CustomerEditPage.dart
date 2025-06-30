@@ -13,8 +13,9 @@ class CustomerEditPage extends StatefulWidget {
 
 class _CustomerEditPageState extends State<CustomerEditPage> {
   final _formKey = GlobalKey<FormState>();
-  CustomerEditModel? _editModel;
+  CustomerEditModel? _model;
   bool _isLoading = true;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -23,57 +24,64 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   }
 
   Future<void> _loadCustomer() async {
-    final detail = await CustomerEditService().fetchCustomerDetails(
+    final response = await CustomerEditService().fetchCustomerDetails(
       widget.customerId,
     );
-
-    if (detail != null) {
+    if (response != null) {
       setState(() {
-        _editModel = CustomerEditModel(
-          id: detail.id,
-          name: detail.name,
-          isCompany: detail.isCompany,
-          taxOffice: detail.taxOffice ?? '',
-          taxNumber: detail.taxNumber ?? '',
-          email: detail.email ?? '',
-          iban: detail.iban ?? '',
-          address: detail.address ?? '',
-          phone: detail.phone ?? '',
-          countryIso2: detail.countryIso2,
-          city: detail.city ?? '',
-          district: detail.district ?? '',
-          isActive: detail.active,
-          type: CustomerTypeExtension.fromString(detail.type),
+        _model = CustomerEditModel(
+          id: response.id,
+          name: response.name,
+          isCompany: response.isCompany,
+          taxOffice: response.taxOffice ?? '',
+          taxNumber: response.taxNumber ?? '',
+          email: response.email ?? '',
+          iban: response.iban ?? '',
+          address: response.address ?? '',
+          phone: response.phone ?? '',
+          countryIso2: response.countryIso2,
+          city: response.city ?? '',
+          district: response.district ?? '',
+          isActive: response.active,
+          type: CustomerTypeExtension.fromString(response.type),
         );
         _isLoading = false;
       });
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
+      if (context.mounted) {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Müşteri bilgisi alınamadı.")),
+        );
+      }
+    }
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
+    setState(() => _isSubmitting = true);
+
+    final success = await CustomerEditService().editCustomer(_model!);
+    setState(() => _isSubmitting = false);
+
+    if (success && mounted) {
+      Navigator.of(context).pop('refresh');
+    } else {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Müşteri bilgisi alınamadı.")),
+        const SnackBar(
+          content: Text('Cari Hesap Güncellenemedi.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
 
-  Future<void> _saveCustomer() async {
-    if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState!.save();
-
-    final success = await CustomerEditService().editCustomer(_editModel!);
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(success ? 'Müşteri güncellendi' : 'Hata oluştu')),
-    );
-    if (success) Navigator.pop(context, true);
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading || _editModel == null) {
+    if (_isLoading || _model == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
@@ -85,71 +93,66 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           key: _formKey,
           child: ListView(
             children: [
-              _buildTextField(
-                'Ad',
-                _editModel!.name,
-                (v) => _editModel?.name = v ?? '',
-              ),
               _buildSwitch(
                 'Şirket mi?',
-                _editModel!.isCompany,
-                (v) => setState(() => _editModel?.isCompany = v),
+                _model!.isCompany,
+                (v) => setState(() => _model!.isCompany = v),
               ),
+              _buildTextField('Ad', _model!.name, (v) => _model!.name = v!),
               _buildTextField(
                 'Vergi Dairesi',
-                _editModel!.taxOffice,
-                (v) => _editModel?.taxOffice = v ?? '',
+                _model!.taxOffice,
+                (v) => _model!.taxOffice = v ?? '',
               ),
               _buildTextField(
                 'Vergi Numarası',
-                _editModel!.taxNumber,
-                (v) => _editModel?.taxNumber = v ?? '',
+                _model!.taxNumber,
+                (v) => _model!.taxNumber = v ?? '',
               ),
               _buildTextField(
                 'Email',
-                _editModel!.email,
-                (v) => _editModel!.email = v ?? '',
+                _model!.email,
+                (v) => _model!.email = v ?? '',
+                inputType: TextInputType.emailAddress,
               ),
               _buildTextField(
                 'Telefon',
-                _editModel!.phone,
-                (v) => _editModel!.phone = v ?? '',
+                _model!.phone,
+                (v) => _model!.phone = v ?? '',
               ),
               _buildTextField(
                 'IBAN',
-                _editModel!.iban,
-                (v) => _editModel!.iban = v ?? '',
+                _model!.iban,
+                (v) => _model!.iban = v ?? '',
               ),
               _buildTextField(
                 'Adres',
-                _editModel!.address,
-                (v) => _editModel!.address = v ?? '',
+                _model!.address,
+                (v) => _model!.address = v ?? '',
+                maxLines: 3,
               ),
               _buildTextField(
-                'Ülke (ISO2)',
-                _editModel!.countryIso2,
-                (v) => _editModel!.countryIso2 = v ?? '',
+                'Ülke',
+                _model!.countryIso2,
+                (v) => _model!.countryIso2 = v ?? '',
               ),
               _buildTextField(
                 'Şehir',
-                _editModel!.city,
-                (v) => _editModel!.city = v ?? '',
+                _model!.city,
+                (v) => _model!.city = v ?? '',
               ),
               _buildTextField(
                 'İlçe',
-                _editModel!.district,
-                (v) => _editModel!.district = v ?? '',
+                _model!.district,
+                (v) => _model!.district = v ?? '',
               ),
               _buildSwitch(
                 'Aktif',
-                _editModel!.isActive,
-                (v) => setState(() => _editModel!.isActive = v),
+                _model!.isActive,
+                (v) => setState(() => _model!.isActive = v),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveCustomer,
-                child: const Text('Kaydet'),
-              ),
+              const SizedBox(height: 24),
+              _submitButton(),
             ],
           ),
         ),
@@ -159,21 +162,60 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
 
   Widget _buildTextField(
     String label,
-    String initial,
-    FormFieldSetter<String?> onSave,
-  ) {
-    return TextFormField(
-      initialValue: initial,
-      decoration: InputDecoration(labelText: label),
-      onSaved: onSave,
+    String initialValue,
+    void Function(String?) onSaved, {
+    TextInputType inputType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: TextFormField(
+        initialValue: initialValue,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        keyboardType: inputType,
+        maxLines: maxLines,
+        validator:
+            (v) => (v == null || v.trim().isEmpty) ? 'Zorunlu alan' : null,
+        onSaved: onSaved,
+      ),
     );
   }
 
-  Widget _buildSwitch(String label, bool value, Function(bool) onChanged) {
+  Widget _buildSwitch(String label, bool value, void Function(bool) onChanged) {
     return SwitchListTile(
-      title: Text(label),
+      title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
       value: value,
       onChanged: onChanged,
+      activeColor: const Color(0xFFB00034),
+    );
+  }
+
+  Widget _submitButton() {
+    return ElevatedButton.icon(
+      onPressed: _isSubmitting ? null : _submit,
+      icon:
+          _isSubmitting
+              ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+              : const Icon(Icons.save),
+      label: const Text('Kaydet'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFB00034),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+        textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
