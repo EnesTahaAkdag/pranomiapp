@@ -27,8 +27,7 @@ class CustomerEditService {
 
     try {
       final response = await _dio.get(
-        '/Customer/Customer/Detail',
-        data: jsonEncode({'Id': customerId}),
+        '/Customer/Detail/$customerId',
         options: Options(
           headers: {
             'ApiKey': apiKey,
