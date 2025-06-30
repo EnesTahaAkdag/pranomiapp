@@ -1,48 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pranomiapp/Helpers/Methods/StringExtensions/StringExtensions.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
-
-class Country {
-  final int id;
-  final String name;
-  final String alpha2;
-
-  Country({required this.id, required this.name, required this.alpha2});
-
-  factory Country.fromJson(Map<String, dynamic> json) {
-    return Country(id: json['id'], name: json['name'], alpha2: json['alpha2']);
-  }
-
-  String get alpha2Formatted => alpha2.toUpperCase();
-}
-
-class City {
-  final int id;
-  final String name;
-  final String countryAlpha2;
-
-  City({required this.id, required this.name, required this.countryAlpha2});
-
-  factory City.fromJson(Map<String, dynamic> json) => City(
-    id: json['id'],
-    name: json['name'],
-    countryAlpha2: json['country_alpha2'],
-  );
-}
-
-class District {
-  final int id;
-  final String name;
-  final int cityId;
-
-  District({required this.id, required this.name, required this.cityId});
-
-  factory District.fromJson(Map<String, dynamic> json) =>
-      District(id: json['id'], name: json['name'], cityId: json['city_id']);
-}
 
 class CustomerEditPage extends StatefulWidget {
   final int customerId;
@@ -59,14 +22,13 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   bool _isSubmitting = false;
 
   List<Country> _countries = [];
-  Country? _selectedCountry;
-
   List<City> _cities = [];
   List<District> _districts = [];
 
   List<City> _filteredCities = [];
   List<District> _filteredDistricts = [];
 
+  Country? _selectedCountry;
   City? _selectedCity;
   District? _selectedDistrict;
 
@@ -77,15 +39,31 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   }
 
   Future<void> _initializeData() async {
-    await Future.wait([
-      _loadCustomer(),
-      _loadCountries(),
-      _loadCities(),
-      _loadDistricts(),
-    ]);
-    _matchCountry();
-    _matchCityAndDistrict();
+    await _loadCustomer();
+    await _loadCountries();
+    await _loadCities();
+    await _loadDistricts();
+
+    if (_model != null) {
+      _matchCountry();
+      _filterCitiesForSelectedCountry(); // özel fonksiyon
+      _matchCityAndDistrict(); // artık şehirler yüklendiği için burada güvenle eşleştirme yapar
+    }
+
     setState(() => _isLoading = false);
+  }
+
+  void _filterCitiesForSelectedCountry() {
+    if (_selectedCountry == null) return;
+
+    _filteredCities =
+        _cities
+            .where(
+              (c) =>
+                  c.countryAlpha2.toUpperCase() ==
+                  _selectedCountry!.alpha2Formatted.toUpperCase(),
+            )
+            .toList();
   }
 
   Future<void> _loadCustomer() async {
@@ -97,26 +75,25 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         id: response.id,
         name: response.name,
         isCompany: response.isCompany,
-        taxOffice: response.taxOffice ?? '',
-        taxNumber: response.taxNumber ?? '',
-        email: response.email ?? '',
-        iban: response.iban ?? '',
-        address: response.address ?? '',
-        phone: response.phone ?? '',
+        taxOffice: response.taxOffice,
+        taxNumber: response.taxNumber,
+        email: response.email,
+        iban: response.iban,
+        address: response.address,
+        phone: response.phone,
         countryIso2: response.countryIso2,
-        city: response.city ?? '',
-        district: response.district ?? '',
+        city: response.city,
+        district: response.district,
         isActive: response.active,
         type: CustomerTypeExtension.fromString(response.type),
       );
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("M\u00fc\u015fteri bilgisi al\u0131namad\u0131."),
-          ),
-        );
-      }
+    } else if (context.mounted) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Müşteri bilgisi yüklenemedi. Tekrar deneyin."),
+        ),
+      );
     }
   }
 
@@ -130,15 +107,26 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
 
   Future<void> _loadCities() async {
     final String response = await rootBundle.loadString(
-      'lib/assets/json/cities.json',
+      'lib/assets/json/il.json',
     );
     final List<dynamic> data = json.decode(response);
-    _cities = data.map((e) => City.fromJson(e)).toList();
+    _cities =
+        data
+            .map((e) {
+              try {
+                return City.fromJson(e);
+              } catch (e) {
+                debugPrint("Şehir yüklenemedi: $e");
+                return null;
+              }
+            })
+            .whereType<City>()
+            .toList();
   }
 
   Future<void> _loadDistricts() async {
     final String response = await rootBundle.loadString(
-      'lib/assets/json/districts.json',
+      'lib/assets/json/ilce.json',
     );
     final List<dynamic> data = json.decode(response);
     _districts = data.map((e) => District.fromJson(e)).toList();
@@ -146,38 +134,43 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
 
   void _matchCountry() {
     if (_model != null) {
-      _selectedCountry = _countries.firstWhere(
-        (c) => c.alpha2Formatted == _model!.countryIso2.toUpperCase(),
-        orElse: () => _countries.first,
-      );
+      final iso2 = _model!.countryIso2.toUpperCase();
+      if (_countries.isNotEmpty) {
+        _selectedCountry = _countries.firstWhere(
+          (c) => c.alpha2Formatted == iso2,
+          orElse: () => _countries.first,
+        );
+      }
     }
   }
 
   void _matchCityAndDistrict() {
-    if (_model == null) return;
+    if (_model == null || _selectedCountry == null) return;
 
     _filteredCities =
-        _cities.where((c) => c.countryAlpha2 == _model!.countryIso2).toList();
-    _selectedCity = _filteredCities.firstWhere(
-      (c) => c.name.toLowerCase() == _model!.city.toLowerCase(),
-      orElse:
-          () =>
-              _filteredCities.isNotEmpty
-                  ? _filteredCities.first
-                  : City(id: 0, name: 'Unknown', countryAlpha2: ''),
-    );
+        _cities
+            .where(
+              (c) =>
+                  c.countryAlpha2.toUpperCase() ==
+                  _selectedCountry!.alpha2Formatted.toUpperCase(),
+            )
+            .toList();
 
-    if (_selectedCity != null) {
+    if (_filteredCities.isNotEmpty) {
+      _selectedCity = _filteredCities.firstWhere(
+        (c) => c.name.toEnglishUpper() == _model!.city.toEnglishUpper(),
+        orElse: () => _filteredCities.first,
+      );
+
       _filteredDistricts =
           _districts.where((d) => d.cityId == _selectedCity!.id).toList();
-      _selectedDistrict = _filteredDistricts.firstWhere(
-        (d) => d.name.toLowerCase() == _model!.district.toLowerCase(),
-        orElse:
-            () =>
-                _filteredDistricts.isNotEmpty
-                    ? _filteredDistricts.first
-                    : District(id: 0, name: 'Unknown', cityId: 0),
-      );
+
+      if (_filteredDistricts.isNotEmpty) {
+        _selectedDistrict = _filteredDistricts.firstWhere(
+          (d) => d.name.toEnglishUpper() == _model!.district.toEnglishUpper(),
+          orElse: () => _filteredDistricts.first,
+        );
+      }
     }
   }
 
@@ -192,9 +185,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     if (success && mounted) {
       Navigator.of(context).pop('refresh');
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Cari Hesap G\u00fcncellenemedi.'),
+          content: Text('Cari Hesap Güncellenemedi.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -208,7 +202,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('M\u00fc\u015fteri D\u00fczenle')),
+      appBar: AppBar(title: const Text('Müşteri Düzenle')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -216,18 +210,22 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           child: ListView(
             children: [
               _buildSwitch(
-                '\u015eirket mi?',
+                'Şirket mi?',
                 _model!.isCompany,
                 (v) => setState(() => _model!.isCompany = v),
               ),
-              _buildTextField('Ad', _model!.name, (v) => _model!.name = v!),
+              _buildTextField(
+                'Ad',
+                _model!.name,
+                (v) => _model!.name = v ?? '',
+              ),
               _buildTextField(
                 'Vergi Dairesi',
                 _model!.taxOffice,
                 (v) => _model!.taxOffice = v ?? '',
               ),
               _buildTextField(
-                'Vergi Numaras\u0131',
+                'Vergi Numarası',
                 _model!.taxNumber,
                 (v) => _model!.taxNumber = v ?? '',
               ),
@@ -291,8 +289,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         maxLines: maxLines,
         validator:
             (v) =>
-                (label == 'Ad' || label == 'Ad') &&
-                        (v == null || v.trim().isEmpty)
+                (label == 'Ad' && (v == null || v.trim().isEmpty))
                     ? 'Zorunlu alan'
                     : null,
         onSaved: onSaved,
@@ -321,7 +318,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                 child: Text(country.name),
               );
             }).toList(),
-        onChanged: (Country? newCountry) {
+        onChanged: (newCountry) {
           setState(() {
             _selectedCountry = newCountry;
             _model!.countryIso2 = newCountry?.alpha2Formatted ?? '';
@@ -332,14 +329,14 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                     )
                     .toList();
             _selectedCity = null;
-            _selectedDistrict = null;
             _filteredDistricts = [];
+            _selectedDistrict = null;
             _model!.city = '';
             _model!.district = '';
           });
         },
         decoration: InputDecoration(
-          labelText: '\u00dclke',
+          labelText: 'Ülke',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: Colors.white,
@@ -357,7 +354,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         items:
             _filteredCities.map((city) {
               return DropdownMenuItem<City>(
-                value: city,
+                value:
+                    _filteredCities.contains(_selectedCity)
+                        ? _selectedCity
+                        : null,
                 child: Text(city.name),
               );
             }).toList(),
@@ -372,7 +372,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           });
         },
         decoration: InputDecoration(
-          labelText: '\u015eehir',
+          labelText: 'Şehir',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: Colors.white,
@@ -400,7 +400,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           });
         },
         decoration: InputDecoration(
-          labelText: '\u0130l\u00e7e',
+          labelText: 'İlçe',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: Colors.white,

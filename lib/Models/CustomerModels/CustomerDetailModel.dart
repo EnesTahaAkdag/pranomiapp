@@ -32,15 +32,15 @@ class CustomerDetailModel {
   final String name;
   final String code;
   final String type;
-  final String? phone;
-  final String? email;
-  final String? iban;
-  final String? city;
-  final String? district;
+  final String phone;
+  final String email;
+  final String iban;
+  final String city;
+  final String district;
   final String countryIso2;
-  final String? taxOffice;
-  final String? taxNumber;
-  final String? address;
+  final String taxOffice;
+  final String taxNumber;
+  final String address;
   final bool active;
   final bool isCompany;
   final double balance;
@@ -50,15 +50,15 @@ class CustomerDetailModel {
     required this.name,
     required this.code,
     required this.type,
-    this.phone,
-    this.email,
-    this.iban,
-    this.city,
-    this.district,
+    required this.phone,
+    required this.email,
+    required this.iban,
+    required this.city,
+    required this.district,
     required this.countryIso2,
-    this.taxOffice,
-    this.taxNumber,
-    this.address,
+    required this.taxOffice,
+    required this.taxNumber,
+    required this.address,
     required this.active,
     required this.isCompany,
     required this.balance,
