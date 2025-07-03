@@ -5,6 +5,7 @@ import 'package:pranomiapp/Helpers/Methods/StringExtensions/StringExtensions.dar
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
+import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
 
 class CustomerEditPage extends StatefulWidget {
@@ -67,7 +68,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   }
 
   Future<void> _loadCustomer() async {
-    final response = await CustomerEditService().fetchCustomerDetails(
+    final response = await CustomerDetailService().getCustomerDetail(
       widget.customerId,
     );
     if (response != null) {

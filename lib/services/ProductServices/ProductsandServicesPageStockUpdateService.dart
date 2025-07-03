@@ -1,40 +1,16 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pranomiapp/Helpers/Methods/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
 
-class ProductsandServicesPageStockUpdateService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://apitest.pranomi.com/',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
-
+class ProductsandServicesPageStockUpdateService extends ApiServiceBase {
   Future<int?> updateStock(ProductStockUpdateModel model) async {
-    final prefs = await SharedPreferences.getInstance();
-    final apiKey = prefs.getString('apiKey');
-    final apiSecret = prefs.getString('apiSecret');
-    if (apiKey == null || apiSecret == null) {
-      throw Exception('API anahtarları bulunamadı.');
-    }
-    final basicAuth =
-        'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
-
     try {
-      final response = await _dio.put(
+      final headers = await getAuthHeaders();
+      final response = await dio.put(
         '/Product/UpdateStock',
         data: model.toJson(),
-        options: Options(
-          headers: {
-            'ApiKey': apiKey,
-            'ApiSecret': apiSecret,
-            'Authorization': basicAuth,
-          },
-        ),
+        options: Options(headers: headers),
       );
 
       debugPrint('Response data: ${response.data}');

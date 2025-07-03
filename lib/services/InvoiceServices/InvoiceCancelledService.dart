@@ -1,50 +1,17 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pranomiapp/Helpers/Methods/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancelModel.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class InvoiceCancelService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://apitest.pranomi.com/',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
-
+class InvoiceCancelService extends ApiServiceBase {
   Future<String?> invoiceCancel(InvoiceCancelModel model) async {
-    final prefs = await SharedPreferences.getInstance();
-    final apiKey = prefs.getString('apiKey');
-    final apiSecret = prefs.getString('apiSecret');
-    if (apiKey == null || apiSecret == null) {
-      throw Exception('API anahtarları bulunamadı.');
-    }
-    final basicAuth =
-        'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
-
     try {
-      final response = await _dio.post(
+      final headers = await getAuthHeaders();
+      final response = await dio.post(
         '/Invoice/CancelInvoice',
         data: model.toJson(),
-        options: Options(
-          headers: {
-            'ApiKey': apiKey,
-            'ApiSecret': apiSecret,
-            'Authorization': basicAuth,
-          },
-        ),
+        options: Options(headers: headers),
       );
-      _dio.interceptors.add(
-        LogInterceptor(
-          request: true,
-          requestBody: true,
-          responseBody: true,
-          error: true,
-        ),
-      );
-
       debugPrint('Response data: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {

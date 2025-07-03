@@ -1,44 +1,22 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:pranomiapp/Helpers/Methods/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/ProductsModels/productmodel.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductsandServicesPageServices {
-  final Dio _dio = Dio();
-
+class ProductsandServicesPageServices extends ApiServiceBase {
   Future<List<ProductResponseModel>> fetchProducts({
     String? query,
     int size = 20,
     int page = 0,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final apiKey = prefs.getString('apiKey');
-    final apiSecret = prefs.getString('apiSecret');
-
-    if (apiKey == null || apiSecret == null) {
-      throw Exception("API key veya secret bulunamadı");
-    }
-
-    final String basicAuth =
-        'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
-
-    late String url;
-    if (query != null && query.isNotEmpty) {
-      url = "https://apitest.pranomi.com/Product/$query?size=$size&page=$page";
-    } else {
-      url = "https://apitest.pranomi.com/Product?page=$page&size=$size";
-    }
+    bool hasSearch = query != null && query.trim().isNotEmpty;
 
     try {
-      final response = await _dio.get(
-        url,
-        options: Options(
-          headers: {
-            'apiKey': apiKey,
-            'apiSecret': apiSecret,
-            'authorization': basicAuth,
-          },
-        ),
+      final headers = await getAuthHeaders();
+      final response = await dio.get(
+        hasSearch
+            ? "/Product/$query?size=$size&page=$page"
+            : "/Product?page=$page&size=$size",
+        options: Options(headers: headers),
       );
 
       if (response.statusCode == 200) {
