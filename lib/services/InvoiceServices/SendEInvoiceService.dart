@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pranomiapp/Helpers/Methods/ApiServices/ApiService.dart';
+import 'package:pranomiapp/Helper/Methods/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceSendEInvoiceModel.dart';
 
 class SendEInvoiceService extends ApiServiceBase {

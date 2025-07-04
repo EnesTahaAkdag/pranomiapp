@@ -1,4 +1,4 @@
-import 'package:pranomiapp/Helpers/Methods/StringExtensions/StringExtensions.dart';
+import 'package:pranomiapp/Helper/Methods/StringExtensions/StringExtensions.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 
 class CustomerAddModel {

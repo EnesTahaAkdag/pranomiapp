@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pranomiapp/Helpers/Methods/StringExtensions/StringExtensions.dart';
+import 'package:pranomiapp/Helper/Methods/StringExtensions/StringExtensions.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
