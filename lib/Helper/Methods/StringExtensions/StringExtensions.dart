@@ -21,6 +21,20 @@ extension StringExtensions on String {
         .replaceAll('Ğ', 'G')
         .replaceAll('Ü', 'U')
         .replaceAll('Ö', 'O')
-        .replaceAll('Ç', 'C');
+        .replaceAll('Ç', 'C')
+        .replaceAll('ı', 'I');
+  }
+}
+
+extension TurkishCaseExtensions on String {
+  String toTurkishProperCase() {
+    final lowered = toLowerCase()
+        .replaceAll('i', 'i')
+        .replaceAll('ı', 'ı')
+        .replaceAll('İ', 'i')
+        .replaceAll('I', 'ı');
+    return lowered.isNotEmpty
+        ? '${lowered[0].toUpperCase()}${lowered.substring(1)}'
+        : '';
   }
 }

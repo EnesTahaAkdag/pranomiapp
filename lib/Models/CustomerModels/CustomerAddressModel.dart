@@ -1,3 +1,5 @@
+import 'package:pranomiapp/Helper/Methods/StringExtensions/StringExtensions.dart';
+
 class Country {
   final int id;
   final String name;
@@ -7,13 +9,15 @@ class Country {
 
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
-      id: json['id'] ?? 0,
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
       name: json['name'] ?? '',
       alpha2: json['alpha2'] ?? '',
     );
   }
 
   String get alpha2Formatted => alpha2.toUpperCase();
+
+  String get displayName => name.toTurkishProperCase(); // 👈 UI için
 }
 
 class City {
@@ -37,6 +41,8 @@ class City {
       countryAlpha2: json['countryAlpha2'] ?? '',
     );
   }
+
+  String get displayName => name.toTurkishProperCase(); // 👈 UI için
 }
 
 class District {
@@ -47,13 +53,12 @@ class District {
   District({required this.id, required this.cityId, required this.name});
 
   factory District.fromJson(Map<String, dynamic> json) {
-    final idStr = json['id']?.toString() ?? '0';
-    final cityIdStr = json['il_id']?.toString() ?? '0';
-
     return District(
-      id: int.tryParse(idStr) ?? 0,
-      cityId: int.tryParse(cityIdStr) ?? 0,
+      id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      cityId: int.tryParse(json['il_id']?.toString() ?? '') ?? 0,
       name: json['name'] ?? '',
     );
   }
+
+  String get displayName => name.toTurkishProperCase(); // 👈 UI için
 }

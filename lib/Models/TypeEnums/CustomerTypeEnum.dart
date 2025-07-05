@@ -1,4 +1,4 @@
-// ignore: file_names, constant_identifier_names
+// ignore: constant_identifier_names
 enum CustomerTypeEnum { Customer, Supplier, Employee }
 
 extension CustomerTypeExtension on CustomerTypeEnum {

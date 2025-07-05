@@ -1,12 +1,12 @@
 import 'dart:convert';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pranomiapp/Helper/Methods/StringExtensions/StringExtensions.dart';
-import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
-import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
-import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
+import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
 
 class CustomerEditPage extends StatefulWidget {
   final int customerId;
@@ -26,8 +26,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   List<City> _cities = [];
   List<District> _districts = [];
 
+  // ignore: unused_field
   List<City> _filteredCities = [];
-  List<District> _filteredDistricts = [];
+  // ignore: unused_field
+  final List<District> _filteredDistricts = [];
 
   Country? _selectedCountry;
   City? _selectedCity;
@@ -41,14 +43,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
 
   Future<void> _initializeData() async {
     await _loadCustomer();
-    await _loadCountries();
-    await _loadCities();
-    await _loadDistricts();
 
     if (_model != null) {
-      _matchCountry();
-      _filterCitiesForSelectedCountry(); // özel fonksiyon
-      _matchCityAndDistrict(); // artık şehirler yüklendiği için burada güvenle eşleştirme yapar
+      _loadData();
+      _filterCitiesForSelectedCountry();
     }
 
     setState(() => _isLoading = false);
@@ -65,6 +63,24 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                   _selectedCountry!.alpha2Formatted.toUpperCase(),
             )
             .toList();
+
+    // Şehir eşleşmesi
+    _selectedCity = _filteredCities.firstWhere(
+      (c) => c.name.toLowerCase() == _model!.city.toLowerCase(),
+      orElse: () => _filteredCities.first,
+    );
+
+    // İlçe eşleşmesi
+    final relatedDistricts =
+        _districts.where((d) => d.cityId == _selectedCity?.id).toList();
+
+    _selectedDistrict =
+        relatedDistricts.isNotEmpty
+            ? relatedDistricts.firstWhere(
+              (d) => d.name.toLowerCase() == _model!.district.toLowerCase(),
+              orElse: () => relatedDistricts.first,
+            )
+            : null;
   }
 
   Future<void> _loadCustomer() async {
@@ -98,81 +114,30 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     }
   }
 
-  Future<void> _loadCountries() async {
-    final String response = await rootBundle.loadString(
+  Future<void> _loadData() async {
+    final countryData = await rootBundle.loadString(
       'lib/assets/json/countries.json',
     );
-    final List<dynamic> data = json.decode(response);
-    _countries = data.map((e) => Country.fromJson(e)).toList();
-  }
-
-  Future<void> _loadCities() async {
-    final String response = await rootBundle.loadString(
-      'lib/assets/json/il.json',
-    );
-    final List<dynamic> data = json.decode(response);
-    _cities =
-        data
-            .map((e) {
-              try {
-                return City.fromJson(e);
-              } catch (e) {
-                debugPrint("Şehir yüklenemedi: $e");
-                return null;
-              }
-            })
-            .whereType<City>()
-            .toList();
-  }
-
-  Future<void> _loadDistricts() async {
-    final String response = await rootBundle.loadString(
+    final cityData = await rootBundle.loadString('lib/assets/json/il.json');
+    final districtData = await rootBundle.loadString(
       'lib/assets/json/ilce.json',
     );
-    final List<dynamic> data = json.decode(response);
-    _districts = data.map((e) => District.fromJson(e)).toList();
-  }
 
-  void _matchCountry() {
-    if (_model != null) {
-      final iso2 = _model!.countryIso2.toUpperCase();
-      if (_countries.isNotEmpty) {
-        _selectedCountry = _countries.firstWhere(
-          (c) => c.alpha2Formatted == iso2,
-          orElse: () => _countries.first,
-        );
-      }
-    }
-  }
-
-  void _matchCityAndDistrict() {
-    if (_model == null || _selectedCountry == null) return;
-
-    _filteredCities =
-        _cities
-            .where(
-              (c) =>
-                  c.countryAlpha2.toUpperCase() ==
-                  _selectedCountry!.alpha2Formatted.toUpperCase(),
-            )
-            .toList();
-
-    if (_filteredCities.isNotEmpty) {
-      _selectedCity = _filteredCities.firstWhere(
-        (c) => c.name.toEnglishUpper() == _model!.city.toEnglishUpper(),
-        orElse: () => _filteredCities.first,
-      );
-
-      _filteredDistricts =
-          _districts.where((d) => d.cityId == _selectedCity!.id).toList();
-
-      if (_filteredDistricts.isNotEmpty) {
-        _selectedDistrict = _filteredDistricts.firstWhere(
-          (d) => d.name.toEnglishUpper() == _model!.district.toEnglishUpper(),
-          orElse: () => _filteredDistricts.first,
-        );
-      }
-    }
+    setState(() {
+      _countries =
+          (json.decode(countryData) as List)
+              .map((e) => Country.fromJson(e))
+              .toList();
+      _cities =
+          (json.decode(cityData)[0]['data'] as List)
+              .map((e) => City.fromJson(e))
+              .toList();
+      _districts =
+          (json.decode(districtData)[0]['data'] as List)
+              .map((e) => District.fromJson(e))
+              .toList();
+      _isLoading = false;
+    });
   }
 
   Future<void> _submit() async {
@@ -252,9 +217,22 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                 (v) => _model!.address = v ?? '',
                 maxLines: 3,
               ),
-              _buildCountryDropdown(),
-              _buildCityDropdown(),
-              _buildDistrictDropdown(),
+              const SizedBox(height: 10),
+              _countryDropdown(),
+              if (_selectedCountry != null &&
+                  _selectedCountry!.name.toLowerCase() == 'türkiye') ...[
+                const SizedBox(height: 15),
+                _cityDropdown(),
+                if (_selectedCity != null) ...[
+                  const SizedBox(height: 15),
+                  _districtDropdown(),
+                ],
+              ] else if (_selectedCountry != null) ...[
+                const SizedBox(height: 10),
+                _customCityInput(),
+                const SizedBox(height: 10),
+                _customDistrictInput(),
+              ],
               _buildSwitch(
                 'Aktif',
                 _model!.isActive,
@@ -307,105 +285,116 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     );
   }
 
-  Widget _buildCountryDropdown() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: DropdownButtonFormField<Country>(
-        value: _selectedCountry,
-        items:
-            _countries.map((country) {
-              return DropdownMenuItem<Country>(
-                value: country,
-                child: Text(country.name),
-              );
-            }).toList(),
-        onChanged: (newCountry) {
-          setState(() {
-            _selectedCountry = newCountry;
-            _model!.countryIso2 = newCountry?.alpha2Formatted ?? '';
-            _filteredCities =
-                _cities
-                    .where(
-                      (c) => c.countryAlpha2 == newCountry?.alpha2Formatted,
-                    )
-                    .toList();
-            _selectedCity = null;
-            _filteredDistricts = [];
-            _selectedDistrict = null;
-            _model!.city = '';
-            _model!.district = '';
-          });
-        },
-        decoration: InputDecoration(
-          labelText: 'Ülke',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-        validator: (val) => val == null ? 'Zorunlu alan' : null,
+  Widget _countryDropdown() => DropdownSearch<Country>(
+    popupProps: PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+    dropdownDecoratorProps: DropDownDecoratorProps(
+      dropdownSearchDecoration: InputDecoration(
+        labelText: 'Ülke *',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: Colors.white,
       ),
-    );
-  }
+    ),
+    items: _countries,
+    itemAsString: (c) => c.name,
+    selectedItem: _selectedCountry,
+    onChanged: (val) {
+      setState(() {
+        _selectedCountry = val;
+        _model?.countryIso2 = val?.alpha2.toUpperCase() ?? '';
+        _selectedCity = null;
+        _selectedDistrict = null;
+        _model?.city = '';
+        _model?.district = '';
+      });
+    },
+    validator: (v) => v == null ? 'Zorunlu alan' : null,
+  );
 
-  Widget _buildCityDropdown() {
+  Widget _cityDropdown() => DropdownSearch<City>(
+    popupProps: PopupProps.menu(showSearchBox: true),
+    dropdownDecoratorProps: DropDownDecoratorProps(
+      dropdownSearchDecoration: InputDecoration(
+        labelText: 'Şehir',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+    ),
+    items: _cities,
+    itemAsString: (city) => city.displayName,
+    selectedItem: _selectedCity,
+    onChanged: (val) {
+      setState(() {
+        _selectedCity = val;
+        _model?.city = val?.name ?? '';
+        _selectedDistrict = null;
+        _model?.district = '';
+      });
+    },
+  );
+
+  Widget _districtDropdown() => DropdownSearch<District>(
+    popupProps: PopupProps.menu(showSearchBox: true),
+    dropdownDecoratorProps: DropDownDecoratorProps(
+      dropdownSearchDecoration: InputDecoration(
+        labelText: 'İlçe',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+    ),
+    items: _districts.where((d) => d.cityId == _selectedCity?.id).toList(),
+    itemAsString: (d) => d.displayName,
+    selectedItem: _selectedDistrict,
+    onChanged: (val) {
+      setState(() {
+        _selectedDistrict = val;
+        _model?.district = val?.name ?? '';
+      });
+    },
+  );
+
+  Widget _customCityInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: DropdownButtonFormField<City>(
-        value: _selectedCity,
-        items:
-            _filteredCities.map((city) {
-              return DropdownMenuItem<City>(
-                value:
-                    _filteredCities.contains(_selectedCity)
-                        ? _selectedCity
-                        : null,
-                child: Text(city.name),
-              );
-            }).toList(),
-        onChanged: (City? newCity) {
-          setState(() {
-            _selectedCity = newCity;
-            _model!.city = newCity?.name ?? '';
-            _filteredDistricts =
-                _districts.where((d) => d.cityId == newCity?.id).toList();
-            _selectedDistrict = null;
-            _model!.district = '';
-          });
-        },
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: TextFormField(
         decoration: InputDecoration(
           labelText: 'Şehir',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          hintText: 'Şehir giriniz',
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
           fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
+        initialValue: _model?.city,
+        validator: _requiredValidator,
+        onSaved: (v) => _model?.city = v?.trim() ?? '',
       ),
     );
   }
 
-  Widget _buildDistrictDropdown() {
+  Widget _customDistrictInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: DropdownButtonFormField<District>(
-        value: _selectedDistrict,
-        items:
-            _filteredDistricts.map((district) {
-              return DropdownMenuItem<District>(
-                value: district,
-                child: Text(district.name),
-              );
-            }).toList(),
-        onChanged: (District? newDistrict) {
-          setState(() {
-            _selectedDistrict = newDistrict;
-            _model!.district = newDistrict?.name ?? '';
-          });
-        },
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: TextFormField(
         decoration: InputDecoration(
           labelText: 'İlçe',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          hintText: 'İlçe giriniz',
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
           fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
+        initialValue: _model?.district,
+        validator: _requiredValidator,
+        onSaved: (v) => _model?.district = v?.trim() ?? '',
       ),
     );
   }
@@ -433,4 +422,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       ),
     );
   }
+
+  String? _requiredValidator(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Zorunlu alan' : null;
 }

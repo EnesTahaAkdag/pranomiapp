@@ -200,8 +200,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     );
   }
 
-  // Widgets
-
   Widget _companySwitch() => ListTile(
     title: Text(
       _model.isCompany ? 'Tüzel Kişi' : 'Gerçek Kişi',
