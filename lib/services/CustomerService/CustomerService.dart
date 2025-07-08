@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pranomiapp/Helper/Methods/ApiServices/ApiService.dart';
+import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 

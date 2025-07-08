@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerPage.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Pages/AuthenticationPages/LoginPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoiceDetails.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerPage.dart';
 import 'package:pranomiapp/Pages/EInvoicesPages/EInvoicePage/EInvoicePage.dart';
-import 'package:pranomiapp/Pages/InvocesPages/InvoicesClaimPage/InvoicesClaimPage.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dart';
+import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesClaimPage.dart';
+import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
 import 'package:pranomiapp/Pages/StockPages/ProductsAndServicesPage/ProductsandServicesPage.dart';
 
 void main() async {

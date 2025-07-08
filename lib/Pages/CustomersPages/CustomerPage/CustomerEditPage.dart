@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
@@ -26,11 +26,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   List<City> _cities = [];
   List<District> _districts = [];
 
-  // ignore: unused_field
-  List<City> _filteredCities = [];
-  // ignore: unused_field
-  final List<District> _filteredDistricts = [];
-
   Country? _selectedCountry;
   City? _selectedCity;
   District? _selectedDistrict;
@@ -42,45 +37,12 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   }
 
   Future<void> _initializeData() async {
+    await _loadData();
     await _loadCustomer();
 
-    if (_model != null) {
-      _loadData();
-      _filterCitiesForSelectedCountry();
-    }
+    if (_model != null) {}
 
     setState(() => _isLoading = false);
-  }
-
-  void _filterCitiesForSelectedCountry() {
-    if (_selectedCountry == null) return;
-
-    _filteredCities =
-        _cities
-            .where(
-              (c) =>
-                  c.countryAlpha2.toUpperCase() ==
-                  _selectedCountry!.alpha2Formatted.toUpperCase(),
-            )
-            .toList();
-
-    // Şehir eşleşmesi
-    _selectedCity = _filteredCities.firstWhere(
-      (c) => c.name.toLowerCase() == _model!.city.toLowerCase(),
-      orElse: () => _filteredCities.first,
-    );
-
-    // İlçe eşleşmesi
-    final relatedDistricts =
-        _districts.where((d) => d.cityId == _selectedCity?.id).toList();
-
-    _selectedDistrict =
-        relatedDistricts.isNotEmpty
-            ? relatedDistricts.firstWhere(
-              (d) => d.name.toLowerCase() == _model!.district.toLowerCase(),
-              orElse: () => relatedDistricts.first,
-            )
-            : null;
   }
 
   Future<void> _loadCustomer() async {
@@ -123,21 +85,20 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       'lib/assets/json/ilce.json',
     );
 
-    setState(() {
-      _countries =
-          (json.decode(countryData) as List)
-              .map((e) => Country.fromJson(e))
-              .toList();
-      _cities =
-          (json.decode(cityData)[0]['data'] as List)
-              .map((e) => City.fromJson(e))
-              .toList();
-      _districts =
-          (json.decode(districtData)[0]['data'] as List)
-              .map((e) => District.fromJson(e))
-              .toList();
-      _isLoading = false;
-    });
+    _countries =
+        (json.decode(countryData) as List)
+            .map((e) => Country.fromJson(e))
+            .toList();
+
+    _cities =
+        (json.decode(cityData)[0] as List)
+            .map((e) => City.fromJson(e))
+            .toList();
+
+    _districts =
+        (json.decode(districtData)[0] as List)
+            .map((e) => District.fromJson(e))
+            .toList();
   }
 
   Future<void> _submit() async {
@@ -166,7 +127,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     if (_isLoading || _model == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
     return Scaffold(
       appBar: AppBar(title: const Text('Müşteri Düzenle')),
       body: Padding(
@@ -221,10 +181,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
               _countryDropdown(),
               if (_selectedCountry != null &&
                   _selectedCountry!.name.toLowerCase() == 'türkiye') ...[
-                const SizedBox(height: 15),
+                const SizedBox(height: 10),
                 _cityDropdown(),
                 if (_selectedCity != null) ...[
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   _districtDropdown(),
                 ],
               ] else if (_selectedCountry != null) ...[
@@ -322,7 +282,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       ),
     ),
     items: _cities,
-    itemAsString: (city) => city.displayName,
+    itemAsString: (c) => c.name,
     selectedItem: _selectedCity,
     onChanged: (val) {
       setState(() {
@@ -344,8 +304,8 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         fillColor: Colors.white,
       ),
     ),
-    items: _districts.where((d) => d.cityId == _selectedCity?.id).toList(),
-    itemAsString: (d) => d.displayName,
+    items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
+    itemAsString: (d) => d.name,
     selectedItem: _selectedDistrict,
     onChanged: (val) {
       setState(() {

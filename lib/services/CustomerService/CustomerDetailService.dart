@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:pranomiapp/Helper/Methods/ApiServices/ApiService.dart';
+import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerDetailModel.dart';
 
 class CustomerDetailService extends ApiServiceBase {

@@ -1,4 +1,4 @@
-import 'package:pranomiapp/Helper/Methods/StringExtensions/StringExtensions.dart';
+import 'package:pranomiapp/Helper/StringExtensions/StringExtensions.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 
 class CustomerAddModel {
@@ -46,7 +46,7 @@ class CustomerAddModel {
       'Iban': iban.isEmpty ? null : iban,
       'Address': address.isEmpty ? null : address,
       'Phone': phone.isEmpty ? null : phone,
-      'CountryIso2': countryIso2.toEnglishUpper(),
+      'CountryIso2': countryIso2.toEnglishUppers(),
       'City': city.isEmpty ? null : city,
       'District': district.isEmpty ? null : district,
       'IsActive': isActive,

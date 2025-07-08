@@ -1,5 +1,3 @@
-import 'package:pranomiapp/Helper/Methods/StringExtensions/StringExtensions.dart';
-
 class Country {
   final int id;
   final String name;
@@ -16,8 +14,6 @@ class Country {
   }
 
   String get alpha2Formatted => alpha2.toUpperCase();
-
-  String get displayName => name.toTurkishProperCase(); // 👈 UI için
 }
 
 class City {
@@ -42,7 +38,7 @@ class City {
     );
   }
 
-  String get displayName => name.toTurkishProperCase(); // 👈 UI için
+  factory City.empty() => City(id: -1, name: '', countryAlpha2: '');
 }
 
 class District {
@@ -60,5 +56,5 @@ class District {
     );
   }
 
-  String get displayName => name.toTurkishProperCase(); // 👈 UI için
+  factory District.empty() => District(id: -1, name: '', cityId: -1);
 }

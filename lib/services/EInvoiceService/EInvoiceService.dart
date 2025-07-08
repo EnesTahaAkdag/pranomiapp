@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:pranomiapp/Helper/Methods/ApiServices/ApiService.dart';
+import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/EInvoiceModels/EInvocieModel.dart';
 
 class EInvoiceService extends ApiServiceBase {
