@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:collection/collection.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
@@ -21,6 +22,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   CustomerEditModel? _model;
   bool _isLoading = true;
   bool _isSubmitting = false;
+  bool _submitSuccess = false;
 
   List<Country> _countries = [];
   List<City> _cities = [];
@@ -29,6 +31,24 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   Country? _selectedCountry;
   City? _selectedCity;
   District? _selectedDistrict;
+
+  String? _cityValidator(String? v) {
+    if (_selectedCountry == null) return 'Zorunlu alan';
+    if (_selectedCountry!.name.toLowerCase() != 'türkiye' &&
+        (v == null || v.trim().isEmpty)) {
+      return 'Şehir alanı zorunludur';
+    }
+    return null;
+  }
+
+  String? _districtValidator(String? v) {
+    if (_selectedCountry == null) return 'Zorunlu alan';
+    if (_selectedCountry!.name.toLowerCase() != 'türkiye' &&
+        (v == null || v.trim().isEmpty)) {
+      return 'İlçe alanı zorunludur';
+    }
+    return null;
+  }
 
   @override
   void initState() {
@@ -40,7 +60,25 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     await _loadData();
     await _loadCustomer();
 
-    if (_model != null) {}
+    if (_model != null) {
+      _selectedCountry = _countries.firstWhereOrNull(
+        (c) => c.alpha2.toLowerCase() == _model!.countryIso2.toLowerCase(),
+      );
+
+      if (_selectedCountry?.name.toLowerCase() == 'türkiye') {
+        _selectedCity = _cities.firstWhereOrNull(
+          (c) => c.name.toLowerCase() == _model!.city.toLowerCase(),
+        );
+
+        if (_selectedCity != null) {
+          _selectedDistrict = _districts
+              .where((d) => d.cityId == _selectedCity!.id)
+              .firstWhereOrNull(
+                (d) => d.name.toLowerCase() == _model!.district.toLowerCase(),
+              );
+        }
+      }
+    }
 
     setState(() => _isLoading = false);
   }
@@ -64,7 +102,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         city: response.city,
         district: response.district,
         isActive: response.active,
-        type: CustomerTypeExtension.fromString(response.type),
+        type: customerType(response.type),
       );
     } else if (context.mounted) {
       // ignore: use_build_context_synchronously
@@ -91,12 +129,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
             .toList();
 
     _cities =
-        (json.decode(cityData)[0] as List)
-            .map((e) => City.fromJson(e))
-            .toList();
+        (json.decode(cityData) as List).map((e) => City.fromJson(e)).toList();
 
     _districts =
-        (json.decode(districtData)[0] as List)
+        (json.decode(districtData) as List)
             .map((e) => District.fromJson(e))
             .toList();
   }
@@ -106,19 +142,42 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     _formKey.currentState!.save();
     setState(() => _isSubmitting = true);
 
-    final success = await CustomerEditService().editCustomer(_model!);
+    final responseModel = await CustomerEditService().editCustomer(_model!);
+
+    if (!mounted) return;
+
     setState(() => _isSubmitting = false);
 
-    if (success && mounted) {
-      Navigator.of(context).pop('refresh');
-    } else {
-      // ignore: use_build_context_synchronously
+    if (responseModel == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Cari Hesap Güncellenemedi.'),
-          backgroundColor: Colors.red,
+          content: Text('Sunucuya ulaşılamadı. Lütfen tekrar deneyin.'),
         ),
       );
+      return;
+    }
+
+    if (responseModel.errorMessages.isNotEmpty ||
+        responseModel.warningMessages.isNotEmpty) {
+      final messages = [
+        ...responseModel.errorMessages,
+        ...responseModel.warningMessages,
+      ].join('\n');
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(messages)));
+    } else if (responseModel.successMessages.isNotEmpty) {
+      setState(() {
+        _submitSuccess = true;
+      });
+
+      await Future.delayed(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          _submitSuccess = false;
+        });
+      }
     }
   }
 
@@ -151,7 +210,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                 (v) => _model!.taxOffice = v ?? '',
               ),
               _buildTextField(
-                'Vergi Numarası',
+                'TCKN/Vergi Numarası',
                 _model!.taxNumber,
                 (v) => _model!.taxNumber = v ?? '',
               ),
@@ -188,9 +247,8 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                   _districtDropdown(),
                 ],
               ] else if (_selectedCountry != null) ...[
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 _customCityInput(),
-                const SizedBox(height: 10),
                 _customDistrictInput(),
               ],
               _buildSwitch(
@@ -214,6 +272,38 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     TextInputType inputType = TextInputType.text,
     int maxLines = 1,
   }) {
+    int? maxLength;
+    List<TextInputFormatter>? inputFormatters;
+
+    switch (label) {
+      case 'Ad':
+        maxLength = 50;
+        break;
+      case 'Vergi Dairesi':
+        maxLength = 50;
+        break;
+      case 'Vergi Numarası':
+        maxLength = 11;
+        inputFormatters = [FilteringTextInputFormatter.digitsOnly];
+        break;
+      case 'Email':
+        maxLength = 100;
+        break;
+      case 'Telefon':
+        maxLength = 10;
+        inputFormatters = [FilteringTextInputFormatter.digitsOnly];
+        break;
+      case 'IBAN':
+        maxLength = 26;
+        inputFormatters = [
+          FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
+        ];
+        break;
+      case 'Adres':
+        maxLength = 250;
+        break;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
@@ -223,14 +313,18 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: Colors.white,
+          counterText: '',
         ),
         keyboardType: inputType,
         maxLines: maxLines,
-        validator:
-            (v) =>
-                (label == 'Ad' && (v == null || v.trim().isEmpty))
-                    ? 'Zorunlu alan'
-                    : null,
+        maxLength: maxLength,
+        inputFormatters: inputFormatters,
+        validator: (v) {
+          if (label == 'Ad' && (v == null || v.trim().isEmpty)) {
+            return 'Zorunlu alan';
+          }
+          return null;
+        },
         onSaved: onSaved,
       ),
     );
@@ -331,7 +425,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           ),
         ),
         initialValue: _model?.city,
-        validator: _requiredValidator,
+        validator: _cityValidator,
         onSaved: (v) => _model?.city = v?.trim() ?? '',
       ),
     );
@@ -353,7 +447,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           ),
         ),
         initialValue: _model?.district,
-        validator: _requiredValidator,
+        validator: _districtValidator,
         onSaved: (v) => _model?.district = v?.trim() ?? '',
       ),
     );
@@ -373,7 +467,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                 ),
               )
               : const Icon(Icons.save),
-      label: const Text('Kaydet'),
+      label: Text(_submitSuccess ? 'Kaydedildi' : 'Kaydet'),
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFB00034),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -382,7 +476,4 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       ),
     );
   }
-
-  String? _requiredValidator(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Zorunlu alan' : null;
 }

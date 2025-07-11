@@ -4,7 +4,7 @@ import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 
 class CustomerEditService extends ApiServiceBase {
-  Future<bool> editCustomer(CustomerEditModel model) async {
+  Future<CustomerResponseModel?> editCustomer(CustomerEditModel model) async {
     try {
       final headers = await getAuthHeaders();
       final response = await dio.post(
@@ -12,10 +12,19 @@ class CustomerEditService extends ApiServiceBase {
         data: model.toJson(),
         options: Options(headers: headers),
       );
-      return response.statusCode == 200;
-    } catch (e) {
-      debugPrint('Edit Error: $e');
-      return false;
+
+      debugPrint('📥 Response status: ${response.statusCode}');
+      debugPrint('📥 Response data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        return CustomerResponseModel.fromJson(response.data);
+      } else {
+        return null;
+      }
+    } catch (e, st) {
+      debugPrint('🚨 Edit Error: $e');
+      debugPrint('$st');
+      return null;
     }
   }
 }

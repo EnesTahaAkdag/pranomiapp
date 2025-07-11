@@ -1,5 +1,25 @@
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 
+class CustomerResponseModel {
+  List<String> errorMessages;
+  List<String> successMessages;
+  List<String> warningMessages;
+
+  CustomerResponseModel({
+    required this.errorMessages,
+    required this.successMessages,
+    required this.warningMessages,
+  });
+
+  factory CustomerResponseModel.fromJson(Map<String, dynamic> json) {
+    return CustomerResponseModel(
+      errorMessages: List<String>.from(json['ErrorMessages'] ?? []),
+      successMessages: List<String>.from(json['SuccessMessages'] ?? []),
+      warningMessages: List<String>.from(json['WarningMessages'] ?? []),
+    );
+  }
+}
+
 class CustomerEditModel {
   String name;
   bool isCompany;
@@ -36,7 +56,7 @@ class CustomerEditModel {
   factory CustomerEditModel.fromJson(Map<String, dynamic> json) {
     return CustomerEditModel(
       name: json['Name'] ?? '',
-      isCompany: json['IsCompany'] ?? false,
+      isCompany: json['IsCompany'],
       taxOffice: json['TaxOffice'] ?? '',
       taxNumber: json['TaxNumber'] ?? '',
       email: json['Email'] ?? '',
@@ -46,8 +66,8 @@ class CustomerEditModel {
       countryIso2: json['CountryIso2'] ?? '',
       city: json['City'] ?? '',
       district: json['District'] ?? '',
-      isActive: json['IsActive'] ?? true,
-      type: CustomerTypeExtension.fromString(json['Type'] ?? 'Customer'),
+      isActive: json['isActive'] ?? true,
+      type: customerType(json['Type']),
       id: json['Id'] ?? 0,
     );
   }

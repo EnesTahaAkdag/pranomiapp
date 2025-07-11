@@ -67,11 +67,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
               .map((e) => Country.fromJson(e))
               .toList();
       _cities =
-          (json.decode(cityData)[2]['data'] as List)
-              .map((e) => City.fromJson(e))
-              .toList();
+          (json.decode(cityData) as List).map((e) => City.fromJson(e)).toList();
       _districts =
-          (json.decode(districtData)[2]['data'] as List)
+          (json.decode(districtData) as List)
               .map((e) => District.fromJson(e))
               .toList();
       _isLoading = false;
@@ -134,7 +132,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
                 onSaved: (v) => _model.taxOffice = v?.trim() ?? '',
               ),
               _modernTextField(
-                'TC/Vergi Numarası',
+                'TCKN/Vergi Numarası',
                 keyboardType: TextInputType.number,
                 onSaved: (v) => _model.taxNumber = v?.trim() ?? '',
               ),

@@ -1,21 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/AuthenticationModels/loginmodel.dart';
 
-class LoginServices {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://apitest.pranomi.com/',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
-
+class LoginServices extends ApiServiceBase {
   Future<LoginResponse?> login(String username, String password) async {
     try {
-      final response = await _dio.post(
+      final response = await dio.post(
         'Login',
+
         data: {'username': username, 'password': password},
       );
 

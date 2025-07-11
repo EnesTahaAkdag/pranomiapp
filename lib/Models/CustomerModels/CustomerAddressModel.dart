@@ -7,7 +7,10 @@ class Country {
 
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
-      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id:
+          json['id'] is int
+              ? json['id']
+              : int.tryParse(json['id'].toString()) ?? 0,
       name: json['name'] ?? '',
       alpha2: json['alpha2'] ?? '',
     );
@@ -19,26 +22,21 @@ class Country {
 class City {
   final int id;
   final String name;
-  final String countryAlpha2;
 
-  City({required this.id, required this.name, required this.countryAlpha2});
+  City({required this.id, required this.name});
 
   factory City.fromJson(Map<String, dynamic> json) {
-    final idRaw = json['id'];
+    final idRaw = json['Id'];
     final idParsed = int.tryParse(idRaw?.toString() ?? '');
 
     if (idParsed == null) {
-      throw FormatException("City JSON id alanı geçersiz: $idRaw");
+      throw FormatException("İl JSON id alanı geçersiz: $idRaw");
     }
 
-    return City(
-      id: idParsed,
-      name: json['name'] ?? '',
-      countryAlpha2: json['countryAlpha2'] ?? '',
-    );
+    return City(id: idParsed, name: json['Name'] ?? '');
   }
 
-  factory City.empty() => City(id: -1, name: '', countryAlpha2: '');
+  factory City.empty() => City(id: -1, name: '');
 }
 
 class District {
@@ -50,9 +48,9 @@ class District {
 
   factory District.fromJson(Map<String, dynamic> json) {
     return District(
-      id: int.tryParse(json['id']?.toString() ?? '') ?? 0,
-      cityId: int.tryParse(json['il_id']?.toString() ?? '') ?? 0,
-      name: json['name'] ?? '',
+      id: int.tryParse(json['Id']?.toString() ?? '') ?? 0,
+      cityId: int.tryParse(json['CityId']?.toString() ?? '') ?? 0,
+      name: json['Name'] ?? '',
     );
   }
 
