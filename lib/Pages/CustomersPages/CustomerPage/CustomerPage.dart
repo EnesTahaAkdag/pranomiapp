@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
+import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerService.dart';
 
 class CustomerPage extends StatefulWidget {
@@ -18,10 +18,10 @@ class _CustomerPageState extends State<CustomerPage> {
   int _currentPage = 0;
   int _totalPages = 1;
   bool _isLoading = false;
-  final ScrollController _scrollController = ScrollController();
-  final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   final List<CustomerModel> _customers = [];
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
 
   bool get _hasMore => _currentPage < _totalPages;
 
@@ -221,7 +221,6 @@ class _CustomerPageState extends State<CustomerPage> {
                         ),
                       );
                     }
-
                     return const Padding(
                       padding: EdgeInsets.all(16),
                       child: Center(child: CircularProgressIndicator()),
