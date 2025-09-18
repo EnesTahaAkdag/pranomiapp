@@ -182,11 +182,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
       symbol: '',
     );
     final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
-    final eCommerceImageUrl =
-        // ignore: unnecessary_null_comparison
-        invoice.eCommerceCode != null
-            ? "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png"
-            : null;
+    final eCommerceImageUrl = "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

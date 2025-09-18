@@ -34,13 +34,11 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  // ignore: deprecated_member_use
-                  color: Colors.black.withOpacity(0.7),
+                  color: Colors.black.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -94,8 +92,7 @@ class _LoginPageState extends State<LoginPage> {
               Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
               const SizedBox(height: 32),
               Card(
-                // ignore: deprecated_member_use
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),

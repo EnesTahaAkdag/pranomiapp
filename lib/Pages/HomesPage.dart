@@ -11,9 +11,9 @@ class HomePage extends StatelessWidget {
     await prefs.remove('apiSecret');
     await prefs.remove('subscriptionType');
     await prefs.remove('isEInvoiceActive');
-
-    // ignore: use_build_context_synchronously
-    context.go('/login');
+    if (context.mounted) {
+      context.go('/login');
+    }
   }
 
   @override
