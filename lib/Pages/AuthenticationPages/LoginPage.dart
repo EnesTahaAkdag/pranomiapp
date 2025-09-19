@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart';
 
+import '../../Injection.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -14,6 +16,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isLoading = false;
+
+  final _loginServices = locator<LoginServices>();
 
   @override
   void dispose() {
@@ -176,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                 final username = usernameController.text.trim();
                 final password = passwordController.text.trim();
 
-                final loginServices = LoginServices();
+                final loginServices = _loginServices;
                 final response = await loginServices.login(username, password);
 
                 setState(() => _isLoading = false);

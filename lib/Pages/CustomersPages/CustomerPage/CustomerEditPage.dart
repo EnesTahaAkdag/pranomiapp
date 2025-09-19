@@ -8,6 +8,8 @@ import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
+import 'package:pranomiapp/Injection.dart';
+
 
 class CustomerEditPage extends StatefulWidget {
   final int customerId;
@@ -31,6 +33,9 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   Country? _selectedCountry;
   City? _selectedCity;
   District? _selectedDistrict;
+
+  final _customerDetailService = locator<CustomerDetailService>();
+  final _customerEditService = locator<CustomerEditService>();
 
   String? _cityValidator(String? v) {
     if (_selectedCountry == null) return 'Zorunlu alan';
@@ -84,7 +89,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   }
 
   Future<void> _loadCustomer() async {
-    final response = await CustomerDetailService().getCustomerDetail(
+    final response = await _customerDetailService.getCustomerDetail(
       widget.customerId,
     );
     if (response != null) {
@@ -142,7 +147,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
     _formKey.currentState!.save();
     setState(() => _isSubmitting = true);
 
-    final responseModel = await CustomerEditService().editCustomer(_model!);
+    final responseModel = await _customerEditService.editCustomer(_model!);
 
     if (!mounted) return;
 
