@@ -10,6 +10,8 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceCancelledService.dart
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancellationReversalModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceCancellationReversalService.dart';
 
+import '../../../Injection.dart';
+
 class InvoicesPage extends StatefulWidget {
   final int invoiceType;
 
@@ -23,6 +25,14 @@ class _InvoicesPageState extends State<InvoicesPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final List<InvoicesModel> _invoices = [];
+
+  final _invoiceService = locator<InvoiceService>();
+
+  final _sendEInvoiceService = locator<SendEInvoiceService>();
+
+  final _invoiceCancelService = locator<InvoiceCancelService>();
+
+  final _invoiceCancellationReversalService = locator<InvoiceCancellationReversalService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -64,7 +74,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     setState(() => _isLoading = true);
 
     try {
-      final resp = await InvoiceService().fetchInvoice(
+      final resp = await _invoiceService.fetchInvoice(
         page: _page,
         size: _size,
         invoiceType: type,
@@ -313,7 +323,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     if (confirm != true) return;
 
     try {
-      final result = await InvoiceCancelService().invoiceCancel(
+      final result = await _invoiceCancelService.invoiceCancel(
         InvoiceCancelModel(documentNumber: invoice.documentNumber),
       );
       _showSnackBar(
@@ -337,7 +347,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     if (confirm != true) return;
 
     try {
-      final result = await InvoiceCancellationReversalService().invoiceCancel(
+      final result = await _invoiceCancellationReversalService.invoiceCancel(
         InvoiceCancellationReversalModel(
           documentNumber: invoice.documentNumber,
         ),
@@ -433,7 +443,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   Navigator.pop(c);
 
                   try {
-                    final response = await SendEInvoiceService()
+                    final response = await _sendEInvoiceService
                         .sendEinvoiceFullResponse(
                           SendEInvoiceModel(
                             invoiceId: invoice.id,

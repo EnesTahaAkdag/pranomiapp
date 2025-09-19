@@ -5,6 +5,8 @@ import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerService.dart';
 
+import '../../../Injection.dart';
+
 class CustomerPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
 
@@ -22,6 +24,8 @@ class _CustomerPageState extends State<CustomerPage> {
   final List<CustomerModel> _customers = [];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+
+  final _customerService = locator<CustomerService>();
 
   bool get _hasMore => _currentPage < _totalPages;
 
@@ -59,7 +63,7 @@ class _CustomerPageState extends State<CustomerPage> {
       _customers.clear();
     }
 
-    final response = await CustomerService().fetchCustomers(
+    final response = await _customerService.fetchCustomers(
       page: _currentPage,
       size: 20,
       customerType: widget.customerType,

@@ -11,6 +11,8 @@ import 'package:pranomiapp/Models/EInvoiceModels/EInvoiceCancelModel.dart';
 import 'package:pranomiapp/services/EInvoiceService/EInvoiceCancelService.dart';
 import 'package:pranomiapp/services/EInvoiceService/EInvoiceOpenAsPdfService.dart';
 
+import '../../../Injection.dart';
+
 class EInvoicesPage extends StatefulWidget {
   final String invoiceType;
   final String recordType;
@@ -29,6 +31,12 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final List<EInvoiceModel> _eInvoices = [];
+
+  final _eInvoiceService = locator<EInvoiceService>();
+
+  final _eInvoiceOpenAsPdfService = locator<EInvoiceOpenAsPdfService>();
+
+  final _eInvoiceCancelService = locator<EInvoiceCancelService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -69,7 +77,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await EInvoiceService().fetchEInvoices(
+      final response = await _eInvoiceService.fetchEInvoices(
         page: _page,
         size: _size,
         eInvoiceDate: _selectedDate,
@@ -384,7 +392,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                     onTap: () async {
                       Navigator.pop(context);
                       setState(() => _isLoading = true);
-                      final response = await EInvoiceOpenAsPdfService()
+                      final response = await _eInvoiceOpenAsPdfService
                           .fetchEInvoicePdf(invoice.uuId);
                       setState(() => _isLoading = false);
                       if (response != null &&
@@ -403,7 +411,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                     onTap: () async {
                       Navigator.pop(context);
                       setState(() => _isLoading = true);
-                      final response = await EInvoiceOpenAsPdfService()
+                      final response = await _eInvoiceOpenAsPdfService
                           .fetchEInvoicePdf(invoice.uuId);
                       setState(() => _isLoading = false);
                       if (response != null &&
@@ -471,7 +479,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     if (confirm != true) return;
 
     try {
-      final result = await EInvoiceCancelService().invoiceCancel(
+      final result = await _eInvoiceCancelService.invoiceCancel(
         EInvoiceCancelModel(
           uuId: invoice.uuId,
           rejectedNote: reason,

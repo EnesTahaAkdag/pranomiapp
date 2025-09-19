@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceClaimModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceClaimService.dart';
 
+import '../../../Injection.dart';
+
 // Güncellenmiş InvoicesClaimPage (models ve servise göre uyarlanmış)
 
 class InvoicesClaimPage extends StatefulWidget {
@@ -18,6 +20,8 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final List<InvoiceClaimModel> _incomeClaim = [];
+
+  final _invoiceClaimService = locator<InvoiceClaimService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -59,7 +63,7 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
     setState(() => _isLoading = true);
 
     try {
-      final resp = await InvoiceClaimService().fetchInvoiceClaim(
+      final resp = await _invoiceClaimService.fetchInvoiceClaim(
         page: _page,
         size: _size,
         invoiceType: type,

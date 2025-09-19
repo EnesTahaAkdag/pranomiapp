@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceDetailsModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceDetailsService.dart';
 
+import '../../../Injection.dart';
+
 class InvoiceDetailPage extends StatefulWidget {
   final int invoiceId;
   const InvoiceDetailPage({super.key, required this.invoiceId});
@@ -15,10 +17,12 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   late Future<InvoiceDetailsResponseModel> _futureDetails;
   int? _openPanelIndex;
 
+  final _invoiceDetailsService = locator<InvoiceDetailsService>();
+
   @override
   void initState() {
     super.initState();
-    _futureDetails = InvoiceDetailsService().fetchInvoiceDetails(
+    _futureDetails = _invoiceDetailsService.fetchInvoiceDetails(
       invoiceId: widget.invoiceId,
     );
   }

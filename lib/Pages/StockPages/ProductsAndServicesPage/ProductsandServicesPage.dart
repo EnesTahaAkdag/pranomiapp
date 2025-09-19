@@ -5,6 +5,8 @@ import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
 import 'package:pranomiapp/services/ProductServices/ProductsandServicesPageServices.dart';
 import 'package:pranomiapp/services/ProductServices/ProductsandServicesPageStockUpdateService.dart';
 
+import '../../../Injection.dart';
+
 class ProductsandServicesPage extends StatefulWidget {
   const ProductsandServicesPage({super.key});
 
@@ -24,6 +26,8 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
   int _page = 0;
   final int _size = 20;
   String _searchText = '';
+
+  final _productsandServicesPageStockUpdateService = locator<ProductsandServicesPageStockUpdateService>();
 
   @override
   void initState() {
@@ -302,7 +306,7 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
                   Navigator.pop(context);
 
                   final result =
-                      await ProductsandServicesPageStockUpdateService()
+                      await _productsandServicesPageStockUpdateService
                           .updateStock(
                             ProductStockUpdateModel(
                               productId: product.productId,

@@ -7,6 +7,8 @@ import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
 
+import '../../../Injection.dart';
+
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
   const CustomerAddPage({super.key, required this.customerType});
@@ -28,6 +30,8 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   Country? _selectedCountry;
   City? _selectedCity;
   District? _selectedDistrict;
+
+  final _customerAddService = locator<CustomerAddService>();
 
   @override
   void initState() {
@@ -81,7 +85,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     _formKey.currentState!.save();
     setState(() => _isSubmitting = true);
 
-    final success = await CustomerAddService().addCustomer(_model);
+    final success = await _customerAddService.addCustomer(_model);
     setState(() => _isSubmitting = false);
 
     if (success && mounted) {
