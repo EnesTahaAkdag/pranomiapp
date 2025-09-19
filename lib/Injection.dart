@@ -15,14 +15,16 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceService.dart';
 import 'package:pranomiapp/services/InvoiceServices/SendEInvoiceService.dart';
 import 'package:pranomiapp/services/ProductServices/ProductsandServicesPageStockUpdateService.dart';
 
-
 final GetIt locator = GetIt.instance;
 
 void setupLocator() {
+  locator.registerLazySingleton<CustomerDetailService>(
+    () => CustomerDetailService(),
+  );
 
-  locator.registerLazySingleton<CustomerDetailService>(() => CustomerDetailService());
-
-  locator.registerLazySingleton<CustomerEditService>(() => CustomerEditService());
+  locator.registerLazySingleton<CustomerEditService>(
+    () => CustomerEditService(),
+  );
 
   locator.registerLazySingleton<CustomerAddService>(() => CustomerAddService());
 
@@ -30,28 +32,39 @@ void setupLocator() {
 
   locator.registerLazySingleton<CustomerService>(() => CustomerService());
 
-  locator.registerLazySingleton<InvoiceClaimService>(() => InvoiceClaimService());
+  locator.registerLazySingleton<InvoiceClaimService>(
+    () => InvoiceClaimService(),
+  );
 
   locator.registerLazySingleton<InvoiceService>(() => InvoiceService());
 
-  locator.registerLazySingleton<SendEInvoiceService>(() => SendEInvoiceService());
+  locator.registerLazySingleton<SendEInvoiceService>(
+    () => SendEInvoiceService(),
+  );
 
-  locator.registerLazySingleton<InvoiceDetailsService>(() => InvoiceDetailsService());
+  locator.registerLazySingleton<InvoiceDetailsService>(
+    () => InvoiceDetailsService(),
+  );
 
-  locator.registerLazySingleton<InvoiceCancelService>(() => InvoiceCancelService());
+  locator.registerLazySingleton<InvoiceCancelService>(
+    () => InvoiceCancelService(),
+  );
 
-  locator.registerLazySingleton<InvoiceCancellationReversalService>(() => InvoiceCancellationReversalService());
+  locator.registerLazySingleton<InvoiceCancellationReversalService>(
+    () => InvoiceCancellationReversalService(),
+  );
 
   locator.registerLazySingleton<EInvoiceService>(() => EInvoiceService());
 
-  locator.registerLazySingleton<EInvoiceOpenAsPdfService>(() => EInvoiceOpenAsPdfService());
+  locator.registerLazySingleton<EInvoiceOpenAsPdfService>(
+    () => EInvoiceOpenAsPdfService(),
+  );
 
-  locator.registerLazySingleton<EInvoiceCancelService>(() => EInvoiceCancelService());
+  locator.registerLazySingleton<EInvoiceCancelService>(
+    () => EInvoiceCancelService(),
+  );
 
-  locator.registerLazySingleton<ProductsandServicesPageStockUpdateService>(() => ProductsandServicesPageStockUpdateService());
-
-
-
-
-
+  locator.registerLazySingleton<ProductsandServicesPageStockUpdateService>(
+    () => ProductsandServicesPageStockUpdateService(),
+  );
 }

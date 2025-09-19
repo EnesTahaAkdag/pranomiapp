@@ -7,6 +7,7 @@ import '../../../Injection.dart';
 
 class InvoiceDetailPage extends StatefulWidget {
   final int invoiceId;
+
   const InvoiceDetailPage({super.key, required this.invoiceId});
 
   @override

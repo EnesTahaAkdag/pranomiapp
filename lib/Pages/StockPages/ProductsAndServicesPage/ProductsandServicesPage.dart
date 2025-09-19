@@ -27,7 +27,8 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
   final int _size = 20;
   String _searchText = '';
 
-  final _productsandServicesPageStockUpdateService = locator<ProductsandServicesPageStockUpdateService>();
+  final _productsandServicesPageStockUpdateService =
+      locator<ProductsandServicesPageStockUpdateService>();
 
   @override
   void initState() {

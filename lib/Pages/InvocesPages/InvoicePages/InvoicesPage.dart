@@ -32,7 +32,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
   final _invoiceCancelService = locator<InvoiceCancelService>();
 
-  final _invoiceCancellationReversalService = locator<InvoiceCancellationReversalService>();
+  final _invoiceCancellationReversalService =
+      locator<InvoiceCancellationReversalService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -192,7 +193,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
       symbol: '',
     );
     final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
-    final eCommerceImageUrl = "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png";
+    final eCommerceImageUrl =
+        "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png";
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
