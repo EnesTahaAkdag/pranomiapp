@@ -11,7 +11,7 @@ import 'package:pranomiapp/Models/EInvoiceModels/EInvoiceCancelModel.dart';
 import 'package:pranomiapp/services/EInvoiceService/EInvoiceCancelService.dart';
 import 'package:pranomiapp/services/EInvoiceService/EInvoiceOpenAsPdfService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 class EInvoicesPage extends StatefulWidget {
   final String invoiceType;

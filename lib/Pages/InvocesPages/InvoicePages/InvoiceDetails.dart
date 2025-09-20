@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceDetailsModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceDetailsService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 class InvoiceDetailPage extends StatefulWidget {
   final int invoiceId;

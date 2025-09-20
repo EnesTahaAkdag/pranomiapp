@@ -8,7 +8,7 @@ import 'package:pranomiapp/Models/CustomerModels/CustomerEditModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
-import 'package:pranomiapp/Injection.dart';
+import 'package:pranomiapp/core/di/Injection.dart';
 
 
 class CustomerEditPage extends StatefulWidget {

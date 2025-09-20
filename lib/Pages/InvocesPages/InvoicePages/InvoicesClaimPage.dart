@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceClaimModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceClaimService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 // Güncellenmiş InvoicesClaimPage (models ve servise göre uyarlanmış)
 

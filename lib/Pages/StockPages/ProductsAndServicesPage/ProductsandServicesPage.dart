@@ -5,7 +5,7 @@ import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
 import 'package:pranomiapp/services/ProductServices/ProductsandServicesPageServices.dart';
 import 'package:pranomiapp/services/ProductServices/ProductsandServicesPageStockUpdateService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 class ProductsandServicesPage extends StatefulWidget {
   const ProductsandServicesPage({super.key});

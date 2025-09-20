@@ -10,7 +10,7 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceCancelledService.dart
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancellationReversalModel.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceCancellationReversalService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 class InvoicesPage extends StatefulWidget {
   final int invoiceType;

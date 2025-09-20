@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart';
-
-import '../../Injection.dart';
+// import 'package:shared_preferences/shared_preferences.dart'; // Handled by ViewModel
+// import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart'; // Handled by ViewModel
+import 'LoginPageViewModel.dart'; // Import the ViewModel
+// import '../../../Injection.dart'; // ViewModel handles its dependencies
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,16 +13,53 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  bool _isLoading = false;
+  late final LoginPageViewModel _viewModel;
 
-  final _loginServices = locator<LoginServices>();
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = LoginPageViewModel(); // Initialize the ViewModel
+    _viewModel.addListener(_onViewModelChanged);
+  }
+
+  void _onViewModelChanged() {
+    // Handle UI updates based on ViewModel changes
+    if (mounted) {
+      // Show messages
+      if (_viewModel.errorMessage != null) {
+        _showMessage(_viewModel.errorMessage!, Colors.red);
+        _viewModel.clearMessages(); // Clear message after showing
+      } else if (_viewModel.warningMessage != null) {
+        _showMessage(_viewModel.warningMessage!, Colors.orange);
+        _viewModel.clearMessages();
+      } else if (_viewModel.successMessage != null && !_viewModel.loginSuccessful) { 
+        // Show general success messages if not navigating immediately
+        _showMessage(_viewModel.successMessage!, Colors.green);
+        _viewModel.clearMessages();
+      }
+
+      // Handle navigation
+      if (_viewModel.loginSuccessful) {
+        // Show success message before navigating if desired, or rely on ViewModel's message.
+        // For example, if LoginViewModel sets a success message that should be shown on this page
+        // _showMessage("Giriş Başarılı!", Colors.green); 
+        debugPrint("Login Successful, navigating to home.");
+        context.go('/');
+        // It's important that the ViewModel resets _loginSuccessful or this could loop
+        // or ensure that navigation truly takes the user away from this listener.
+      }
+      // Update loading state
+      setState(() {
+        // This is primarily to rebuild if _isLoading changes,
+        // though other properties might also require a rebuild.
+      });
+    }
+  }
 
   @override
   void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
+    _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose(); // Dispose the ViewModel
     super.dispose();
   }
 
@@ -33,16 +70,16 @@ class _LoginPageState extends State<LoginPage> {
       body: Stack(
         children: [
           _buildLoginForm(),
-          if (_isLoading)
+          if (_viewModel.isLoading) // Use ViewModel's isLoading
             Center(
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.7),
+                  color: Colors.black.withValues(alpha: 0.7), // Updated withOpacity
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: Colors.black.withOpacity(0.3), // Updated withOpacity
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -96,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
               Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
               const SizedBox(height: 32),
               Card(
-                color: Colors.black.withValues(alpha: 0.6),
+                color: Colors.black.withOpacity(0.6), // Updated withOpacity
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -108,11 +145,11 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       _icon(),
                       const SizedBox(height: 32),
-                      _inputField("Kullanıcı Adı", usernameController),
+                      _inputField("Kullanıcı Adı", _viewModel.usernameController), // Use ViewModel's controller
                       const SizedBox(height: 16),
                       _inputField(
                         "Şifre",
-                        passwordController,
+                        _viewModel.passwordController, // Use ViewModel's controller
                         isPassword: true,
                       ),
                       const SizedBox(height: 24),
@@ -171,52 +208,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginBtn() {
     return ElevatedButton(
-      onPressed:
-          _isLoading
-              ? null
-              : () async {
-                setState(() => _isLoading = true);
-
-                final username = usernameController.text.trim();
-                final password = passwordController.text.trim();
-
-                final loginServices = _loginServices;
-                final response = await loginServices.login(username, password);
-
-                setState(() => _isLoading = false);
-
-                if (response != null) {
-                  for (final msg in response.successMessages) {
-                    _showMessage(msg, Colors.green);
-                  }
-                  for (final msg in response.warningMessages) {
-                    _showMessage(msg, Colors.orange);
-                  }
-                  for (final msg in response.errorMessages) {
-                    _showMessage(msg, Colors.red);
-                  }
-
-                  if (response.success && response.item != null) {
-                    final item = response.item!;
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setString('apiKey', item.apiKey);
-                    await prefs.setString('apiSecret', item.apiSecret);
-                    await prefs.setString(
-                      'subscriptionType',
-                      item.subscriptionType.name,
-                    );
-                    await prefs.setBool(
-                      'isEInvoiceActive',
-                      item.isEInvoiceActive,
-                    );
-
-                    debugPrint("Giriş Başarılı");
-                    if (mounted) context.go('/');
-                  } else {
-                    debugPrint("Giriş Başarısız ama response null değil.");
-                  }
-                }
-              },
+      onPressed: _viewModel.isLoading ? null : () async { // Use ViewModel's isLoading and call ViewModel's login
+        // Clear previous messages before attempting a new login
+        _viewModel.clearMessages(); 
+        await _viewModel.login();
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFB00034),
         foregroundColor: Colors.white,

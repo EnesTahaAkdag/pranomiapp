@@ -5,7 +5,7 @@ import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 class CustomerPage extends StatefulWidget {
   final CustomerTypeEnum customerType;

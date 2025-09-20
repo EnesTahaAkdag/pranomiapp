@@ -7,7 +7,7 @@ import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
 
-import '../../../Injection.dart';
+import '../../../core/di/Injection.dart';
 
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;

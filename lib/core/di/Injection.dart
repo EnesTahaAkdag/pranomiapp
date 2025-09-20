@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart';
+import 'package:pranomiapp/features/authentication/data/LoginServices.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
