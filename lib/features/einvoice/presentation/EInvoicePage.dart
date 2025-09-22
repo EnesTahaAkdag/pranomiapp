@@ -9,11 +9,6 @@ import 'package:pranomiapp/features/einvoice/domain/EInvocieModel.dart';
 import 'package:pranomiapp/features/einvoice/presentation/EInvoiceViewModel.dart';
 
 import '../data/EInvoiceModel.dart';
-// import 'package:pranomiapp/services/EInvoiceService/EInvoiceService.dart'; // Handled by ViewModel
-// import 'package:pranomiapp/Models/EInvoiceModels/EInvoiceCancelModel.dart'; // Handled by ViewModel
-// import 'package:pranomiapp/services/EInvoiceService/EInvoiceCancelService.dart'; // Handled by ViewModel
-// import 'package:pranomiapp/services/EInvoiceService/EInvoiceOpenAsPdfService.dart'; // Handled by ViewModel
-// import '../../../core/di/Injection.dart'; // Handled by ViewModel
 
 class EInvoicesPage extends StatefulWidget {
   final String invoiceType;
@@ -50,7 +45,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
         _showSnackBar(_viewModel.snackBarMessage!, _viewModel.snackBarColor);
         _viewModel.clearSnackBarMessage();
       }
-      setState(() {}); // Rebuild on any change
+      setState(() {});
     }
   }
 
@@ -336,7 +331,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                 leading: const Icon(Icons.cancel),
                 title: const Text('Faturayı İptal Et'),
                 onTap: () {
-                  Navigator.pop(modalContext); // Close bottom sheet first
+                  Navigator.pop(modalContext);
                   _showCancelReasonDialog(invoice);
                 },
               ),
@@ -396,16 +391,16 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Hayır'), // Changed from İptal
+            child: const Text('Hayır'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red, // Changed to red for confirmation of cancellation
+              backgroundColor: Colors.red,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Evet, İptal Et'), // Changed from Evet
+            child: const Text('Evet, İptal Et'),
           ),
         ],
       ),
