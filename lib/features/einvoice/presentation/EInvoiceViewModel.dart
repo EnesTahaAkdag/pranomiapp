@@ -30,7 +30,7 @@ class EInvoiceViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  bool _isActionLoading = false; // For PDF generation or cancellation
+  bool _isActionLoading = false;
   bool get isActionLoading => _isActionLoading;
 
   bool _hasMore = true;
