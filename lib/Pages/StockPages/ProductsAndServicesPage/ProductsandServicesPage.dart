@@ -331,7 +331,7 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.of(context,rootNavigator: true).pop(),
                 child: const Text('İptal'),
               ),
               ElevatedButton(
