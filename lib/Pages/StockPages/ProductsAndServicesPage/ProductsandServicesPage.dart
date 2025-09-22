@@ -180,51 +180,92 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      product.productName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () => _showProductActions(product),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Stok Kodu: ${product.stockCode}',
-                style: const TextStyle(color: Colors.black54),
-              ),
-              Text(
-                'Stok: ${product.stockAmount}',
-                style: const TextStyle(color: Colors.black87),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Birim Fiyat: ${currencyFormatter.format(product.price)}₺',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: (product.imageUrl.isNotEmpty)
+                      ? Image.network(
+                          product.imageUrl,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey),
+                              ),
+                        )
+                      : Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: Colors.grey),
+                        ),
                 ),
               ),
-              Text(
-                // ignore: unnecessary_brace_in_string_interps
-                'Satış Fiyatı: ${currencyFormatter.format(salePrice)}₺',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            product.productName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.more_vert),
+                          onPressed: () => _showProductActions(product),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Stok Kodu: ${product.stockCode}',
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                    Text(
+                      'Stok: ${product.stockAmount}',
+                      style: const TextStyle(color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Birim Fiyat: ${currencyFormatter.format(product.price)}₺',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      // ignore: unnecessary_brace_in_string_interps
+                      'Satış Fiyatı: ${currencyFormatter.format(salePrice)}₺',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -304,7 +345,7 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
                     return;
                   }
 
-                  Navigator.pop(context);
+                  Navigator.of(context,rootNavigator: true).pop();
 
                   final result =
                       await _productsandServicesPageStockUpdateService
