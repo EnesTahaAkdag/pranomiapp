@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/ProductsModels/productmodel.dart';
 
-class ProductsandServicesPageServices extends ApiServiceBase {
+/// This class is responsible for fetching and search products from the API.
+
+class ProductsAndServicesPageServices extends ApiServiceBase {
   Future<List<ProductResponseModel>> fetchProducts({
     String? query,
     int size = 20,

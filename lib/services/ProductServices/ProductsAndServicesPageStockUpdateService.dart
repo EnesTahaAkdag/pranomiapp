@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
 import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
 
-class ProductsandServicesPageStockUpdateService extends ApiServiceBase {
+/// This class is responsible for updating product stock.
+
+class ProductsAndServicesPageStockUpdateService extends ApiServiceBase {
   Future<int?> updateStock(ProductStockUpdateModel model) async {
     try {
       final headers = await getAuthHeaders();
