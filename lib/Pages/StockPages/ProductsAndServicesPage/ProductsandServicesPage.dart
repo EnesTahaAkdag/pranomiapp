@@ -336,7 +336,7 @@ class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final newStock = int.tryParse(stockController.text);
+                  final newStock = double.tryParse(stockController.text);
                   if (newStock == null) {
                     _showSnackBar(
                       'Geçerli bir stok miktarı girin.',

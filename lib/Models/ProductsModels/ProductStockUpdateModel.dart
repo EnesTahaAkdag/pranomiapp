@@ -1,6 +1,6 @@
 class ProductStockUpdateModel {
   final int productId;
-  final int stockAmount;
+  final double stockAmount;
   final String description;
 
   ProductStockUpdateModel({
