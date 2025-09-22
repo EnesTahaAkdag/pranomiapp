@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/ProductsModels/productmodel.dart';
 import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
-import 'package:pranomiapp/services/ProductServices/ProductService.dart';
-import 'package:pranomiapp/services/ProductServices/ProductStockUpdateService.dart';
+import 'package:pranomiapp/features/products/data/ProductService.dart';
+import 'package:pranomiapp/features/products/data/ProductStockUpdateService.dart';
 import '../../../core/di/Injection.dart';
 
 class ProductsAndServicesViewModel extends ChangeNotifier {

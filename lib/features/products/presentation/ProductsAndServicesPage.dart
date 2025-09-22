@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/Models/ProductsModels/productmodel.dart';
-import 'package:pranomiapp/features/products_and_services/presentation/ProductsAndServicesViewModel.dart';
+
+import 'ProductsAndServicesViewModel.dart';
 
 class ProductsAndServicesPage extends StatefulWidget {
   const ProductsAndServicesPage({super.key});

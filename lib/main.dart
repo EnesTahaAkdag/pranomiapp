@@ -14,7 +14,8 @@ import 'package:pranomiapp/features/einvoice/presentation/EInvoicePage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesClaimPage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
-import 'package:pranomiapp/features/products_and_services/presentation/ProductsAndServicesPage.dart';
+
+import 'features/products/presentation/ProductsAndServicesPage.dart';
 
 
 void main() async {
