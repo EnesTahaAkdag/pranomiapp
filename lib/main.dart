@@ -14,7 +14,7 @@ import 'package:pranomiapp/features/einvoice/presentation/EInvoicePage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesClaimPage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
-import 'package:pranomiapp/Pages/StockPages/ProductsAndServicesPage/ProductsandServicesPage.dart';
+import 'package:pranomiapp/Pages/StockPages/ProductsAndServicesPage/ProductsAndServicesPage.dart';
 
 void main() async {
   setupLocator();
