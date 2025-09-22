@@ -1,4 +1,4 @@
-import 'package:pranomiapp/Models/TypeEnums/AuthenticationTypeEnums.dart';
+import 'package:pranomiapp/features/authentication/domain/AuthenticationTypeEnums.dart';
 
 class LoginResponseModel {
   final String apiKey;

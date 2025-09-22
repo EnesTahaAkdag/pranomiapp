@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
-import 'package:pranomiapp/Models/EInvoiceModels/EInvocieModel.dart';
+import 'package:pranomiapp/features/einvoice/domain/EInvocieModel.dart';
+
+import '../../features/einvoice/data/EInvoiceResponseModel.dart';
 
 class EInvoiceService extends ApiServiceBase {
   Future<EInvoiceResponseModel?> fetchEInvoices({
@@ -15,7 +17,7 @@ class EInvoiceService extends ApiServiceBase {
     try {
       final headers = await getAuthHeaders();
       final response = await dio.get(
-        "?size=$size&page=$page"
+        "EInvoice?size=$size&page=$page"
         "&invoiceType=$eInvoiceType"
         "${eInvoiceDate != null ? '&invoiceDate=${eInvoiceDate.toIso8601String().split('T')[0]}' : ''}"
         "&recordType=$recordType",

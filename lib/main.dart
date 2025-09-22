@@ -10,7 +10,7 @@ import 'package:pranomiapp/features/authentication/presentation/LoginPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoiceDetails.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerPage.dart';
-import 'package:pranomiapp/Pages/EInvoicesPages/EInvoicePage/EInvoicePage.dart';
+import 'package:pranomiapp/features/einvoice/presentation/EInvoicePage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dart';
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesClaimPage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
