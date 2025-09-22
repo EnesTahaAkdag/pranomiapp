@@ -7,15 +7,15 @@ import 'package:pranomiapp/services/ProductServices/ProductsandServicesPageStock
 
 import '../../../core/di/Injection.dart';
 
-class ProductsandServicesPage extends StatefulWidget {
-  const ProductsandServicesPage({super.key});
+class ProductsAndServicesPage extends StatefulWidget {
+  const ProductsAndServicesPage({super.key});
 
   @override
-  State<ProductsandServicesPage> createState() =>
-      _ProductsandServicesPageState();
+  State<ProductsAndServicesPage> createState() =>
+      _ProductsAndServicesPageState();
 }
 
-class _ProductsandServicesPageState extends State<ProductsandServicesPage> {
+class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final List<ProductResponseModel> _products = [];

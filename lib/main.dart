@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
 
                 GoRoute(
                   path: '/ProductsandServices',
-                  builder: (_, __) => const ProductsandServicesPage(),
+                  builder: (_, __) => const ProductsAndServicesPage(),
                 ),
 
                 GoRoute(
