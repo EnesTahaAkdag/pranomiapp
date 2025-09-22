@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Models/ProductsModels/productmodel.dart';
 import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
-import 'package:pranomiapp/services/ProductServices/ProductsAndServicesPageServices.dart';
-import 'package:pranomiapp/services/ProductServices/ProductsAndServicesPageStockUpdateService.dart';
+import 'package:pranomiapp/services/ProductServices/ProductService.dart';
+import 'package:pranomiapp/services/ProductServices/ProductStockUpdateService.dart';
 import '../../../core/di/Injection.dart';
 
 class ProductsAndServicesViewModel extends ChangeNotifier {
-  final ProductsAndServicesPageServices _productsService =
-      locator<ProductsAndServicesPageServices>();
-  final ProductsAndServicesPageStockUpdateService _stockUpdateService =
-      locator<ProductsAndServicesPageStockUpdateService>();
+  final ProductService _productsService =
+      locator<ProductService>();
+  final ProductStockUpdateService _stockUpdateService =
+      locator<ProductStockUpdateService>();
 
   final List<ProductResponseModel> _products = [];
 

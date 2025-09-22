@@ -5,7 +5,7 @@ import 'package:pranomiapp/Models/ProductsModels/productstockupdatemodel.dart';
 
 /// This class is responsible for updating product stock.
 
-class ProductsAndServicesPageStockUpdateService extends ApiServiceBase {
+class ProductStockUpdateService extends ApiServiceBase {
   Future<int?> updateStock(ProductStockUpdateModel model) async {
     try {
       final headers = await getAuthHeaders();

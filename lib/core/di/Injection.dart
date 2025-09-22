@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:pranomiapp/features/authentication/data/LoginServices.dart';
-import 'package:pranomiapp/features/products_and_services/presentation/ProductsAndServicesPage.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerEditService.dart';
@@ -14,9 +13,9 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceClaimService.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceDetailsService.dart';
 import 'package:pranomiapp/services/InvoiceServices/InvoiceService.dart';
 import 'package:pranomiapp/services/InvoiceServices/SendEInvoiceService.dart';
-import 'package:pranomiapp/services/ProductServices/ProductsAndServicesPageStockUpdateService.dart';
+import 'package:pranomiapp/services/ProductServices/ProductStockUpdateService.dart';
 
-import '../../services/ProductServices/ProductsAndServicesPageServices.dart';
+import '../../services/ProductServices/ProductService.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -67,11 +66,11 @@ void setupLocator() {
     () => EInvoiceCancelService(),
   );
 
-  locator.registerLazySingleton<ProductsAndServicesPageStockUpdateService>(
-    () => ProductsAndServicesPageStockUpdateService(),
+  locator.registerLazySingleton<ProductStockUpdateService>(
+    () => ProductStockUpdateService(),
   );
 
-  locator.registerLazySingleton<ProductsAndServicesPageServices>(
-    () => ProductsAndServicesPageServices(),
+  locator.registerLazySingleton<ProductService>(
+    () => ProductService(),
   );
 }
