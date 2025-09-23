@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
-import 'package:pranomiapp/features/einvoice/domain/EInvoiceOpenAsPdfModel.dart';
+
+import '../../features/e_invoice/domain/EInvoiceOpenAsPdfModel.dart';
 
 class EInvoiceOpenAsPdfService extends ApiServiceBase {
   Future<EInvoiceOpenAsPdfModel?> fetchEInvoicePdf(String uuId) async {

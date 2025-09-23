@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
-import 'package:pranomiapp/features/einvoice/domain/EInvocieModel.dart';
 
-import '../../features/einvoice/data/EInvoiceResponseModel.dart';
+import '../../features/e_invoice/data/EInvoiceResponseModel.dart';
 
 class EInvoiceService extends ApiServiceBase {
   Future<EInvoiceResponseModel?> fetchEInvoices({

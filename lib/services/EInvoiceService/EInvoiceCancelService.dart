@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
-import 'package:pranomiapp/features/einvoice/domain/EInvoiceCancelModel.dart';
 import 'package:pranomiapp/Models/InvoiceModels/InvoiceCancelModel.dart';
+
+import '../../features/e_invoice/domain/EInvoiceCancelModel.dart';
 
 class EInvoiceCancelService extends ApiServiceBase {
   Future<String?> invoiceCancel(EInvoiceCancelModel model) async {
