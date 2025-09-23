@@ -106,7 +106,7 @@ class _CustomerPageState extends State<CustomerPage> {
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30, color: Colors.white),
-        onPressed: () => context.push('/CustomerAddPage'),
+        onPressed: () => context.push('/${widget.customerType.name}AddPage'),
       ),
       body: SafeArea(
         child: Column(

@@ -201,6 +201,13 @@ class MyApp extends StatelessWidget {
             ),
 
             GoRoute(
+              path: '/EmployeeAddPage',
+              builder: (context, state) {
+                return CustomerAddPage(customerType: CustomerTypeEnum.Employee);
+              },
+            ),
+
+            GoRoute(
               path: '/CustomerEditPage',
               builder: (context, state) {
                 final customerId = state.extra as int?;
