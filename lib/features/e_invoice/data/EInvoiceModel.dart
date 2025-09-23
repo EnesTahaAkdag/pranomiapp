@@ -1,4 +1,5 @@
-import 'package:pranomiapp/features/einvoice/domain/EInvoiceTypeEnums.dart';
+
+import '../domain/EInvoiceTypeEnums.dart';
 
 
 class EInvoiceModel {
