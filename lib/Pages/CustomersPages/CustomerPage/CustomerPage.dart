@@ -207,10 +207,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
-                                  if (customer.customerCode.isNotEmpty)
-                                    Text(
-                                      'Cari Hesap Kodu: ${customer.customerCode}',
-                                    ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Ödenen Tutar: ${currencyFormatter.format(customer.balance)} ₺',

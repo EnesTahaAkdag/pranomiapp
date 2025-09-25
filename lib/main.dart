@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pranomiapp/Pages/AccountPages/AccountPage/AcoountDepositAndBanks.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
@@ -221,6 +222,10 @@ class MyApp extends StatelessWidget {
                 return CustomerEditPage(customerId: customerId);
               },
             ),
+            GoRoute(path:"/DepositAndBanks",
+            builder: (context,state){
+              return const AccountDepositAndBanksPage();
+            })
           ],
         );
 
@@ -304,6 +309,9 @@ class MyApp extends StatelessWidget {
 
       case '/SupplierAccounts':
         return 'Tedarikçiler';
+
+      case '/DepositAndBanks':
+        return 'Kasa Ve Bankalar';
 
       default:
         return 'Sayfa';

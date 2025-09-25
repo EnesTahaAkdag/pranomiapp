@@ -207,10 +207,6 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
-                                  if (employee.employeeName.isNotEmpty)
-                                    Text(
-                                      'Çalışan Kodu: ${employee.employeeCode}',
-                                    ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Ödenen Tutar: ${currencyFormatter.format(employee.balance)} ₺',

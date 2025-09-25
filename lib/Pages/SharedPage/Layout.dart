@@ -215,7 +215,7 @@ class _AppLayoutState extends State<AppLayout> {
                   ]),
                 if (showIncomeExpense)
                   _buildExpandableTile("Nakit", "f", [
-                    _drawerItem("Kasa ve Bankalar", '/a'),
+                    _drawerItem("Kasa ve Bankalar", '/DepositAndBanks'),
                     _drawerItem("Çekler", '/ab'),
                     _drawerItem("Senetler", '/ac'),
                   ]),
