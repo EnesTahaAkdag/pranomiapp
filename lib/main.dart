@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
+import 'package:pranomiapp/features/employees/EmployeesPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/features/authentication/presentation/LoginPage.dart';
@@ -170,7 +171,7 @@ class MyApp extends StatelessWidget {
                 GoRoute(
                   path: '/EmployeAccounts',
                   builder:
-                      (_, __) => const CustomerPage(
+                      (_, __) => const EmployeesPage(
                         customerType: CustomerTypeEnum.Employee,
                       ),
                 ),
