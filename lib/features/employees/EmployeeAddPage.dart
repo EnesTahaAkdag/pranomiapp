@@ -5,8 +5,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddModel.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerAddressModel.dart';
-import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
-
+import 'package:pranomiapp/features/employees/EmployeeAddService.dart';
 import '../../../core/di/Injection.dart';
 
 class EmployeeAddPage extends StatefulWidget {
@@ -24,8 +23,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   bool _isLoading = true;
   bool _isSubmitting = false;
 
-  int _employeeCode = 2025000001;
-
   List<Country> _countries = [];
   List<City> _cities = [];
   List<District> _districts = [];
@@ -34,7 +31,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   City? _selectedCity;
   District? _selectedDistrict;
 
-  final _customerAddService = locator<CustomerAddService>();
+  final _employeeAddService = locator<EmployeeAddService>();
 
   @override
   void initState() {
@@ -88,7 +85,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
     _formKey.currentState!.save();
     setState(() => _isSubmitting = true);
 
-    final success = await _customerAddService.addCustomer(_model);
+    final success = await _employeeAddService.addEmployee(_model);
     setState(() => _isSubmitting = false);
 
     if (success && mounted) {
