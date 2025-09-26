@@ -14,14 +14,23 @@ class CustomerService extends ApiServiceBase {
     try {
       final headers = await getAuthHeaders();
 
+      String path;
+      if (search != null && search.isNotEmpty) {
+        path = '/Customer/$search';
+        } else {
+        path = '/Customer';
+      }
+
+      Map<String, dynamic> queryParameters = {
+        'page': page,
+        'size': size,
+        'customerType': customerType.name
+      };
+
       final response = await dio.get(
-        '/Customer',
-        queryParameters: {
-          'page': page,
-          'size': size,
-          'customerType': customerType.name,
-          if (search != null) 'search': search,
-        },
+        path,
+        queryParameters:
+          queryParameters,
         options: Options(headers: headers),
       );
 
