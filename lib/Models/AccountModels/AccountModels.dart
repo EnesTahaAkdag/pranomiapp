@@ -19,9 +19,9 @@ class AccountResponseModel {
       currentSize: json['CurrentSize'],
       totalPages: json['TotalPages'],
       accounts:
-          (json['Accounts'] as List)
+          (json['Customers'] as List)
               .map((account) => AccountModel.fromJson(account))
-              .toList(),
+              .toList() ?? [],
     );
   }
 }
