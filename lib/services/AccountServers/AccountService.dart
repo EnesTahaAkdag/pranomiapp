@@ -12,29 +12,38 @@ class AccountService extends ApiServiceBase {
     try {
       final headers = await getAuthHeaders();
 
+      String path;
+      if (search != null && search.isNotEmpty) {
+        path = '/Account/$search'; // MODIFIED: Search term becomes part of the path
+      } else {
+        path = '/Account';
+      }
+
+      // MODIFIED: 'search' is removed from queryParameters as it's now in the path
+      Map<String, dynamic> queryParameters = {
+        'page': page,
+        'size': size,
+      };
+
       final response = await dio.get(
-        '/Account',
-        queryParameters: {
-          'page': page,
-          'size': size,
-          if (search != null) 'search': search,
-        },
+        path, // Uses the dynamically constructed path
+        queryParameters: queryParameters,
         options: Options(headers: headers),
       );
 
       if (response.statusCode == 200) {
         return AccountResponseModel.fromJson(response.data);
       } else {
-        debugPrint("Veri alınamadı: ${response.statusCode}");
+        debugPrint("Veri alınamadı (fetchAccounts): ${response.statusCode}");
         return null;
       }
     } on DioException catch (dioError) {
       debugPrint(
-        'DioException: ${dioError.response?.data ?? dioError.message}',
+        'DioException (fetchAccounts): ${dioError.response?.data ?? dioError.message}',
       );
       return null;
     } catch (e) {
-      debugPrint('Genel Hata: $e');
+      debugPrint('Genel Hata (fetchAccounts): $e');
       return null;
     }
   }
