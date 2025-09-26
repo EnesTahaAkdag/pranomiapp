@@ -54,7 +54,7 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   Future<void> _fetchCustomers({bool reset = false}) async {
-    if (_isLoading) return;
+    if (_isLoading && !reset) return; // Prevent concurrent fetches unless it's a reset
 
     setState(() => _isLoading = true);
 
@@ -70,15 +70,16 @@ class _CustomerPageState extends State<CustomerPage> {
       search: _searchText.isNotEmpty ? _searchText : null,
     );
 
-    if (response != null) {
-      setState(() {
-        _currentPage = (response.currentPage ?? 0) + 1;
-        _totalPages = response.totalPages ?? 1;
-        _customers.addAll(response.customers ?? []);
-      });
+    if (mounted) {
+      if (response != null) {
+        setState(() {
+          _currentPage = (response.currentPage ?? 0) + 1;
+          _totalPages = response.totalPages ?? 1;
+          _customers.addAll(response.customers ?? []);
+        });
+      }
+      setState(() => _isLoading = false);
     }
-
-    setState(() => _isLoading = false);
   }
 
   void _clearSearch() {
@@ -106,7 +107,17 @@ class _CustomerPageState extends State<CustomerPage> {
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30, color: Colors.white),
-        onPressed: () => context.push('/${widget.customerType.name}AddPage'),
+        onPressed: () async { // Made onPressed async
+          final result = await context.push(
+            '/${widget.customerType.name}AddPage',
+            // Pass the customerType to CustomerAddPage if it needs it
+            // For example, if CustomerAddPage constructor takes customerType:
+            // extra: widget.customerType, 
+          );
+          if (result == 'refresh') {
+            _fetchCustomers(reset: true);
+          }
+        },
       ),
       body: SafeArea(
         child: Column(
@@ -164,10 +175,10 @@ class _CustomerPageState extends State<CustomerPage> {
                       return GestureDetector(
                         onTap: () async {
                           final result = await context.push(
-                            '/CustomerEditPage',
+                            '/CustomerEditPage', // Assuming you have a route for editing
                             extra: customer.customerId,
                           );
-                          if (result == true) {
+                          if (result == true || result == 'refresh') { // Also refresh if edit page indicates a change
                             _fetchCustomers(reset: true);
                           }
                         },
@@ -207,6 +218,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
+                                  // Display Customer Code if it's available and not empty
+                                  if (customer.customerCode.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4.0),
+                                      child: Text(
+                                        'Müşteri Kodu: ${customer.customerCode}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Ödenen Tutar: ${currencyFormatter.format(customer.balance)} ₺',
