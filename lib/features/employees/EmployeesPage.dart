@@ -54,7 +54,9 @@ class _EmployeesPageState extends State<EmployeesPage> {
   }
 
   Future<void> _fetchEmployees({bool reset = false}) async {
-    if (_isLoading) return;
+    if (_isLoading && !reset) return; // Prevent concurrent fetches unless it's a reset
+
+
 
     setState(() => _isLoading = true);
 
@@ -70,16 +72,18 @@ class _EmployeesPageState extends State<EmployeesPage> {
       search: _searchText.isNotEmpty ? _searchText : null,
     );
 
-    if (response != null) {
-      setState(() {
-        _currentPage = (response.currentPage ?? 0) + 1;
-        _totalPages = response.totalPages ?? 1;
-        _employees.addAll(response.employees ?? []);
-      });
-    }
+    if (mounted) {
+      if (response != null) {
+        setState(() {
+          _currentPage = (response.currentPage ?? 0) + 1;
+          _totalPages = response.totalPages ?? 1;
+          _employees.addAll(response.employees ?? []);
+        });
+      }
+      setState(() => _isLoading = false);
 
-    setState(() => _isLoading = false);
-  }
+      setState(() => _isLoading = false);
+    }}
 
   void _clearSearch() {
     _searchController.clear();
@@ -106,7 +110,17 @@ class _EmployeesPageState extends State<EmployeesPage> {
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30, color: Colors.white),
-        onPressed: () => context.push('/${widget.customerType.name}AddPage'),
+        onPressed: () async { // Made onPressed async
+          final result = await context.push(
+            '/${widget.customerType.name}AddPage',
+            // Pass the customerType to CustomerAddPage if it needs it
+            // For example, if CustomerAddPage constructor takes customerType:
+            // extra: widget.customerType,
+          );
+          if (result == 'refresh') {
+            _fetchEmployees(reset: true);
+          }
+        },
       ),
       body: SafeArea(
         child: Column(
@@ -167,7 +181,8 @@ class _EmployeesPageState extends State<EmployeesPage> {
                             '/CustomerEditPage',
                             extra: employee.employeeId,
                           );
-                          if (result == true) {
+                          if (result == true || result == 'refresh') { // Also refresh if edit page indicates a change
+
                             _fetchEmployees(reset: true);
                           }
                         },
@@ -207,6 +222,15 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
+                                  // Display Customer Code if it's available and not empty
+                                  if (employee.employeeCode != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4.0),
+                                      child: Text(
+                                        'Müşteri Kodu: ${employee.employeeCode}',
+                                        style: TextStyle(color: Colors.grey[700]),
+                                      ),
+                                    ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Ödenen Tutar: ${currencyFormatter.format(employee.balance)} ₺',
