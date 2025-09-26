@@ -54,9 +54,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
   }
 
   Future<void> _fetchEmployees({bool reset = false}) async {
-    if (_isLoading && !reset) return; // Prevent concurrent fetches unless it's a reset
-
-
+    if (_isLoading && !reset) return;
 
     setState(() => _isLoading = true);
 
@@ -83,7 +81,8 @@ class _EmployeesPageState extends State<EmployeesPage> {
       setState(() => _isLoading = false);
 
       setState(() => _isLoading = false);
-    }}
+    }
+  }
 
   void _clearSearch() {
     _searchController.clear();
@@ -110,12 +109,10 @@ class _EmployeesPageState extends State<EmployeesPage> {
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 30, color: Colors.white),
-        onPressed: () async { // Made onPressed async
+        onPressed: () async {
+          /// Made onPressed async and that's help us to refresh the page with navigation result
           final result = await context.push(
             '/${widget.customerType.name}AddPage',
-            // Pass the customerType to CustomerAddPage if it needs it
-            // For example, if CustomerAddPage constructor takes customerType:
-            // extra: widget.customerType,
           );
           if (result == 'refresh') {
             _fetchEmployees(reset: true);
@@ -181,7 +178,8 @@ class _EmployeesPageState extends State<EmployeesPage> {
                             '/CustomerEditPage',
                             extra: employee.employeeId,
                           );
-                          if (result == true || result == 'refresh') { // Also refresh if edit page indicates a change
+                          if (result == true || result == 'refresh') {
+                            // Also refresh if edit page indicates a change
 
                             _fetchEmployees(reset: true);
                           }
@@ -225,10 +223,14 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                   // Display Customer Code if it's available and not empty
                                   if (employee.employeeCode != null)
                                     Padding(
-                                      padding: const EdgeInsets.only(bottom: 4.0),
+                                      padding: const EdgeInsets.only(
+                                        bottom: 4.0,
+                                      ),
                                       child: Text(
                                         'Müşteri Kodu: ${employee.employeeCode}',
-                                        style: TextStyle(color: Colors.grey[700]),
+                                        style: TextStyle(
+                                          color: Colors.grey[700],
+                                        ),
                                       ),
                                     ),
                                   const SizedBox(height: 8),
