@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/Models/AccountModels/AccountModels.dart';
+import 'package:pranomiapp/core/widgets/CustomSearchBar.dart';
 import 'package:pranomiapp/services/AccountServers/AccountService.dart';
 import 'package:pranomiapp/core/di/Injection.dart'; // Assuming locator is setup for AccountService
 
@@ -8,10 +9,12 @@ class AccountDepositAndBanksPage extends StatefulWidget {
   const AccountDepositAndBanksPage({super.key});
 
   @override
-  State<AccountDepositAndBanksPage> createState() => _AccountDepositAndBanksPageState();
+  State<AccountDepositAndBanksPage> createState() =>
+      _AccountDepositAndBanksPageState();
 }
 
-class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage> {
+class _AccountDepositAndBanksPageState
+    extends State<AccountDepositAndBanksPage> {
   int _currentPage = 0;
   int _totalPages = 1;
   bool _isLoading = false;
@@ -108,7 +111,7 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: AccountSearchBar(
+              child: CustomSearchBar(
                 controller: _searchController,
                 onClear: _clearSearch,
                 onSubmitted: _submitSearch,
@@ -128,45 +131,6 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
           ],
         ),
       ),
-    );
-  }
-}
-
-class AccountSearchBar extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback onClear;
-  final ValueChanged<String> onSubmitted;
-
-  const AccountSearchBar({
-    Key? key,
-    required this.controller,
-    required this.onClear,
-    required this.onSubmitted,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        prefixIcon: const Icon(Icons.search),
-        hintText: 'Hesap ara...',
-        suffixIcon:
-        controller.text.isNotEmpty
-            ? IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: onClear,
-        )
-            : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      ),
-      onSubmitted: onSubmitted,
     );
   }
 }
@@ -212,25 +176,38 @@ class AccountListView extends StatelessWidget {
           final account = accounts[idx];
           // Use a specific formatter for the item if currency codes can vary
           final itemCurrencyFormatter = NumberFormat.currency(
-            locale: 'tr_TR', // Or a locale appropriate for the currencyCode
+            locale: 'tr_TR',
+            // Or a locale appropriate for the currencyCode
             decimalDigits: 2,
             // Determine symbol based on currencyCode, fallback to currencyCode itself or default
-            symbol: account.currencyCode == "TRY" ? "₺" :
-            (account.currencyCode == "USD" ? "\$" :
-            (account.currencyCode == "EUR" ? "€" : account.currencyCode)),
+            symbol:
+                account.currencyCode == "TRY"
+                    ? "₺"
+                    : (account.currencyCode == "USD"
+                        ? "\$"
+                        : (account.currencyCode == "EUR"
+                            ? "€"
+                            : account.currencyCode)),
           );
 
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ListTile(
-              title: Text(account.accountName, style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                account.accountName,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Tür: ${account.accountType}'),
-                  Text('Bakiye: ${itemCurrencyFormatter.format(account.balance)}'),
+                  Text(
+                    'Bakiye: ${itemCurrencyFormatter.format(account.balance)}',
+                  ),
                 ],
               ),
               // onTap: () {

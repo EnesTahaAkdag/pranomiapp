@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/Models/CustomerModels/CustomerModel.dart';
+import 'package:pranomiapp/core/widgets/CustomSearchBar.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerService.dart';
 
 import '../../../core/di/Injection.dart';
@@ -122,10 +123,10 @@ class _CustomerPageState extends State<CustomerPage> {
       body: SafeArea(
         child: Column(
           children: [
-            AccountSearchBar(
-              searchController: _searchController,
-              clearSearch: _clearSearch,
-              submitSearch: _submitSearch,
+            CustomSearchBar(
+              controller: _searchController,
+              onClear: _clearSearch,
+              onSubmitted: _submitSearch,
             ),
             Expanded(
               child: AccountListView(
@@ -147,47 +148,6 @@ class _CustomerPageState extends State<CustomerPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class AccountSearchBar extends StatelessWidget {
-  final TextEditingController searchController;
-  final VoidCallback clearSearch;
-  final ValueChanged<String> submitSearch;
-
-  const AccountSearchBar({
-    Key? key,
-    required this.searchController,
-    required this.clearSearch,
-    required this.submitSearch,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextField(
-        controller: searchController,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: const Icon(Icons.search),
-          hintText: 'Müşteri ara...',
-          suffixIcon: searchController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: clearSearch,
-                )
-              : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-        ),
-        onSubmitted: submitSearch,
       ),
     );
   }
