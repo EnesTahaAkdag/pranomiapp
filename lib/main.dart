@@ -185,6 +185,11 @@ class MyApp extends StatelessWidget {
                         customerType: CustomerTypeEnum.Supplier,
                       ),
                 ),
+
+                GoRoute(path:"/DepositAndBanks",
+                    builder: (context,state){
+                      return const AccountDepositAndBanksPage();
+                    })
               ],
             ),
 
@@ -222,10 +227,6 @@ class MyApp extends StatelessWidget {
                 return CustomerEditPage(customerId: customerId);
               },
             ),
-            GoRoute(path:"/DepositAndBanks",
-            builder: (context,state){
-              return const AccountDepositAndBanksPage();
-            })
           ],
         );
 

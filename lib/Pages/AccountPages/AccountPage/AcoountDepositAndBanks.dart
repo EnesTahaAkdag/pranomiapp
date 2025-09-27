@@ -103,12 +103,6 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text('Hesaplar'),
-        centerTitle: true,
-        backgroundColor: const Color(0xFF2C2C2C),
-        elevation: 0,
-      ),
       body: SafeArea(
         child: Column(
           children: [
