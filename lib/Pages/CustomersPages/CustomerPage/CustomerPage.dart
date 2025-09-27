@@ -123,10 +123,14 @@ class _CustomerPageState extends State<CustomerPage> {
       body: SafeArea(
         child: Column(
           children: [
-            CustomSearchBar(
-              controller: _searchController,
-              onClear: _clearSearch,
-              onSubmitted: _submitSearch,
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child:
+              CustomSearchBar(
+                controller: _searchController,
+                onClear: _clearSearch,
+                onSubmitted: _submitSearch,
+              ),
             ),
             Expanded(
               child: AccountListView(

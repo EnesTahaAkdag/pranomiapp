@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:pranomiapp/core/widgets/CustomSearchBar.dart';
 import 'package:pranomiapp/features/employees/EmployeesModel.dart';
 import 'package:pranomiapp/features/employees/EmployeesService.dart';
 
@@ -124,26 +125,9 @@ class _EmployeesPageState extends State<EmployeesPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: CustomSearchBar(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Çalışan ara...',
-                  suffixIcon:
-                      _searchController.text.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: _clearSearch,
-                          )
-                          : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
+                onClear: _clearSearch,
                 onSubmitted: _submitSearch,
               ),
             ),
