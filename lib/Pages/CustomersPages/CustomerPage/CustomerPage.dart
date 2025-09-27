@@ -122,135 +122,185 @@ class _CustomerPageState extends State<CustomerPage> {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Müşteri ara...',
-                  suffixIcon:
-                      _searchController.text.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: _clearSearch,
-                          )
-                          : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
-                onSubmitted: _submitSearch,
-              ),
+            AccountSearchBar(
+              searchController: _searchController,
+              clearSearch: _clearSearch,
+              submitSearch: _submitSearch,
             ),
             Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => _fetchCustomers(reset: true),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount:
-                      _customers.isEmpty && !_isLoading
-                          ? 1
-                          : _customers.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (ctx, idx) {
-                    if (_customers.isEmpty && !_isLoading) {
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        child: Center(
-                          child: Text(
-                            'Hiç müşteri bulunamadı.',
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                        ),
-                      );
-                    }
-
-                    if (idx < _customers.length) {
-                      final customer = _customers[idx];
-                      return GestureDetector(
-                        onTap: () async {
-                          final result = await context.push(
-                            '/CustomerEditPage', // Assuming you have a route for editing
-                            extra: customer.customerId,
-                          );
-                          if (result == true || result == 'refresh') { // Also refresh if edit page indicates a change
-                            _fetchCustomers(reset: true);
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Card(
-                            elevation: 4,
-                            shadowColor: Colors.black12,
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          customer.customerName,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const Icon(
-                                        Icons.edit,
-                                        color: Colors.grey,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  // Display Customer Code if it's available and not empty
-                                  if (customer.customerCode.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4.0),
-                                      child: Text(
-                                        'Müşteri Kodu: ${customer.customerCode}',
-                                        style: TextStyle(color: Colors.grey[700]),
-                                      ),
-                                    ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Ödenen Tutar: ${currencyFormatter.format(customer.balance)} ₺',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  },
-                ),
+              child: AccountListView(
+                customers: _customers,
+                isLoading: _isLoading,
+                scrollController: _scrollController,
+                currencyFormatter: currencyFormatter,
+                fetchCustomers: () => _fetchCustomers(reset: true),
+                onTapCustomer: (customer) async {
+                  final result = await context.push(
+                    '/CustomerEditPage',
+                    extra: customer.customerId,
+                  );
+                  if (result == true || result == 'refresh') {
+                    _fetchCustomers(reset: true);
+                  }
+                },
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class AccountSearchBar extends StatelessWidget {
+  final TextEditingController searchController;
+  final VoidCallback clearSearch;
+  final ValueChanged<String> submitSearch;
+
+  const AccountSearchBar({
+    Key? key,
+    required this.searchController,
+    required this.clearSearch,
+    required this.submitSearch,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        controller: searchController,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          prefixIcon: const Icon(Icons.search),
+          hintText: 'Müşteri ara...',
+          suffixIcon: searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: clearSearch,
+                )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        ),
+        onSubmitted: submitSearch,
+      ),
+    );
+  }
+}
+
+class AccountListView extends StatelessWidget {
+  final List<CustomerModel> customers;
+  final bool isLoading;
+  final ScrollController scrollController;
+  final NumberFormat currencyFormatter;
+  final Future<void> Function() fetchCustomers;
+  final Future<void> Function(CustomerModel) onTapCustomer;
+
+  const AccountListView({
+    Key? key,
+    required this.customers,
+    required this.isLoading,
+    required this.scrollController,
+    required this.currencyFormatter,
+    required this.fetchCustomers,
+    required this.onTapCustomer,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: fetchCustomers,
+      child: ListView.builder(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: customers.isEmpty && !isLoading
+            ? 1
+            : customers.length + (isLoading ? 1 : 0),
+        itemBuilder: (ctx, idx) {
+          if (customers.isEmpty && !isLoading) {
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Center(
+                child: Text(
+                  'Hiç müşteri bulunamadı.',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              ),
+            );
+          }
+
+          if (idx < customers.length) {
+            final customer = customers[idx];
+            return GestureDetector(
+              onTap: () => onTapCustomer(customer),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Card(
+                  elevation: 4,
+                  shadowColor: Colors.black12,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                customer.customerName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.edit,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        if (customer.customerCode.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4.0),
+                            child: Text(
+                              'Müşteri Kodu: ${customer.customerCode}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                          ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Ödenen Tutar: ${currencyFormatter.format(customer.balance)} ₺',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        },
       ),
     );
   }

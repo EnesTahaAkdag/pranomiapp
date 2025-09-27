@@ -108,33 +108,21 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: AccountSearchBar(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Hesap ara...',
-                  suffixIcon:
-                  _searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: _clearSearch,
-                  )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
+                onClear: _clearSearch,
                 onSubmitted: _submitSearch,
               ),
             ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => _fetchAccounts(reset: true),
-                child: _buildAccountList(currencyFormatter),
+                child: AccountListView(
+                  accounts: _accounts,
+                  isLoading: _isLoading,
+                  scrollController: _scrollController,
+                  defaultCurrencyFormatter: currencyFormatter,
+                ),
               ),
             ),
           ],
@@ -142,13 +130,68 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
       ),
     );
   }
+}
 
-  Widget _buildAccountList(NumberFormat defaultCurrencyFormatter) {
-    if (_isLoading && _accounts.isEmpty) {
+class AccountSearchBar extends StatelessWidget {
+  final TextEditingController controller;
+  final VoidCallback onClear;
+  final ValueChanged<String> onSubmitted;
+
+  const AccountSearchBar({
+    Key? key,
+    required this.controller,
+    required this.onClear,
+    required this.onSubmitted,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        prefixIcon: const Icon(Icons.search),
+        hintText: 'Hesap ara...',
+        suffixIcon:
+        controller.text.isNotEmpty
+            ? IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: onClear,
+        )
+            : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      ),
+      onSubmitted: onSubmitted,
+    );
+  }
+}
+
+class AccountListView extends StatelessWidget {
+  final List<AccountModel> accounts;
+  final bool isLoading;
+  final ScrollController scrollController;
+  final NumberFormat defaultCurrencyFormatter;
+
+  const AccountListView({
+    Key? key,
+    required this.accounts,
+    required this.isLoading,
+    required this.scrollController,
+    required this.defaultCurrencyFormatter,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading && accounts.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_accounts.isEmpty && !_isLoading) {
+    if (accounts.isEmpty && !isLoading) {
       return SizedBox(
         height: MediaQuery.of(context).size.height * 0.5,
         child: Center(
@@ -161,12 +204,12 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
     }
 
     return ListView.builder(
-      controller: _scrollController,
+      controller: scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: _accounts.length + (_isLoading && _accounts.isNotEmpty ? 1 : 0),
+      itemCount: accounts.length + (isLoading && accounts.isNotEmpty ? 1 : 0),
       itemBuilder: (ctx, idx) {
-        if (idx < _accounts.length) {
-          final account = _accounts[idx];
+        if (idx < accounts.length) {
+          final account = accounts[idx];
           // Use a specific formatter for the item if currency codes can vary
           final itemCurrencyFormatter = NumberFormat.currency(
             locale: 'tr_TR', // Or a locale appropriate for the currencyCode
@@ -197,7 +240,7 @@ class _AccountDepositAndBanksPageState extends State<AccountDepositAndBanksPage>
             ),
           );
         }
-        if (_isLoading && _accounts.isNotEmpty) {
+        if (isLoading && accounts.isNotEmpty) {
           // Loading indicator at the bottom for pagination
           return const Padding(
             padding: EdgeInsets.all(16),
