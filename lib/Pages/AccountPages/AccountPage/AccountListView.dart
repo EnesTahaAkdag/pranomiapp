@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/Models/AccountModels/AccountModels.dart';
-import 'package:pranomiapp/core/widgets/CustomSearchBar.dart';
-import 'package:pranomiapp/services/AccountServers/AccountService.dart';
-import 'package:pranomiapp/core/di/Injection.dart'; // Assuming locator is setup for AccountService
 
 class AccountListView extends StatelessWidget {
   final List<AccountModel> accounts;
@@ -76,13 +73,14 @@ class AccountListView extends StatelessWidget {
                 children: [
                   Text('Tür: ${account.accountType}'),
                   Text(
-                    'Bakiye: ${itemCurrencyFormatter.format(account.balance)}',
+                   'Bakiye: ${itemCurrencyFormatter.format(account.balance)}',
+                    style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
                   ),
                 ],
               ),
               // onTap: () {
-              //   // TODO: Navigate to an Account Detail Page if needed
-              //   // context.push('/accountDetail', extra: account.accountId);
+              //   Navigate to an Account Detail Page if needed
+              //    context.push('/accountDetail', extra: account.accountId);
               // },
             ),
           );
