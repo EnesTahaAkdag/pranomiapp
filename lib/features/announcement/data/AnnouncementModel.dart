@@ -20,15 +20,12 @@ class AnnouncementModel {
   factory AnnouncementModel.fromJson(Map<String, dynamic> json) {
     return AnnouncementModel(
       id: json['Id'] as int,
-      // Parse ISO8601 string to DateTime
       createdAt: DateTime.parse(json['CreatedAt'] as String),
       viewType: json['ViewType'] as String,
       announcementType: json['AnnouncementType'] as String,      title: json['Title'] as String,
       description: json['Description'] as String,
     );
   }
-
-  // Optional: Add a toJson method if you need to send this model to an API
   Map<String, dynamic> toJson() {
     return {
       'Id': id,
