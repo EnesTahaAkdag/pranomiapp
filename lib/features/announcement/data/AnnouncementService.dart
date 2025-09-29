@@ -2,7 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pranomiapp/Helper/ApiServices/ApiService.dart'; // Assuming this is your base class
-import 'package:pranomiapp/features/announcement/AnnouncementModel.dart';
+import 'package:pranomiapp/features/announcement/data/AnnouncementModel.dart';
 
 class AnnouncementService extends ApiServiceBase {
   // Method to fetch all announcements

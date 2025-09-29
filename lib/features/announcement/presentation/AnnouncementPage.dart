@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
-import 'package:pranomiapp/features/announcement/AnnouncementModel.dart';
-import 'package:pranomiapp/features/announcement/AnnouncementService.dart';
+import 'package:pranomiapp/features/announcement/data/AnnouncementModel.dart';
+import 'package:pranomiapp/features/announcement/data/AnnouncementService.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:url_launcher/url_launcher.dart';
 

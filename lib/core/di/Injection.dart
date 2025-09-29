@@ -18,7 +18,7 @@ import 'package:pranomiapp/services/InvoiceServices/InvoiceService.dart';
 import 'package:pranomiapp/services/InvoiceServices/SendEInvoiceService.dart';
 import 'package:pranomiapp/features/products/data/ProductStockUpdateService.dart';
 
-import '../../features/announcement/AnnouncementService.dart';
+import '../../features/announcement/data/AnnouncementService.dart';
 import '../../features/products/data/ProductService.dart';
 
 final GetIt locator = GetIt.instance;
