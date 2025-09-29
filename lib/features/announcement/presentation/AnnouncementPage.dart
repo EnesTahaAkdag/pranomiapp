@@ -151,9 +151,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                       ),
                       // Add more styles for other HTML tags like h1, h2, ul, li etc. if needed
                     },
-                    onLinkTap: (url,_,__){
+                    onLinkTap: (url, _, __) {
                       _launchURL(url ?? "https://www.google.com");
-                    }
+                    },
                     // You can also add onLinkTap, onImageTap etc. from flutter_html
                   ),
                 ],
@@ -164,8 +164,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       ),
     );
   }
-
-
 }
 
 Future<void> _launchURL(String urlAddress) async {
