@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:pranomiapp/features/announcement/AnnouncementModel.dart';
 import 'package:pranomiapp/features/announcement/AnnouncementService.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AnnouncementPage extends StatefulWidget {
   const AnnouncementPage({super.key});
@@ -129,7 +130,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                   const SizedBox(height: 4),
                   Text(
                     'Yayınlanma Tarihi: ${DateFormat('dd.MM.yyyy HH:mm').format(announcement.createdAt)}',
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Html(
@@ -139,7 +142,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                         // Remove default browser margins for the body tag within Html widget
                         margin: Margins.zero,
                         padding: HtmlPaddings.zero,
-                        fontSize: FontSize(15),
+                        fontSize: FontSize(16),
                       ),
                       "p": Style(
                         // Adjust paragraph margins if needed, or line height
@@ -148,6 +151,9 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                       ),
                       // Add more styles for other HTML tags like h1, h2, ul, li etc. if needed
                     },
+                    onLinkTap: (url,_,__){
+                      _launchURL(url ?? "https://www.google.com");
+                    }
                     // You can also add onLinkTap, onImageTap etc. from flutter_html
                   ),
                 ],
@@ -157,5 +163,15 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
         },
       ),
     );
+  }
+
+
+}
+
+Future<void> _launchURL(String urlAddress) async {
+  final Uri url = Uri.parse(urlAddress);
+
+  if (!await launchUrl(url)) {
+    throw Exception('Could not launch $url');
   }
 }
