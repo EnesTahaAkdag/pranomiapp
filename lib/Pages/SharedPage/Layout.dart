@@ -250,7 +250,7 @@ class _AppLayoutState extends State<AppLayout> {
                       _drawerItem("E-Belge Şablon", '/aü'),
                     ]),
                   ]),
-                _drawerItems("Duyurularım", '/aas'),
+                _drawerItems("Duyurularım", '/Announcements'),
                 _drawerItems("Profilim", '/aasd'),
               ],
             ),

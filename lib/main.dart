@@ -17,6 +17,7 @@ import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerAddPage.dar
 import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/InvoicesClaimPage.dart';
 import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.dart';
 
+import 'features/announcement/AnnouncementPage.dart';
 import 'features/e_invoice/presentation/EInvoicePage.dart';
 import 'features/products/presentation/ProductsAndServicesPage.dart';
 
@@ -212,6 +213,13 @@ class MyApp extends StatelessWidget {
               path: '/EmployeeAddPage',
               builder: (context, state) {
                 return EmployeeAddPage(customerType: CustomerTypeEnum.Employee);
+              },
+            ),
+
+            GoRoute(
+              path: '/Announcements',
+              builder: (context, state) {
+                return AnnouncementPage();
               },
             ),
 
