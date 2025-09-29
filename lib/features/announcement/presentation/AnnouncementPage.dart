@@ -6,6 +6,8 @@ import 'package:pranomiapp/features/announcement/data/AnnouncementService.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../domain/AnnouncementType.dart';
+
 class AnnouncementPage extends StatefulWidget {
   const AnnouncementPage({super.key});
 
@@ -121,11 +123,23 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    announcement.title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          announcement.title,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Icon(
+                        _getIconForType(
+                          parseAnnouncementType(announcement.announcementType),
+                        ),
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 36,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -171,5 +185,19 @@ Future<void> _launchURL(String urlAddress) async {
 
   if (!await launchUrl(url)) {
     throw Exception('Could not launch $url');
+  }
+}
+
+IconData _getIconForType(AnnouncementType type) {
+  switch (type) {
+    case AnnouncementType.news:
+      return Icons.newspaper;
+    case AnnouncementType.announcement:
+      return Icons.campaign;
+    case AnnouncementType.changelog:
+      return Icons.alt_route;
+    case AnnouncementType.unknown:
+    default:
+      return Icons.info_outline;
   }
 }
