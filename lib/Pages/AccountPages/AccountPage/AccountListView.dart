@@ -72,9 +72,35 @@ class AccountListView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Tür: ${account.accountType}'),
-                  Text(
-                   'Bakiye: ${itemCurrencyFormatter.format(account.balance)}',
-                    style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
+                  Row(
+                    children: [
+                      Text(
+                        itemCurrencyFormatter.format(account.balance.abs()),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      if (account.balance < 0)
+                        const Text(
+                          "(B)",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        )
+                      else if (account.balance > 0)
+                        const Text(
+                          "(A)",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),
