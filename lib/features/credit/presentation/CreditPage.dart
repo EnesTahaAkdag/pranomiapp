@@ -105,7 +105,24 @@ class _CreditPageState extends State<CreditPage> {
   }
 
   static String getTransactionTypeDescription(int type) {
-    // Placeholder - implement actual logic
+    switch (type) {
+      case 1:
+        return "Diğer";
+      case 2:
+        return "Nakit";
+      case 3:
+        return "Havale/Eft";
+      case 4:
+        return "Kredi Kartı";
+      case 5:
+        return "Hediye";
+      case 6:
+        return "E-Fatura";
+      case 7:
+        return "E-Arşive Fatura";
+      case 8:
+        return "E-İrsaliye";
+    }
     return "İşlem Tipi: $type";
   }
 
@@ -315,6 +332,13 @@ class _TransactionListItem extends StatelessWidget {
               style: Theme.of(
                 context,
               ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Bakiye: ${currencyFormatter.format(transaction.totalTransactionAmount)}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium,
             ),
             const SizedBox(height: 4),
             Text(

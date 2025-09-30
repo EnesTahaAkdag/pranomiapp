@@ -55,6 +55,7 @@ class CreditTransaction {
   final String referenceNumber;
   final String? description;
   final double transactionAmount;
+  final double totalTransactionAmount;
 
   CreditTransaction({
     required this.id,
@@ -63,6 +64,7 @@ class CreditTransaction {
     required this.referenceNumber,
     this.description,
     required this.transactionAmount,
+    required this.totalTransactionAmount,
   });
 
   factory CreditTransaction.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class CreditTransaction {
       referenceNumber: json['ReferenceNumber'] ?? "",
       description: json['Description'],
       transactionAmount: (json['TransactionAmount'] as num).toDouble(),
+      totalTransactionAmount: (json['TotalTransactionAmount'])
     );
   }
 }
