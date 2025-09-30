@@ -18,13 +18,17 @@ class _CreditPageState extends State<CreditPage> {
   final ScrollController _scrollController = ScrollController();
 
   bool _isLoading = true;
-  bool _isLoadingMore = false; // For loading indicator at the bottom
+  bool _isLoadingMore = false;
   int _currentPage = 0;
   int _totalPages = 1;
   String? _error;
 
-  final DateFormat _dateFormatter = DateFormat('dd.MM.yyyy HH:mm');
-  final NumberFormat _currencyFormatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
+  // Formatters can be static if they don't depend on instance state
+  static final DateFormat _dateFormatter = DateFormat('dd.MM.yyyy HH:mm');
+  static final NumberFormat _currencyFormatter = NumberFormat.currency(
+    locale: 'tr_TR',
+    symbol: '₺',
+  );
 
   @override
   void initState() {
@@ -38,7 +42,8 @@ class _CreditPageState extends State<CreditPage> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    super.dispose();}
+    super.dispose();
+  }
 
   Future<void> _fetchCreditTransactions({bool isRefresh = false}) async {
     if (isRefresh) {
@@ -49,7 +54,6 @@ class _CreditPageState extends State<CreditPage> {
         _error = null;
       });
     } else {
-      // Avoid multiple simultaneous loads for pagination
       if (_isLoadingMore || _currentPage >= _totalPages) return;
       setState(() {
         _isLoadingMore = true;
@@ -58,22 +62,20 @@ class _CreditPageState extends State<CreditPage> {
     }
 
     try {
-      // Assuming CreditService.fetchCredits now returns CreditItem
       final creditItem = await _creditService.fetchCredits(
         page: _currentPage,
-        size: 20, // Or your preferred page size
+        size: 20,
       );
 
       if (mounted) {
         if (creditItem != null) {
           setState(() {
             _transactions.addAll(creditItem.creditTransactions);
-            _currentPage = creditItem.currentPage + 1; // Prepare for next page
+            _currentPage = creditItem.currentPage + 1;
             _totalPages = creditItem.totalPages;
           });
         } else if (isRefresh) {
-          // Only set error if initial load fails and it's a refresh
-          _error = "Kontör hareketleri yüklenemedi.";
+          _error = "Kredi hareketleri yüklenemedi.";
         }
       }
     } catch (e) {
@@ -94,14 +96,16 @@ class _CreditPageState extends State<CreditPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 &&
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200 &&
         !_isLoadingMore &&
         _currentPage < _totalPages) {
       _fetchCreditTransactions();
     }
   }
 
-  String _getTransactionTypeDescription(int type) {
+  // Moved to static as it doesn't rely on instance members and can be reused or kept with model
+  static String getTransactionTypeDescription(int type) {
     // This is a placeholder. You should map type numbers to meaningful descriptions.
     // Example:
     // switch (type) {
@@ -115,50 +119,29 @@ class _CreditPageState extends State<CreditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Kredi Hareketleri'),
+        centerTitle: true,
+      ),
       body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
     if (_isLoading && _transactions.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const _LoadingView();
     }
 
     if (_error != null && _transactions.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red, fontSize: 16)),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => _fetchCreditTransactions(isRefresh: true),
-                child: const Text("Tekrar Dene"),
-              ),
-            ],
-          ),
-        ),
+      return _ErrorView(
+        error: _error!,
+        onRetry: () => _fetchCreditTransactions(isRefresh: true),
       );
     }
 
     if (_transactions.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Kontör hareketi bulunmamaktadır.', style: TextStyle(fontSize: 16)),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => _fetchCreditTransactions(isRefresh: true),
-                child: const Text("Yenile"),
-              ),
-            ],
-          ),
-        ),
+      return _EmptyView(
+        onRefresh: () => _fetchCreditTransactions(isRefresh: true),
       );
     }
 
@@ -170,67 +153,179 @@ class _CreditPageState extends State<CreditPage> {
         itemCount: _transactions.length + (_isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _transactions.length) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Center(child: CircularProgressIndicator()),
-            );
+            return const _LoadingMoreIndicator();
           }
-
           final transaction = _transactions[index];
-          return Card(
-            elevation: 2,
-            margin: const EdgeInsets.symmetric(vertical: 6.0),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          transaction.referenceNumber,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        _currencyFormatter.format(transaction.transactionAmount),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: transaction.transactionAmount >= 0 ? Colors.green.shade700 : Colors.red.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Tarih: ${_dateFormatter.format(transaction.transactionDate)}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _getTransactionTypeDescription(transaction.transactionType),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
-                  ),
-                  if (transaction.description != null && transaction.description!.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      'Açıklama: ${transaction.description}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
-              ),
-            ),
+          return _TransactionListItem(
+            key: ValueKey(transaction.id), // Use a key for better list performance
+            transaction: transaction,
+            dateFormatter: _dateFormatter,
+            currencyFormatter: _currencyFormatter,
+            getTransactionTypeDescription: getTransactionTypeDescription, // Pass static method
           );
         },
         separatorBuilder: (context, index) => const SizedBox(height: 6),
       ),
+    );
+  }
+}
+
+// --- Extracted Widgets ---
+
+class _LoadingView extends StatelessWidget {
+  const _LoadingView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  final String error;
+  final VoidCallback onRetry;
+
+  const _ErrorView({required this.error, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: onRetry,
+              child: const Text("Tekrar Dene"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyView extends StatelessWidget {
+  final VoidCallback onRefresh;
+
+  const _EmptyView({required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Kredi hareketi bulunmamaktadır.',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: onRefresh,
+              child: const Text("Yenile"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TransactionListItem extends StatelessWidget {
+  final CreditTransaction transaction;
+  final DateFormat dateFormatter;
+  final NumberFormat currencyFormatter;
+  final String Function(int) getTransactionTypeDescription;
+
+
+  const _TransactionListItem({
+    super.key, // Pass the key here
+    required this.transaction,
+    required this.dateFormatter,
+    required this.currencyFormatter,
+    required this.getTransactionTypeDescription,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    transaction.referenceNumber,
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  currencyFormatter.format(transaction.transactionAmount),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: transaction.transactionAmount >= 0
+                        ? Colors.green.shade700
+                        : Colors.red.shade700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tarih: ${dateFormatter.format(transaction.transactionDate)}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              getTransactionTypeDescription(transaction.transactionType),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+            ),
+            if (transaction.description != null &&
+                transaction.description!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Açıklama: ${transaction.description}',
+                style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LoadingMoreIndicator extends StatelessWidget {
+  const _LoadingMoreIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }
