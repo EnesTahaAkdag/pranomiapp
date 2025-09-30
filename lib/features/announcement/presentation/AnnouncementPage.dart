@@ -54,9 +54,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(),
-    );
+    return Scaffold(body: _buildBody());
   }
 
   Widget _buildBody() {
@@ -65,42 +63,14 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
     }
 
     if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _error!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _fetchAnnouncements,
-                child: const Text("Tekrar Dene"),
-              ),
-            ],
-          ),
-        ),
+      return _ErrorView(
+        error: _error!,
+        onRetry: _fetchAnnouncements,
       );
     }
 
     if (_announcements == null || _announcements!.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Gosterilecek duyuru bulunmamaktadır.'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _fetchAnnouncements,
-              child: const Text("Yenile"),
-            ),
-          ],
-        ),
-      );
+      return _EmptyView(onRefresh: _fetchAnnouncements);
     }
 
     return RefreshIndicator(
@@ -110,67 +80,182 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
         itemCount: _announcements!.length,
         itemBuilder: (context, index) {
           final announcement = _announcements![index];
-          return Card(
-            elevation: 2,
-            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          announcement.title,
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Icon(
-                        _getIconForType(
-                          parseAnnouncementType(announcement.announcementType),
-                        ),
-                        color: const Color(0xFFB00034),
-                        size: 36,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Yayınlanma Tarihi: ${DateFormat('dd.MM.yyyy HH:mm').format(announcement.createdAt)}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Html(
-                    data: announcement.description,
-                    style: {
-                      "body": Style(
-                        // Remove default browser margins for the body tag within Html widget
-                        margin: Margins.zero,
-                        padding: HtmlPaddings.zero,
-                        fontSize: FontSize(16),
-                      ),
-                      "p": Style(
-                        // Adjust paragraph margins if needed, or line height
-                        margin: Margins.symmetric(vertical: 6.0),
-                        lineHeight: const LineHeight(1.4),
-                      ),
-                      // Add more styles for other HTML tags like h1, h2, ul, li etc. if needed
-                    },
-                    onLinkTap: (url, _, __) {
-                      _launchURL(url ?? "https://www.google.com");
-                    },
-                    // You can also add onLinkTap, onImageTap etc. from flutter_html
-                  ),
-                ],
-              ),
-            ),
+          return AnnouncementCard(
+            key: ValueKey(announcement.id ?? index),
+            announcement: announcement,
           );
         },
       ),
+    );
+  }
+}
+
+// Ayrı widget - Gereksiz rebuild'leri önler
+class _ErrorView extends StatelessWidget {
+  final String error;
+  final VoidCallback onRetry;
+
+  const _ErrorView({
+    required this.error,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: onRetry,
+              child: const Text("Tekrar Dene"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Ayrı widget - Gereksiz rebuild'leri önler
+class _EmptyView extends StatelessWidget {
+  final VoidCallback onRefresh;
+
+  const _EmptyView({required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('Gösterilecek duyuru bulunmamaktadır.'),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: onRefresh,
+            child: const Text("Yenile"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Ayrı widget class - Her item bağımsız rebuild olur
+class AnnouncementCard extends StatelessWidget {
+  final AnnouncementModel announcement;
+
+  const AnnouncementCard({
+    super.key,
+    required this.announcement,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _AnnouncementHeader(announcement: announcement),
+            const SizedBox(height: 4),
+            _AnnouncementDate(date: announcement.createdAt),
+            const SizedBox(height: 8),
+            _AnnouncementContent(description: announcement.description),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Header - const olmayan Icon nedeniyle ayrı widget
+class _AnnouncementHeader extends StatelessWidget {
+  final AnnouncementModel announcement;
+
+  const _AnnouncementHeader({required this.announcement});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            announcement.title,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Icon(
+          _getIconForType(
+            parseAnnouncementType(announcement.announcementType),
+          ),
+          color: const Color(0xFFB00034),
+          size: 36,
+        ),
+      ],
+    );
+  }
+}
+
+// Tarih - Cache için ayrı widget
+class _AnnouncementDate extends StatelessWidget {
+  final DateTime date;
+  static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+
+  const _AnnouncementDate({required this.date});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Yayınlanma Tarihi: ${_dateFormat.format(date)}',
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
+
+// HTML content - En ağır kısım, ayrı widget olarak cache'lenir
+class _AnnouncementContent extends StatelessWidget {
+  final String description;
+
+  // HTML stil ayarları - const olarak tanımla, her build'de yeniden oluşturulmasın
+  static final _htmlStyle = {
+    "body": Style(
+      margin: Margins.zero,
+      padding: HtmlPaddings.zero,
+      fontSize: FontSize(16),
+    ),
+    "p": Style(
+      margin: Margins.symmetric(vertical: 6.0),
+      lineHeight: const LineHeight(1.4),
+    ),
+  };
+
+  const _AnnouncementContent({required this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return Html(
+      data: description,
+      style: _htmlStyle,
+      onLinkTap: (url, _, __) {
+        _launchURL(url ?? "https://www.google.com");
+      },
     );
   }
 }
