@@ -5,6 +5,7 @@ import 'package:pranomiapp/Pages/AccountPages/AccountPage/AcoountDepositAndBanks
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
+import 'package:pranomiapp/features/credit/presentation/CreditPage.dart';
 import 'package:pranomiapp/features/employees/EmployeeAddPage.dart';
 import 'package:pranomiapp/features/employees/EmployeesPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,6 @@ import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/CustomerEditPage.da
 import 'features/announcement/presentation/AnnouncementPage.dart';
 import 'features/e_invoice/presentation/EInvoicePage.dart';
 import 'features/products/presentation/ProductsAndServicesPage.dart';
-
 
 void main() async {
   setupLocator();
@@ -187,10 +187,12 @@ class MyApp extends StatelessWidget {
                       ),
                 ),
 
-                GoRoute(path:"/DepositAndBanks",
-                    builder: (context,state){
-                      return const AccountDepositAndBanksPage();
-                    }),
+                GoRoute(
+                  path: "/DepositAndBanks",
+                  builder: (context, state) {
+                    return const AccountDepositAndBanksPage();
+                  },
+                ),
 
                 GoRoute(
                   path: '/Announcements',
@@ -199,7 +201,10 @@ class MyApp extends StatelessWidget {
                   },
                 ),
 
-
+                GoRoute(
+                  path: '/Credits',
+                  builder: (context, state) => const CreditPage(),
+                ),
               ],
             ),
 
@@ -224,8 +229,6 @@ class MyApp extends StatelessWidget {
                 return EmployeeAddPage(customerType: CustomerTypeEnum.Employee);
               },
             ),
-
-
 
             GoRoute(
               path: '/CustomerEditPage',
@@ -328,6 +331,9 @@ class MyApp extends StatelessWidget {
 
       case '/Announcements':
         return 'Duyurular';
+
+      case '/Credits':
+        return 'Kontörlerim';
 
       default:
         return 'Sayfa';

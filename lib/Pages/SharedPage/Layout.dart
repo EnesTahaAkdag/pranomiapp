@@ -217,7 +217,7 @@ class _AppLayoutState extends State<AppLayout> {
                   _buildExpandableTile("Nakit", "f", [
                     _drawerItem("Kasa ve Bankalar", '/DepositAndBanks'),
                   ]),
-                _drawerItems("Kontör", '/ae'),
+                _drawerItems("Kontör", '/Credits'),
                 _drawerItems("Bildirimler", '/av'),
                 if (showEDocuments)
                   _buildExpandableTile("Ayarlar", "c", [
