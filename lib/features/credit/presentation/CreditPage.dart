@@ -107,22 +107,71 @@ class _CreditPageState extends State<CreditPage> {
   // Moved to static as it doesn't rely on instance members and can be reused or kept with model
   static String getTransactionTypeDescription(int type) {
     // This is a placeholder. You should map type numbers to meaningful descriptions.
+    //  public enum PraNomiCustomerCreditTransactionTypeEnum : byte
+    //  {
+    //
+    //  /*Diğer*/
+    //      Other = 1,
+    //
+    // /*Nakit*/
+    //      Cash = 2,
+    //
+    //  /*Havale/Eft*/
+    //      BankEft = 3,
+    //
+    //  /*Kredi Kartı*/
+    //      CreditCard = 4,
+    //
+    //  /*Hediye*/
+    //      Gift = 5,
+    //
+    // /*E-Fatura*/
+    //      eInvoice = 6,
+    //
+    //      /*E-Arşiv Fatura*/
+    //      eArchive = 7,
+    //
+    //      /*E-İrsaliye*/
+    //      eDespacth = 8,
+    //  }
     // Example:
     // switch (type) {
     //   case 1: return "Gelen Havale";
     //   case 6: return "Satış";
     //   default: return "Diğer İşlem";
     // }
+    switch (type) {
+      case 1:
+        return "Diğer";
+
+      case 2:
+        return "Nakit";
+
+      case 3:
+        return "Havale/Eft";
+
+      case 4:
+        return "Kredi Kartı";
+
+      case 5:
+        return "Hediye";
+
+      case 6:
+        return "E-Fatura";
+
+      case 7:
+        return "E-Arşive Fatura";
+
+      case 8:
+        return "E-İrsaliye";
+
+    }
     return "İşlem Tipi: $type"; // Replace with actual logic
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kredi Hareketleri'),
-        centerTitle: true,
-      ),
       body: _buildBody(),
     );
   }
@@ -169,8 +218,6 @@ class _CreditPageState extends State<CreditPage> {
     );
   }
 }
-
-// --- Extracted Widgets ---
 
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
