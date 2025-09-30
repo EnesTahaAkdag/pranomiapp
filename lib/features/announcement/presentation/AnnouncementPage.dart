@@ -55,11 +55,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Duyurular'), // Announcements
-        centerTitle: true,
-        // backgroundColor: const Color(0xFF2C2C2C), // Or your app's standard AppBar color
-      ),
       body: _buildBody(),
     );
   }
@@ -136,7 +131,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                         _getIconForType(
                           parseAnnouncementType(announcement.announcementType),
                         ),
-                        color: Theme.of(context).colorScheme.primary,
+                        color: const Color(0xFFB00034),
                         size: 36,
                       ),
                     ],

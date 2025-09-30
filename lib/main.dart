@@ -190,7 +190,16 @@ class MyApp extends StatelessWidget {
                 GoRoute(path:"/DepositAndBanks",
                     builder: (context,state){
                       return const AccountDepositAndBanksPage();
-                    })
+                    }),
+
+                GoRoute(
+                  path: '/Announcements',
+                  builder: (context, state) {
+                    return AnnouncementPage();
+                  },
+                ),
+
+
               ],
             ),
 
@@ -216,12 +225,7 @@ class MyApp extends StatelessWidget {
               },
             ),
 
-            GoRoute(
-              path: '/Announcements',
-              builder: (context, state) {
-                return AnnouncementPage();
-              },
-            ),
+
 
             GoRoute(
               path: '/CustomerEditPage',
@@ -321,6 +325,9 @@ class MyApp extends StatelessWidget {
 
       case '/DepositAndBanks':
         return 'Kasa Ve Bankalar';
+
+      case '/Announcements':
+        return 'Duyurular';
 
       default:
         return 'Sayfa';

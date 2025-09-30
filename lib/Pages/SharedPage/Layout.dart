@@ -216,21 +216,8 @@ class _AppLayoutState extends State<AppLayout> {
                 if (showIncomeExpense)
                   _buildExpandableTile("Nakit", "f", [
                     _drawerItem("Kasa ve Bankalar", '/DepositAndBanks'),
-                    _drawerItem("Çekler", '/ab'),
-                    _drawerItem("Senetler", '/ac'),
                   ]),
-                _drawerItems("Fiziki Mağaza", '/ad'),
                 _drawerItems("Kontör", '/ae'),
-                _drawerItems("Fiyatlar", '/af'),
-                if (showIncomeExpense)
-                  _buildExpandableTile("Toplu işlemler", "e", [
-                    _drawerItem("İşlem Durumları", '/ag'),
-                    _drawerItem("Toplu Ürün Sil", '/aq'),
-                  ]),
-                if (showIncomeExpense)
-                  _buildExpandableTile("Entegrasyon", "d", [
-                    _drawerItem("Mağazalarım", '/aa'),
-                  ]),
                 _drawerItems("Bildirimler", '/av'),
                 if (showEDocuments)
                   _buildExpandableTile("Ayarlar", "c", [
@@ -251,7 +238,6 @@ class _AppLayoutState extends State<AppLayout> {
                     ]),
                   ]),
                 _drawerItems("Duyurularım", '/Announcements'),
-                _drawerItems("Profilim", '/aasd'),
               ],
             ),
           ),
