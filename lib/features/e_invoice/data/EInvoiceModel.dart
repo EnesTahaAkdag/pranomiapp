@@ -1,6 +1,4 @@
-
 import '../domain/EInvoiceTypeEnums.dart';
-
 
 class EInvoiceModel {
   final String documentNumber;
