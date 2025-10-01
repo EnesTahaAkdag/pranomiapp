@@ -8,7 +8,7 @@ import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:pranomiapp/features/credit/presentation/CreditPage.dart';
 import 'package:pranomiapp/features/employees/EmployeeAddPage.dart';
 import 'package:pranomiapp/features/employees/EmployeesPage.dart';
-import 'package:pranomiapp/features/notifications/NotificationsPage.dart';
+import 'package:pranomiapp/features/notifications/presentation/NotificationsPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/features/authentication/presentation/LoginPage.dart';
