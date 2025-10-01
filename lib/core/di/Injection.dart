@@ -3,6 +3,7 @@ import 'package:pranomiapp/features/authentication/data/LoginServices.dart';
 import 'package:pranomiapp/features/credit/data/CreditService.dart';
 import 'package:pranomiapp/features/employees/EmployeeAddService.dart';
 import 'package:pranomiapp/features/employees/EmployeesService.dart';
+import 'package:pranomiapp/features/notifications/data/NotificationsService.dart';
 import 'package:pranomiapp/services/AccountServers/AccountService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerAddService.dart';
 import 'package:pranomiapp/services/CustomerService/CustomerDetailService.dart';
@@ -93,5 +94,9 @@ void setupLocator() {
 
   locator.registerLazySingleton<CreditService>(
         () => CreditService(),
+  );
+
+  locator.registerLazySingleton<NotificationsService>(
+        () => NotificationsService(),
   );
 }

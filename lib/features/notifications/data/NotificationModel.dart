@@ -1,30 +1,24 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 class NotificationResponse {
   final bool success;
   final int statusCode;
-  final NotificationItem item;
+  final NotificationItem? item;
 
   NotificationResponse({
     required this.success,
     required this.statusCode,
-    required this.item,
+    this.item,
   });
 
   factory NotificationResponse.fromJson(Map<String, dynamic> json) {
     return NotificationResponse(
       success: json['Success'] ?? false,
       statusCode: json['StatusCode'] ?? 0,
-      item: NotificationItem.fromJson(json['Item']),
+      item: json['Item'] != null ? NotificationItem.fromJson(json['Item']) : null,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'Success': success,
-      'StatusCode': statusCode,
-      'Item': item.toJson(),
-    };
   }
 }
 
@@ -45,26 +39,22 @@ class NotificationItem {
   });
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    // --- THIS IS THE FIX ---
+    // Safely parse the list of notifications, defaulting to an empty list if null.
+    List<CustomerNotification> notifications = [];
+    if (json['customerNotifications'] != null && json['customerNotifications'] is List) {
+      notifications = (json['customerNotifications'] as List<dynamic>)
+          .map((e) => CustomerNotification.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+
     return NotificationItem(
       count: json['Count'] ?? 0,
       currentPage: json['CurrentPage'] ?? 0,
       currentSize: json['CurrentSize'] ?? 0,
       totalPages: json['TotalPages'] ?? 0,
-      customerNotifications: (json['customerNotifications'] as List<dynamic>)
-          .map((e) => CustomerNotification.fromJson(e))
-          .toList(),
+      customerNotifications: notifications, // Use the safely parsed list
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'Count': count,
-      'CurrentPage': currentPage,
-      'CurrentSize': currentSize,
-      'TotalPages': totalPages,
-      'customerNotifications':
-      customerNotifications.map((e) => e.toJson()).toList(),
-    };
   }
 }
 
@@ -89,26 +79,23 @@ class CustomerNotification {
   });
 
   factory CustomerNotification.fromJson(Map<String, dynamic> json) {
+    // Safely parse DateTime
+    DateTime parsedDate;
+    try {
+      parsedDate = DateTime.parse(json['NotificationDate'] as String);
+    } catch (e) {
+      parsedDate = DateTime.now(); // Fallback to current time on parsing error
+      debugPrint("Error parsing NotificationDate: \${json['NotificationDate']}");
+    }
+
     return CustomerNotification(
       id: json['Id'] ?? 0,
       referenceNumber: json['ReferenceNumber'] ?? '',
-      notificationDate: DateTime.parse(json['NotificationDate']),
+      notificationDate: parsedDate,
       notificationType: json['NotificationType'] ?? 0,
       eCommerceCode: json['ECommerceCode'],
       description: json['Description'] ?? '',
       invoiceType: json['InvoiceType'] ?? 0,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'Id': id,
-      'ReferenceNumber': referenceNumber,
-      'NotificationDate': notificationDate.toIso8601String(),
-      'NotificationType': notificationType,
-      'ECommerceCode': eCommerceCode,
-      'Description': description,
-      'InvoiceType': invoiceType,
-    };
   }
 }
