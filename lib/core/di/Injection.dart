@@ -80,23 +80,17 @@ void setupLocator() {
     () => ProductStockUpdateService(),
   );
 
-  locator.registerLazySingleton<ProductService>(
-    () => ProductService(),
-  );
+  locator.registerLazySingleton<ProductService>(() => ProductService());
 
-  locator.registerLazySingleton<AccountService>(
-        () => AccountService(),
-  );
+  locator.registerLazySingleton<AccountService>(() => AccountService());
 
   locator.registerLazySingleton<AnnouncementService>(
-      () => AnnouncementService(),
+    () => AnnouncementService(),
   );
 
-  locator.registerLazySingleton<CreditService>(
-        () => CreditService(),
-  );
+  locator.registerLazySingleton<CreditService>(() => CreditService());
 
   locator.registerLazySingleton<NotificationsService>(
-        () => NotificationsService(),
+    () => NotificationsService(),
   );
 }
