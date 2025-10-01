@@ -8,6 +8,7 @@ import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:pranomiapp/features/credit/presentation/CreditPage.dart';
 import 'package:pranomiapp/features/employees/EmployeeAddPage.dart';
 import 'package:pranomiapp/features/employees/EmployeesPage.dart';
+import 'package:pranomiapp/features/notifications/NotificationsPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/Models/TypeEnums/CustomerTypeEnum.dart';
 import 'package:pranomiapp/features/authentication/presentation/LoginPage.dart';
@@ -205,6 +206,11 @@ class MyApp extends StatelessWidget {
                   path: '/Credits',
                   builder: (context, state) => const CreditPage(),
                 ),
+
+                GoRoute(
+                  path: '/Notifications',
+                  builder: (context, state) => const NotificationsPage(),
+                ),
               ],
             ),
 
@@ -334,6 +340,9 @@ class MyApp extends StatelessWidget {
 
       case '/Credits':
         return 'Kontörlerim';
+
+      case '/Notifications':
+        return 'Bildirimler';
 
       default:
         return 'Sayfa';
