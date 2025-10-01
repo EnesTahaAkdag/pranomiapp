@@ -41,9 +41,10 @@ class CreditItem {
       currentPage: json['CurrentPage'] ?? 0,
       currentSize: json['CurrentSize'] ?? 0,
       totalPages: json['TotalPages'] ?? 0,
-      creditTransactions: (json['creditTransactions'] as List<dynamic>)
-          .map((e) => CreditTransaction.fromJson(e))
-          .toList(),
+      creditTransactions:
+          (json['creditTransactions'] as List<dynamic>)
+              .map((e) => CreditTransaction.fromJson(e))
+              .toList(),
     );
   }
 }
@@ -75,7 +76,7 @@ class CreditTransaction {
       referenceNumber: json['ReferenceNumber'] ?? "",
       description: json['Description'],
       transactionAmount: (json['TransactionAmount'] as num).toDouble(),
-      totalTransactionAmount: (json['TotalTransactionAmount'])
+      totalTransactionAmount: (json['TotalTransactionAmount']),
     );
   }
 }
