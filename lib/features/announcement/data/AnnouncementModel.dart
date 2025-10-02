@@ -22,10 +22,12 @@ class AnnouncementModel {
       id: json['Id'] as int,
       createdAt: DateTime.parse(json['CreatedAt'] as String),
       viewType: json['ViewType'] as String,
-      announcementType: json['AnnouncementType'] as String,      title: json['Title'] as String,
+      announcementType: json['AnnouncementType'] as String,
+      title: json['Title'] as String,
       description: json['Description'] as String,
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'Id': id,
