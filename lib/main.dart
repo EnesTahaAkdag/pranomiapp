@@ -26,7 +26,6 @@ import 'features/products/presentation/ProductsAndServicesPage.dart';
 void main() async {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
-  await Future.delayed(Duration(milliseconds: 1500));
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(255, 41, 41, 41),
