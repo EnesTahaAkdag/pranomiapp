@@ -34,11 +34,11 @@ void main() async {
     ),
   );
 
-  runApp(const MyApp());
+  runApp(const PranomiApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PranomiApp extends StatelessWidget {
+  const PranomiApp({super.key});
 
   static const getTitleForRoutes = {
     '/': 'Genel Bakış',
