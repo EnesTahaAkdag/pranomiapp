@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
+import 'package:pranomiapp/features/notifications/data/NotificationEnum.dart';
 import 'package:pranomiapp/features/notifications/data/NotificationModel.dart';
 import 'package:pranomiapp/features/notifications/data/NotificationsService.dart';
 import 'package:pranomiapp/core/di/Injection.dart'; // Assuming locator is setup
@@ -267,7 +268,7 @@ class _NotificationListItem extends StatelessWidget {
         child: Icon(icon, color: Colors.grey.shade800),
       ),
       title: Html(
-        data: notification.description,
+        data: getNotificationNameFromType(getNotificationTypeFromValue(notification.notificationType)),
         style: {
           "body": Style(
             margin: Margins.zero,
