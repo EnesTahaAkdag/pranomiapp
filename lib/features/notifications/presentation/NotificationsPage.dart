@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
@@ -101,9 +100,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  static Image? getIconForNotificationType(String? eCommerceCode) {
-    // Placeholder logic - expand with all your types
-   return Image.network("https://panel.pranomi.com/images/eCommerceLogo/${eCommerceCode?.toLowerCase()}.png");
+  // MODIFIED: This function is now more robust.
+  static Widget? getIconForNotificationType(String? eCommerceCode) {
+    // If no code is provided, return null to show nothing.
+    if (eCommerceCode == null || eCommerceCode.trim().isEmpty) {
+      return null;
+    }
+    // Return an Image.network widget with a crucial errorBuilder.
+    return Image.network(
+      "https://panel.pranomi.com/images/eCommerceLogo/${eCommerceCode.toLowerCase()}.png",
+      errorBuilder: (context, error, stackTrace) {
+        // If the image fails to load (e.g., 404 Not Found),
+        // return an empty widget instead of an error icon.
+        return const SizedBox.shrink();
+      },
+    );
   }
 
   @override
@@ -132,7 +143,8 @@ class _NotificationsPageBody extends StatelessWidget {
   final ScrollController scrollController;
   final Future<void> Function() onRefresh;
   final DateFormat dateFormatter;
-  final Image? Function(String?) getIconForNotificationType;
+  // MODIFIED: The function now returns a Widget? instead of Image?
+  final Widget? Function(String?) getIconForNotificationType;
 
   const _NotificationsPageBody({
     required this.isLoading,
@@ -242,7 +254,8 @@ class _EmptyView extends StatelessWidget {
 class _NotificationListItem extends StatelessWidget {
   final CustomerNotification notification;
   final DateFormat dateFormatter;
-  final Image? Function(String?) getIconForNotificationType;
+  // MODIFIED: The function now returns a Widget? instead of Image?
+  final Widget? Function(String?) getIconForNotificationType;
 
   const _NotificationListItem({
     super.key,
@@ -253,14 +266,16 @@ class _NotificationListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = getIconForNotificationType(notification.eCommerceCode);
-    
+    // This now returns a full widget with error handling, or null.
+    final iconWidget = getIconForNotificationType(notification.eCommerceCode);
+
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.grey.shade200,
-        child:
-        Image(image: icon?.image ?? AssetImage("assets/images/logo.png"), color: Colors.grey.shade800),
-      ),
+      leading: iconWidget != null
+          ? CircleAvatar(
+              backgroundColor: Colors.white,
+              child: iconWidget,
+            )
+          : null,
       title: Html(
         data: getNotificationNameFromType(getNotificationTypeFromValue(notification.notificationType)),
         style: {
@@ -272,9 +287,7 @@ class _NotificationListItem extends StatelessWidget {
             textOverflow: TextOverflow.ellipsis,
           ),
            "i": Style(
-             // Font Awesome icons are fonts, so we can style them.
-             // This is a basic style, might need a custom font if not rendering correctly.
-             color: Theme.of(context).primaryColor, 
+             color: Theme.of(context).primaryColor,
            ),
         },
       ),
@@ -286,7 +299,6 @@ class _NotificationListItem extends StatelessWidget {
         ),
       ),
       onTap: () {
-        // TODO: Implement navigation to notification detail or action
         debugPrint("Notification tapped: ${notification.id}");
       },
     );
