@@ -323,9 +323,10 @@ class _NotificationListItem extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Tarih: ${dateFormatter.format(notification.notificationDate)}',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700],fontSize: 14),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[700],
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 4),
             const SizedBox(height: 4),
