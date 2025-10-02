@@ -101,16 +101,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  static IconData getIconForNotificationType(int notificationType) {
+  static Image? getIconForNotificationType(String? eCommerceCode) {
     // Placeholder logic - expand with all your types
-    switch (notificationType) {
-      case 6:
-        return Icons.undo; // Return/Claim
-      case 8:
-        return Icons.delete_outline; // Delete
-      default:
-        return Icons.notifications_none;
-    }
+   return Image.network("https://panel.pranomi.com/images/eCommerceLogo/${eCommerceCode?.toLowerCase()}.png");
   }
 
   @override
@@ -139,7 +132,7 @@ class _NotificationsPageBody extends StatelessWidget {
   final ScrollController scrollController;
   final Future<void> Function() onRefresh;
   final DateFormat dateFormatter;
-  final IconData Function(int) getIconForNotificationType;
+  final Image? Function(String?) getIconForNotificationType;
 
   const _NotificationsPageBody({
     required this.isLoading,
@@ -249,7 +242,7 @@ class _EmptyView extends StatelessWidget {
 class _NotificationListItem extends StatelessWidget {
   final CustomerNotification notification;
   final DateFormat dateFormatter;
-  final IconData Function(int) getIconForNotificationType;
+  final Image? Function(String?) getIconForNotificationType;
 
   const _NotificationListItem({
     super.key,
@@ -260,12 +253,13 @@ class _NotificationListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = getIconForNotificationType(notification.notificationType);
+    final icon = getIconForNotificationType(notification.eCommerceCode);
     
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey.shade200,
-        child: Icon(icon, color: Colors.grey.shade800),
+        child:
+        Image(image: icon?.image ?? AssetImage("assets/images/logo.png"), color: Colors.grey.shade800),
       ),
       title: Html(
         data: getNotificationNameFromType(getNotificationTypeFromValue(notification.notificationType)),
