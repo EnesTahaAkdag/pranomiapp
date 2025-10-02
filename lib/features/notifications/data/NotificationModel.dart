@@ -17,12 +17,12 @@ class NotificationResponse {
     return NotificationResponse(
       success: json['Success'] ?? false,
       statusCode: json['StatusCode'] ?? 0,
-      item: json['Item'] != null ? NotificationItem.fromJson(json['Item']) : null,
+      item:
+          json['Item'] != null ? NotificationItem.fromJson(json['Item']) : null,
     );
   }
 }
 
-/// Item İçeriği
 class NotificationItem {
   final int count;
   final int currentPage;
@@ -42,10 +42,14 @@ class NotificationItem {
     // --- THIS IS THE FIX ---
     // Safely parse the list of notifications, defaulting to an empty list if null.
     List<CustomerNotification> notifications = [];
-    if (json['customerNotifications'] != null && json['customerNotifications'] is List) {
-      notifications = (json['customerNotifications'] as List<dynamic>)
-          .map((e) => CustomerNotification.fromJson(e as Map<String, dynamic>))
-          .toList();
+    if (json['customerNotifications'] != null &&
+        json['customerNotifications'] is List) {
+      notifications =
+          (json['customerNotifications'] as List<dynamic>)
+              .map(
+                (e) => CustomerNotification.fromJson(e as Map<String, dynamic>),
+              )
+              .toList();
     }
 
     return NotificationItem(
@@ -58,7 +62,6 @@ class NotificationItem {
   }
 }
 
-/// customerNotifications Detayı
 class CustomerNotification {
   final int id;
   final String referenceNumber;
@@ -79,13 +82,14 @@ class CustomerNotification {
   });
 
   factory CustomerNotification.fromJson(Map<String, dynamic> json) {
-    // Safely parse DateTime
     DateTime parsedDate;
     try {
       parsedDate = DateTime.parse(json['NotificationDate'] as String);
     } catch (e) {
       parsedDate = DateTime.now(); // Fallback to current time on parsing error
-      debugPrint("Error parsing NotificationDate: \${json['NotificationDate']}");
+      debugPrint(
+        "Error parsing NotificationDate: \${json['NotificationDate']}",
+      );
     }
 
     return CustomerNotification(
