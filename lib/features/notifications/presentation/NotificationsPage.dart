@@ -143,6 +143,7 @@ class _NotificationsPageBody extends StatelessWidget {
   final ScrollController scrollController;
   final Future<void> Function() onRefresh;
   final DateFormat dateFormatter;
+
   // MODIFIED: The function now returns a Widget? instead of Image?
   final Widget? Function(String?) getIconForNotificationType;
 
@@ -189,17 +190,19 @@ class _NotificationsPageBody extends StatelessWidget {
             getIconForNotificationType: getIconForNotificationType,
           );
         },
-        separatorBuilder: (context, index) => const Divider(height: 1, indent: 16, endIndent: 16),
+        separatorBuilder:
+            (context, index) =>
+                const Divider(height: 1, indent: 16, endIndent: 16),
       ),
     );
   }
 }
 
-
 // --- UI Helper Widgets ---
 
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
+
   @override
   Widget build(BuildContext context) {
     return const Center(child: CircularProgressIndicator());
@@ -209,6 +212,7 @@ class _LoadingView extends StatelessWidget {
 class _ErrorView extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
+
   const _ErrorView({required this.error, required this.onRetry});
 
   @override
@@ -219,9 +223,16 @@ class _ErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(error, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red, fontSize: 16)),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+            ),
             const SizedBox(height: 20),
-            ElevatedButton(onPressed: onRetry, child: const Text("Tekrar Dene")),
+            ElevatedButton(
+              onPressed: onRetry,
+              child: const Text("Tekrar Dene"),
+            ),
           ],
         ),
       ),
@@ -231,6 +242,7 @@ class _ErrorView extends StatelessWidget {
 
 class _EmptyView extends StatelessWidget {
   final VoidCallback onRefresh;
+
   const _EmptyView({required this.onRefresh});
 
   @override
@@ -241,7 +253,10 @@ class _EmptyView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Okunacak bildirim bulunmamaktadır.', style: TextStyle(fontSize: 16)),
+            const Text(
+              'Okunacak bildirim bulunmamaktadır.',
+              style: TextStyle(fontSize: 16),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(onPressed: onRefresh, child: const Text("Yenile")),
           ],
@@ -254,6 +269,7 @@ class _EmptyView extends StatelessWidget {
 class _NotificationListItem extends StatelessWidget {
   final CustomerNotification notification;
   final DateFormat dateFormatter;
+
   // MODIFIED: The function now returns a Widget? instead of Image?
   final Widget? Function(String?) getIconForNotificationType;
 
@@ -269,44 +285,111 @@ class _NotificationListItem extends StatelessWidget {
     // This now returns a full widget with error handling, or null.
     final iconWidget = getIconForNotificationType(notification.eCommerceCode);
 
-    return ListTile(
-      leading: iconWidget != null
-          ? CircleAvatar(
-              backgroundColor: Colors.white,
-              child: iconWidget,
-            )
-          : null,
-      title: Html(
-        data: getNotificationNameFromType(getNotificationTypeFromValue(notification.notificationType)),
-        style: {
-          "body": Style(
-            margin: Margins.zero,
-            padding: HtmlPaddings.zero,
-            fontSize: FontSize(15),
-            maxLines: 2,
-            textOverflow: TextOverflow.ellipsis,
-          ),
-           "i": Style(
-             color: Theme.of(context).primaryColor,
-           ),
-        },
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: Text(
-          dateFormatter.format(notification.notificationDate),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (iconWidget != null)
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: iconWidget,
+                  ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    getNotificationNameFromType(
+                      getNotificationTypeFromValue(
+                        notification.notificationType,
+                      ),
+                    ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tarih: ${dateFormatter.format(notification.notificationDate)}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700],fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            const SizedBox(height: 4),
+            Text(
+              "Ref No: ${notification.referenceNumber}",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 6),
+            Html(
+              data: "Açıklama: ${notification.description}",
+              style: {
+                "body": Style(
+                  margin: Margins.zero,
+                  padding: HtmlPaddings.zero,
+                  fontSize: FontSize(15),
+                  maxLines: 2,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+                "i": Style(color: Theme.of(context).primaryColor),
+              },
+            ),
+          ],
         ),
       ),
-      onTap: () {
-        debugPrint("Notification tapped: ${notification.id}");
-      },
     );
+
+    /**   return ListTile(
+        leading: iconWidget != null
+        ? CircleAvatar(
+        backgroundColor: Colors.white,
+        child: iconWidget,
+        )
+        : null,
+        title: Html(
+        data: getNotificationNameFromType(getNotificationTypeFromValue(notification.notificationType)),
+        style: {
+        "body": Style(
+        margin: Margins.zero,
+        padding: HtmlPaddings.zero,
+        fontSize: FontSize(15),
+        maxLines: 2,
+        textOverflow: TextOverflow.ellipsis,
+        ),
+        "i": Style(
+        color: Theme.of(context).primaryColor,
+        ),
+        },
+        ),
+        subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4.0),
+        child: Text(
+        dateFormatter.format(notification.notificationDate),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+        ),
+        ),
+        onTap: () {
+        debugPrint("Notification tapped: ${notification.id}");
+        },
+        ); **/
   }
 }
 
 class _LoadingMoreIndicator extends StatelessWidget {
   const _LoadingMoreIndicator();
+
   @override
   Widget build(BuildContext context) {
     return const Padding(
