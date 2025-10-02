@@ -40,6 +40,31 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static const getTitleForRoutes = {
+    '/': 'Genel Bakış',
+    '/ProductsandServices': 'Ürünler ve Hizmetler',
+    '/InComeInvoice': 'Gelen Faturalar',
+    '/ExpenseInvoice': 'Giden Faturalar',
+    '/InComeOrder': 'Gelen Siparişler',
+    '/ExpenseOrder': 'Giden Siparişler',
+    '/IncomeWayBill': 'Gelen İrsaliyeler',
+    '/InComeClaim': 'Satış İade Faturası',
+    '/ExpenseClaim': 'Alış İade Faturası',
+    '/ExpenseWayBill': 'Giden İrsaliyeler',
+    '/ApprovedE-Dispatch': 'Gelen E-İrsaliyeler',
+    '/ApprovedE-Invoice': 'Gelen E-Faturalar',
+    '/OutGoingE-Dispatch': 'Gide E-İrsaliyeler',
+    '/OutGoingE-Archive': 'Giden E-Arşiv Faturalar',
+    '/OutGoingE-Invoice': 'Giden E-Faturalar',
+    '/CustomerAccounts': 'Cari Hesaplar',
+    '/EmployeAccounts': 'Çalışanlar',
+    '/SupplierAccounts': 'Tedarikçiler',
+    '/DepositAndBanks': 'Kasa Ve Bankalar',
+    '/Announcements': 'Duyurular',
+    '/Credits': 'Kontörlerim',
+    '/Notifications': 'Bildirimler',
+  };
+
   Future<bool> _isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? apiKey = prefs.getString('apiKey');
@@ -276,75 +301,6 @@ class MyApp extends StatelessWidget {
   }
 
   String _getTitleForRoute(String path) {
-    switch (path) {
-      case '/':
-        return 'Genel Bakış';
-
-      case '/ProductsandServices':
-        return 'Ürünler ve Hizmetler';
-
-      case '/InComeInvoice':
-        return 'Gelen Faturalar';
-
-      case '/ExpenseInvoice':
-        return 'Giden Faturalar';
-
-      case '/InComeOrder':
-        return 'Gelen Siparişler';
-
-      case '/ExpenseOrder':
-        return 'Giden Siparişler';
-
-      case '/IncomeWayBill':
-        return 'Gelen İrsaliyeler';
-
-      case '/InComeClaim':
-        return 'Satış İade Faturası';
-
-      case '/ExpenseClaim':
-        return 'Alış İade Faturası';
-
-      case '/ExpenseWayBill':
-        return 'Giden İrsaliyeler';
-
-      case '/ApprovedE-Dispatch':
-        return 'Gelen E-İrsaliyeler';
-
-      case '/ApprovedE-Invoice':
-        return 'Gelen E-Faturalar';
-
-      case '/OutGoingE-Dispatch':
-        return 'Gide E-İrsaliyeler';
-
-      case '/OutGoingE-Archive':
-        return 'Giden E-Arşiv Faturalar';
-
-      case '/OutGoingE-Invoice':
-        return 'Giden E-Faturalar';
-
-      case '/CustomerAccounts':
-        return 'Cari Hesaplar';
-
-      case '/EmployeAccounts':
-        return 'Çalışanlar';
-
-      case '/SupplierAccounts':
-        return 'Tedarikçiler';
-
-      case '/DepositAndBanks':
-        return 'Kasa Ve Bankalar';
-
-      case '/Announcements':
-        return 'Duyurular';
-
-      case '/Credits':
-        return 'Kontörlerim';
-
-      case '/Notifications':
-        return 'Bildirimler';
-
-      default:
-        return 'Sayfa';
-    }
+    return getTitleForRoutes[path] ?? 'Sayfa';
   }
 }
