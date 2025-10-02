@@ -310,9 +310,10 @@ class _NotificationListItem extends StatelessWidget {
                         notification.notificationType,
                       ),
                     ),
+                    textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 20,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
