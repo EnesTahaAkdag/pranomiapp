@@ -8,31 +8,14 @@ class NotificationsService extends ApiServiceBase {
   Future<NotificationItem?> fetchNotifications({
     required int page,
     required int size,
-  }) async {
-    try {
-      final headers = await getAuthHeaders();
-      const String path = '/Notifications'; // Simplified path definition
-
-      final response = await dio.get(
-        path, // Use const path
-        queryParameters: {'page': page, 'size': size},
-        options: Options(headers: headers),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        // --- THIS IS THE FIX ---
-        // Parse the full response, then return the 'item' from it.
-        return NotificationResponse.fromJson(response.data).item;
-      } else {
-        debugPrint("Veri alınamadı: ${response.statusCode}");
-        return null;
-      }
-    } on DioException catch (dioError) {
-      debugPrint('DioException: ${dioError.response?.data ?? dioError.message}');
-      return null;
-    } catch (e) {
-      debugPrint('Genel Hata: $e');
-      return null;
-    }
+  }) {
+    return getRequest<NotificationItem?>(
+      path: 'Notifications',
+      queryParameters: {
+        'page': page,
+        'size': size,
+      },
+      fromJson: (data) => NotificationResponse.fromJson(data).item,
+    );
   }
 }
