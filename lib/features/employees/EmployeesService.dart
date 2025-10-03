@@ -10,44 +10,18 @@ class EmployeesService extends ApiServiceBase {
     required int size,
     required CustomerTypeEnum customerType,
     String? search,
-  }) async {
-    try {
-      final headers = await getAuthHeaders();
-
-      String path;
-      if (search != null && search.isNotEmpty) {
-        path = '/Customer/$search'; // Use search term in the path
-      } else {
-        path = '/Customer';
-      }
-
-      // Query parameters that are always sent
-      Map<String, dynamic> queryParameters = {
+  }) {
+    return getRequest(
+      path:
+          search != null && search.isNotEmpty
+              ? '/Customer/$search'
+              : '/Customer',
+      queryParameters: {
         'page': page,
         'size': size,
         'customerType': customerType.name,
-      };
-
-      final response = await dio.get(
-        path, // Use the dynamically constructed path
-        queryParameters: queryParameters, // Pass the consistent query parameters
-        options: Options(headers: headers),
-      );
-
-      if (response.statusCode == 200) {
-        return EmployeesResponse.fromJson(response.data);
-      } else {
-        debugPrint("Veri alınamadı (fetchEmployees): ${response.statusCode}");
-        return null;
-      }
-    } on DioException catch (dioError) {
-      debugPrint(
-        'DioException (fetchEmployees): ${dioError.response?.data ?? dioError.message}',
-      );
-      return null;
-    } catch (e) {
-      debugPrint('Genel Hata (fetchEmployees): $e');
-      return null;
-    }
+      },
+      fromJson: (data) => EmployeesResponse.fromJson(data),
+    );
   }
 }
