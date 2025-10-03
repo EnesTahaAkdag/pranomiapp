@@ -6,6 +6,7 @@ import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
 import 'package:pranomiapp/Pages/SharedPage/Layout.dart';
 import 'package:pranomiapp/features/credit/presentation/CreditPage.dart';
+import 'package:pranomiapp/features/dashboard/presentation/DashboardPage.dart';
 import 'package:pranomiapp/features/employees/EmployeeAddPage.dart';
 import 'package:pranomiapp/features/employees/EmployeesPage.dart';
 import 'package:pranomiapp/features/notifications/presentation/NotificationsPage.dart';
@@ -96,7 +97,7 @@ class PranomiApp extends StatelessWidget {
                     title: _getTitleForRoute(state.uri.path),
                   ),
               routes: [
-                GoRoute(path: '/', builder: (_, __) => const HomePage()),
+                GoRoute(path: '/', builder: (_, __) => const DashboardPage()),
 
                 GoRoute(
                   path: '/ProductsandServices',

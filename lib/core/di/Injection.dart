@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:pranomiapp/features/authentication/data/LoginServices.dart';
 import 'package:pranomiapp/features/credit/data/CreditService.dart';
+import 'package:pranomiapp/features/dashboard/data/DashboardService.dart';
 import 'package:pranomiapp/features/employees/EmployeeAddService.dart';
 import 'package:pranomiapp/features/employees/EmployeesService.dart';
 import 'package:pranomiapp/features/notifications/data/NotificationsService.dart';
@@ -92,5 +93,9 @@ void setupLocator() {
 
   locator.registerLazySingleton<NotificationsService>(
     () => NotificationsService(),
+  );
+
+  locator.registerLazySingleton<DashboardService>(
+        () => DashboardService(),
   );
 }
