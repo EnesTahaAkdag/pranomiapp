@@ -10,44 +10,19 @@ class CustomerService extends ApiServiceBase {
     required int size,
     required CustomerTypeEnum customerType,
     String? search,
-  }) async {
-    try {
-      final headers = await getAuthHeaders();
+  }) {
+    final path = (search != null && search.isNotEmpty)
+        ? '/Customer/$search'
+        : '/Customer';
 
-      String path;
-      if (search != null && search.isNotEmpty) {
-        path = '/Customer/$search';
-        } else {
-        path = '/Customer';
-      }
-
-      Map<String, dynamic> queryParameters = {
+    return getRequest<CustomerResponseModel>(
+      path: path,
+      queryParameters: {
         'page': page,
         'size': size,
-        'customerType': customerType.name
-      };
-
-      final response = await dio.get(
-        path,
-        queryParameters:
-          queryParameters,
-        options: Options(headers: headers),
-      );
-
-      if (response.statusCode == 200) {
-        return CustomerResponseModel.fromJson(response.data);
-      } else {
-        debugPrint("Veri alınamadı: ${response.statusCode}");
-        return null;
-      }
-    } on DioException catch (dioError) {
-      debugPrint(
-        'DioException: ${dioError.response?.data ?? dioError.message}',
-      );
-      return null;
-    } catch (e) {
-      debugPrint('Genel Hata: $e');
-      return null;
-    }
+        'customerType': customerType.name,
+      },
+      fromJson: (data) => CustomerResponseModel.fromJson(data),
+    );
   }
 }
