@@ -1,8 +1,5 @@
-// lib/features/notifications/data/NotificationsService.dart
-
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';import 'NotificationModel.dart';
+import 'package:pranomiapp/Helper/ApiServices/ApiService.dart';
+import 'NotificationModel.dart';
 
 class NotificationsService extends ApiServiceBase {
   Future<NotificationItem?> fetchNotifications({
@@ -11,10 +8,7 @@ class NotificationsService extends ApiServiceBase {
   }) {
     return getRequest<NotificationItem?>(
       path: 'Notifications',
-      queryParameters: {
-        'page': page,
-        'size': size,
-      },
+      queryParameters: {'page': page, 'size': size},
       fromJson: (data) => NotificationResponse.fromJson(data).item,
     );
   }
