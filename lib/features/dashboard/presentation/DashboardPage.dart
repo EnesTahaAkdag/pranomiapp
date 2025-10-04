@@ -311,6 +311,7 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
+      surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -336,13 +337,16 @@ class DashboardCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 8),
-                      DashboardListItem(
-                        dashboardTitle: "Kasadwadwadawdwadawdawdaw",
-                      ),
-                      DashboardListItem(dashboardTitle: "Cari Hesap Çek"),
-                      DashboardListItem(dashboardTitle: "Cari Hesap Senet"),
-                      DashboardListItem(dashboardTitle: "Banka"),
+                      SizedBox(height: 16),
+                      DashboardListItem(dashboardTitle: "Kasa",imagePath: 'lib/assets/images/icon_cash_account.svg',),
+                      SizedBox(height: 16),
+
+                      DashboardListItem(dashboardTitle: "Cari Hesap  \n Çek",imagePath: 'lib/assets/images/icon_cheque.svg',),
+                      SizedBox(height: 16),
+                      DashboardListItem(dashboardTitle: "Cari Hesap  \n Senet",imagePath: 'lib/assets/images/icon_bond.svg',),
+                      SizedBox(height: 16),
+
+                      DashboardListItem(dashboardTitle: "Banka",imagePath: 'lib/assets/images/icon_bank.svg',),
                     ],
                   ),
                 ),
@@ -359,10 +363,14 @@ class DashboardCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 8),
-                      DashboardListItem(dashboardTitle: "Cari Borçlar"),
-                      DashboardListItem(dashboardTitle: "Ödenecek Çekler"),
-                      DashboardListItem(dashboardTitle: "Ödenecek Senetler"),
+                      SizedBox(height: 16),
+                      DashboardListItem(dashboardTitle: "Cari Borçlar",imagePath: 'lib/assets/images/icon_cash_account.svg',),
+                      SizedBox(height: 16),
+
+                      DashboardListItem(dashboardTitle: "Ödenecek Çekler",imagePath: 'lib/assets/images/icon_cheque.svg',),
+                      SizedBox(height: 16),
+
+                      DashboardListItem(dashboardTitle: "Ödenecek Senetler",imagePath: 'lib/assets/images/icon_bond.svg',),
                     ],
                   ),
                 ),
@@ -377,21 +385,29 @@ class DashboardCard extends StatelessWidget {
 
 class DashboardListItem extends StatelessWidget {
   final String dashboardTitle;
+  final String imagePath;
 
-  const DashboardListItem({super.key, required this.dashboardTitle});
+  const DashboardListItem({
+    super.key,
+    required this.dashboardTitle,
+    required this.imagePath,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         SvgPicture.asset(
-          'lib/assets/images/icon_cheque.svg',
+          imagePath,
           width: 32,
           height: 32,
           alignment: Alignment.center,
         ),
         SizedBox(width: 16),
-        Column(children: [Text("Kasa"), SizedBox(height: 8), Text("450")]),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [Text(dashboardTitle), SizedBox(height: 8), Text("450")],
+        ),
       ],
     );
   }
