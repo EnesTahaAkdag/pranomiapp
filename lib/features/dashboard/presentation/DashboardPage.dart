@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardModel.dart';
@@ -63,7 +64,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: _buildBody(),
+      body: DashboardCard(dashboardTitle: "Güncel"),
     );
   }
 
@@ -78,9 +79,16 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
+              ),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: _fetchDashboard, child: const Text("Tekrar Dene")),
+              ElevatedButton(
+                onPressed: _fetchDashboard,
+                child: const Text("Tekrar Dene"),
+              ),
             ],
           ),
         ),
@@ -93,7 +101,10 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             const Text("Gösterilecek veri bulunamadı."),
             const SizedBox(height: 20),
-            ElevatedButton(onPressed: _fetchDashboard, child: const Text("Yenile")),
+            ElevatedButton(
+              onPressed: _fetchDashboard,
+              child: const Text("Yenile"),
+            ),
           ],
         ),
       );
@@ -108,13 +119,31 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 12),
           _buildCustomerAccountCard(_dashboardItem!),
           const SizedBox(height: 12),
-           _buildTotalIncomeExpenseCard(_dashboardItem!),
+          _buildTotalIncomeExpenseCard(_dashboardItem!),
           const SizedBox(height: 12),
-          _buildInvoiceCard('Fatura', _dashboardItem!.activeInvoiceReceiving, _dashboardItem!.nextInvoiceReceiving, _dashboardItem!.activeInvoicePayment, _dashboardItem!.nextInvoicePayment),
+          _buildInvoiceCard(
+            'Fatura',
+            _dashboardItem!.activeInvoiceReceiving,
+            _dashboardItem!.nextInvoiceReceiving,
+            _dashboardItem!.activeInvoicePayment,
+            _dashboardItem!.nextInvoicePayment,
+          ),
           const SizedBox(height: 12),
-          _buildInvoiceCard('Çek', _dashboardItem!.activeChequeReceiving, _dashboardItem!.nextChequeReceiving, _dashboardItem!.activeChequePayment, _dashboardItem!.nextChequePayment),
-           const SizedBox(height: 12),
-          _buildInvoiceCard('Senet', _dashboardItem!.activeDeedReceiving, _dashboardItem!.nextDeedReceiving, _dashboardItem!.activeDeedPayment, _dashboardItem!.nextDeedPayment),
+          _buildInvoiceCard(
+            'Çek',
+            _dashboardItem!.activeChequeReceiving,
+            _dashboardItem!.nextChequeReceiving,
+            _dashboardItem!.activeChequePayment,
+            _dashboardItem!.nextChequePayment,
+          ),
+          const SizedBox(height: 12),
+          _buildInvoiceCard(
+            'Senet',
+            _dashboardItem!.activeDeedReceiving,
+            _dashboardItem!.nextDeedReceiving,
+            _dashboardItem!.activeDeedPayment,
+            _dashboardItem!.nextDeedPayment,
+          ),
         ],
       ),
     );
@@ -125,10 +154,18 @@ class _DashboardPageState extends State<DashboardPage> {
       title: 'Kasa ve Banka Bakiyeleri',
       icon: Icons.account_balance_wallet,
       children: [
-        _DataRow('Nakit Toplam', data.totalCashAccountBalance, isReceiving: true),
+        _DataRow(
+          'Nakit Toplam',
+          data.totalCashAccountBalance,
+          isReceiving: true,
+        ),
         const Divider(),
-        ...data.totalBankAccountBalances.map((bank) => 
-          _DataRow('${bank.currencyCode} Banka Toplam', bank.totalBankAccountBalance, isReceiving: true)
+        ...data.totalBankAccountBalances.map(
+          (bank) => _DataRow(
+            '${bank.currencyCode} Banka Toplam',
+            bank.totalBankAccountBalance,
+            isReceiving: true,
+          ),
         ),
       ],
     );
@@ -139,16 +176,24 @@ class _DashboardPageState extends State<DashboardPage> {
       title: 'Cari Hesap Durumu',
       icon: Icons.people,
       children: [
-        _DataRow('Vadesi Gelen Alacaklar', data.activeCustomerAccountReceiving, isReceiving: true),
+        _DataRow(
+          'Vadesi Gelen Alacaklar',
+          data.activeCustomerAccountReceiving,
+          isReceiving: true,
+        ),
         _DataRow('Vadesi Gelen Borçlar', data.activeCustomerAccountPayment),
         const Divider(),
-        _DataRow('Gelecek Alacaklar', data.nextCustomerAccountReceiving, isReceiving: true),
+        _DataRow(
+          'Gelecek Alacaklar',
+          data.nextCustomerAccountReceiving,
+          isReceiving: true,
+        ),
         _DataRow('Gelecek Borçlar', data.nextCustomerAccountPayment),
       ],
     );
   }
-  
-    Widget _buildTotalIncomeExpenseCard(DashboardItem data) {
+
+  Widget _buildTotalIncomeExpenseCard(DashboardItem data) {
     return _DataCard(
       title: 'Toplam Gelir ve Gider',
       icon: Icons.swap_horiz,
@@ -159,10 +204,19 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildInvoiceCard(String title, double activeReceiving, double nextReceiving, double activePayment, double nextPayment) {
+  Widget _buildInvoiceCard(
+    String title,
+    double activeReceiving,
+    double nextReceiving,
+    double activePayment,
+    double nextPayment,
+  ) {
     return _DataCard(
       title: '$title Durumu',
-      icon: title == 'Fatura' ? Icons.receipt_long : (title == 'Çek' ? Icons.sticky_note_2 : Icons.description),
+      icon:
+          title == 'Fatura'
+              ? Icons.receipt_long
+              : (title == 'Çek' ? Icons.sticky_note_2 : Icons.description),
       children: [
         _DataRow('Vadesi Gelen Alacaklar', activeReceiving, isReceiving: true),
         _DataRow('Vadesi Gelen Borçlar', activePayment),
@@ -180,7 +234,11 @@ class _DataCard extends StatelessWidget {
   final IconData icon;
   final List<Widget> children;
 
-  const _DataCard({required this.title, required this.icon, required this.children});
+  const _DataCard({
+    required this.title,
+    required this.icon,
+    required this.children,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +254,12 @@ class _DataCard extends StatelessWidget {
               children: [
                 Icon(icon, color: Theme.of(context).primaryColor, size: 28),
                 const SizedBox(width: 10),
-                Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -235,6 +298,101 @@ class _DataRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class DashboardCard extends StatelessWidget {
+  final String dashboardTitle;
+
+  const DashboardCard({super.key, required this.dashboardTitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Güncel (Ekim 2025)"),
+
+            SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Varlıklar sütunu
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Varlıklar",
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      DashboardListItem(
+                        dashboardTitle: "Kasadwadwadawdwadawdawdaw",
+                      ),
+                      DashboardListItem(dashboardTitle: "Cari Hesap Çek"),
+                      DashboardListItem(dashboardTitle: "Cari Hesap Senet"),
+                      DashboardListItem(dashboardTitle: "Banka"),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // Borçlar sütunu
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Borçlar",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      DashboardListItem(dashboardTitle: "Cari Borçlar"),
+                      DashboardListItem(dashboardTitle: "Ödenecek Çekler"),
+                      DashboardListItem(dashboardTitle: "Ödenecek Senetler"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardListItem extends StatelessWidget {
+  final String dashboardTitle;
+
+  const DashboardListItem({super.key, required this.dashboardTitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SvgPicture.asset(
+          'lib/assets/images/icon_cheque.svg',
+          width: 32,
+          height: 32,
+          alignment: Alignment.center,
+        ),
+        SizedBox(width: 16),
+        Column(children: [Text("Kasa"), SizedBox(height: 8), Text("450")]),
+      ],
     );
   }
 }
