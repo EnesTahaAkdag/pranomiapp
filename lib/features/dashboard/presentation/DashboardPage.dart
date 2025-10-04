@@ -338,15 +338,27 @@ class DashboardCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 16),
-                      DashboardListItem(dashboardTitle: "Kasa",imagePath: 'lib/assets/images/icon_cash_account.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Kasa",
+                        imagePath: 'lib/assets/images/icon_cash_account.svg',
+                      ),
                       SizedBox(height: 16),
 
-                      DashboardListItem(dashboardTitle: "Cari Hesap  \n Çek",imagePath: 'lib/assets/images/icon_cheque.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Cari Hesap  \n Çek",
+                        imagePath: 'lib/assets/images/icon_cheque.svg',
+                      ),
                       SizedBox(height: 16),
-                      DashboardListItem(dashboardTitle: "Cari Hesap  \n Senet",imagePath: 'lib/assets/images/icon_bond.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Cari Hesap  \n Senet",
+                        imagePath: 'lib/assets/images/icon_bond.svg',
+                      ),
                       SizedBox(height: 16),
 
-                      DashboardListItem(dashboardTitle: "Banka",imagePath: 'lib/assets/images/icon_bank.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Banka",
+                        imagePath: 'lib/assets/images/icon_bank.svg',
+                      ),
                     ],
                   ),
                 ),
@@ -364,13 +376,22 @@ class DashboardCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 16),
-                      DashboardListItem(dashboardTitle: "Cari Borçlar",imagePath: 'lib/assets/images/icon_cash_account.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Cari Borçlar",
+                        imagePath: 'lib/assets/images/icon_cash_account.svg',
+                      ),
                       SizedBox(height: 16),
 
-                      DashboardListItem(dashboardTitle: "Ödenecek Çekler",imagePath: 'lib/assets/images/icon_cheque.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Ödenecek Çekler",
+                        imagePath: 'lib/assets/images/icon_cheque.svg',
+                      ),
                       SizedBox(height: 16),
 
-                      DashboardListItem(dashboardTitle: "Ödenecek Senetler",imagePath: 'lib/assets/images/icon_bond.svg',),
+                      DashboardListItem(
+                        dashboardTitle: "Ödenecek Senetler",
+                        imagePath: 'lib/assets/images/icon_bond.svg',
+                      ),
                     ],
                   ),
                 ),
