@@ -625,9 +625,21 @@ class DashboardListItem extends StatelessWidget {
           alignment: Alignment.center,
         ),
         SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(dashboardTitle), SizedBox(height: 8), Text(amount)],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                dashboardTitle,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 8),
+              Text(
+                amount,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ],
     );
