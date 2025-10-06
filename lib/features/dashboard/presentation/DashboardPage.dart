@@ -4,8 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardModel.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardService.dart';
-import 'package:intl/date_symbol_data_local.dart';
-
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -503,6 +501,6 @@ class DashboardListItem extends StatelessWidget {
   }
 }
 
-String _getCurrentMonthYear(){
+String _getCurrentMonthYear() {
   return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
 }
