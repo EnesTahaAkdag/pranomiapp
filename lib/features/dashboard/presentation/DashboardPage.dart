@@ -64,48 +64,42 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final DashboardItem dashboard =
         _dashboardItem ??
-            DashboardItem(
-              totalCashAccountBalance: 0,
-              totalBankAccountBalances: [],
-              activeCustomerAccountReceiving: 0,
-              activeCustomerAccountPayment: 0,
-              nextCustomerAccountReceiving: 0,
-              nextCustomerAccountPayment: 0,
-              totalIncomeAmount: 0,
-              totalExpenseAmount: 0,
-              activeInvoiceReceiving: 0,
-              nextInvoiceReceiving: 0,
-              activeInvoicePayment: 0,
-              nextInvoicePayment: 0,
-              activeChequeReceiving: 0,
-              nextChequeReceiving: 0,
-              activeChequePayment: 0,
-              nextChequePayment: 0,
-              activeDeedReceiving: 0,
-              nextDeedReceiving: 0,
-              activeDeedPayment: 0,
-              nextDeedPayment: 0,
-            );
+        DashboardItem(
+          totalCashAccountBalance: 0,
+          totalBankAccountBalances: [],
+          activeCustomerAccountReceiving: 0,
+          activeCustomerAccountPayment: 0,
+          nextCustomerAccountReceiving: 0,
+          nextCustomerAccountPayment: 0,
+          totalIncomeAmount: 0,
+          totalExpenseAmount: 0,
+          activeInvoiceReceiving: 0,
+          nextInvoiceReceiving: 0,
+          activeInvoicePayment: 0,
+          nextInvoicePayment: 0,
+          activeChequeReceiving: 0,
+          nextChequeReceiving: 0,
+          activeChequePayment: 0,
+          nextChequePayment: 0,
+          activeDeedReceiving: 0,
+          nextDeedReceiving: 0,
+          activeDeedPayment: 0,
+          nextDeedPayment: 0,
+        );
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            DashboardCard(
-              dashboardTitle: "Güncel",
-              dashboardItem: dashboard,
-            ),
+            DashboardCard(dashboardTitle: "Güncel", dashboardItem: dashboard),
             const SizedBox(height: 16),
-            DashboardNextCard(
-              dashboardItem: dashboard,
-            ),
+            DashboardNextCard(dashboardItem: dashboard),
           ],
         ),
       ),
     );
   }
-
 }
 
 class DashboardNextCard extends StatelessWidget {
@@ -117,11 +111,14 @@ class DashboardNextCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
     String bankBalance =
-    dashboardItem.totalBankAccountBalances.isNotEmpty
-        ? formatter.format(
-      dashboardItem.totalBankAccountBalances.first.totalBankAccountBalance,
-    )
-        : formatter.format(0);
+        dashboardItem.totalBankAccountBalances.isNotEmpty
+            ? formatter.format(
+              dashboardItem
+                  .totalBankAccountBalances
+                  .first
+                  .totalBankAccountBalance,
+            )
+            : formatter.format(0);
 
     return Card(
       elevation: 4,
@@ -133,7 +130,7 @@ class DashboardNextCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Gelecek Dönem (${_getNextMonthYear()})"),
+            Text("Gelecek Dönem"),
             SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,9 +213,7 @@ class DashboardNextCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
-                        amount: formatter.format(
-                          dashboardItem.nextDeedPayment,
-                        ),
+                        amount: formatter.format(dashboardItem.nextDeedPayment),
                       ),
                     ],
                   ),
@@ -246,14 +241,14 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
     String bankBalance =
-    dashboardItem.totalBankAccountBalances.isNotEmpty
-        ? formatter.format(
-      dashboardItem
-          .totalBankAccountBalances
-          .first
-          .totalBankAccountBalance,
-    )
-        : formatter.format(0);
+        dashboardItem.totalBankAccountBalances.isNotEmpty
+            ? formatter.format(
+              dashboardItem
+                  .totalBankAccountBalances
+                  .first
+                  .totalBankAccountBalance,
+            )
+            : formatter.format(0);
 
     return Card(
       elevation: 4,
@@ -447,10 +442,7 @@ class DashboardListItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                dashboardTitle,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Text(dashboardTitle, overflow: TextOverflow.ellipsis),
               SizedBox(height: 8),
               Text(
                 formattedAbsAmount,
@@ -467,12 +459,4 @@ class DashboardListItem extends StatelessWidget {
 
 String _getCurrentMonthYear() {
   return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
-}
-
-String _getNextMonthYear() {
-  DateTime now = DateTime.now();
-  int year = now.month == 12 ? now.year + 1 : now.year;
-  int month = now.month == 12 ? 1 : now.month + 1;
-  final next = DateTime(year, month);
-  return DateFormat('MMMM yyyy', 'tr_TR').format(next);
 }
