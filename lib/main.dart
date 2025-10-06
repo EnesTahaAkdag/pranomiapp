@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:pranomiapp/Pages/AccountPages/AccountPage/AcoountDepositAndBanks.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/Pages/HomesPage.dart';
@@ -27,6 +28,7 @@ import 'features/products/presentation/ProductsAndServicesPage.dart';
 void main() async {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('tr_TR', null);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(255, 41, 41, 41),

@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardModel.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardService.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -64,7 +66,37 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: DashboardCard(dashboardTitle: "Güncel"),
+      body:
+          _dashboardItem != null
+              ? DashboardCard(
+                dashboardTitle: "Güncel",
+                dashboardItem: _dashboardItem!,
+              )
+              : DashboardCard(
+                dashboardTitle: "Güncel",
+                dashboardItem: DashboardItem(
+                  totalCashAccountBalance: 0,
+                  totalBankAccountBalances: [],
+                  activeCustomerAccountReceiving: 0,
+                  activeCustomerAccountPayment: 0,
+                  nextCustomerAccountReceiving: 0,
+                  nextCustomerAccountPayment: 0,
+                  totalIncomeAmount: 0,
+                  totalExpenseAmount: 0,
+                  activeInvoiceReceiving: 0,
+                  nextInvoiceReceiving: 0,
+                  activeInvoicePayment: 0,
+                  nextInvoicePayment: 0,
+                  activeChequeReceiving: 0,
+                  nextChequeReceiving: 0,
+                  activeChequePayment: 0,
+                  nextChequePayment: 0,
+                  activeDeedReceiving: 0,
+                  nextDeedReceiving: 0,
+                  activeDeedPayment: 0,
+                  nextDeedPayment: 0,
+                ),
+              ),
     );
   }
 
@@ -304,11 +336,27 @@ class _DataRow extends StatelessWidget {
 
 class DashboardCard extends StatelessWidget {
   final String dashboardTitle;
+  final DashboardItem dashboardItem;
 
-  const DashboardCard({super.key, required this.dashboardTitle});
+  const DashboardCard({
+    super.key,
+    required this.dashboardTitle,
+    required this.dashboardItem,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
+    String bankBalance =
+        dashboardItem.totalBankAccountBalances.isNotEmpty
+            ? formatter.format(
+              dashboardItem
+                  .totalBankAccountBalances
+                  .first
+                  .totalBankAccountBalance,
+            )
+            : formatter.format(0);
+
     return Card(
       elevation: 4,
       surfaceTintColor: Colors.white,
@@ -319,7 +367,7 @@ class DashboardCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Güncel (Ekim 2025)"),
+            Text("Güncel (${_getCurrentMonthYear()})"),
 
             SizedBox(height: 16),
             Row(
@@ -341,23 +389,33 @@ class DashboardCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
+                        amount: formatter.format(
+                          dashboardItem.totalCashAccountBalance,
+                        ),
                       ),
                       SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
+                        amount: formatter.format(
+                          dashboardItem.activeChequeReceiving,
+                        ),
                       ),
                       SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
+                        amount: formatter.format(
+                          dashboardItem.activeDeedReceiving,
+                        ),
                       ),
                       SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Banka",
                         imagePath: 'lib/assets/images/icon_bank.svg',
+                        amount: bankBalance,
                       ),
                     ],
                   ),
@@ -379,18 +437,27 @@ class DashboardCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
+                        amount: formatter.format(
+                          dashboardItem.activeCustomerAccountPayment,
+                        ),
                       ),
                       SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
+                        amount: formatter.format(
+                          dashboardItem.activeChequePayment,
+                        ),
                       ),
                       SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
+                        amount: formatter.format(
+                          dashboardItem.activeDeedPayment,
+                        ),
                       ),
                     ],
                   ),
@@ -407,11 +474,13 @@ class DashboardCard extends StatelessWidget {
 class DashboardListItem extends StatelessWidget {
   final String dashboardTitle;
   final String imagePath;
+  final String amount;
 
   const DashboardListItem({
     super.key,
     required this.dashboardTitle,
     required this.imagePath,
+    required this.amount,
   });
 
   @override
@@ -427,9 +496,13 @@ class DashboardListItem extends StatelessWidget {
         SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(dashboardTitle), SizedBox(height: 8), Text("450")],
+          children: [Text(dashboardTitle), SizedBox(height: 8), Text(amount)],
         ),
       ],
     );
   }
+}
+
+String _getCurrentMonthYear(){
+  return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
 }
