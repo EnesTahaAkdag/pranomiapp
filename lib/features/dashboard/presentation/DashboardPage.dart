@@ -62,41 +62,50 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final DashboardItem dashboard =
+        _dashboardItem ??
+        DashboardItem(
+          totalCashAccountBalance: 0,
+          totalBankAccountBalances: [],
+          activeCustomerAccountReceiving: 0,
+          activeCustomerAccountPayment: 0,
+          nextCustomerAccountReceiving: 0,
+          nextCustomerAccountPayment: 0,
+          totalIncomeAmount: 0,
+          totalExpenseAmount: 0,
+          activeInvoiceReceiving: 0,
+          nextInvoiceReceiving: 0,
+          activeInvoicePayment: 0,
+          nextInvoicePayment: 0,
+          activeChequeReceiving: 0,
+          nextChequeReceiving: 0,
+          activeChequePayment: 0,
+          nextChequePayment: 0,
+          activeDeedReceiving: 0,
+          nextDeedReceiving: 0,
+          activeDeedPayment: 0,
+          nextDeedPayment: 0,
+        );
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body:
-          _dashboardItem != null
-              ? DashboardCard(
-                dashboardTitle: "Güncel",
-                dashboardItem: _dashboardItem!,
-              )
-              : DashboardCard(
-                dashboardTitle: "Güncel",
-                dashboardItem: DashboardItem(
-                  totalCashAccountBalance: 0,
-                  totalBankAccountBalances: [],
-                  activeCustomerAccountReceiving: 0,
-                  activeCustomerAccountPayment: 0,
-                  nextCustomerAccountReceiving: 0,
-                  nextCustomerAccountPayment: 0,
-                  totalIncomeAmount: 0,
-                  totalExpenseAmount: 0,
-                  activeInvoiceReceiving: 0,
-                  nextInvoiceReceiving: 0,
-                  activeInvoicePayment: 0,
-                  nextInvoicePayment: 0,
-                  activeChequeReceiving: 0,
-                  nextChequeReceiving: 0,
-                  activeChequePayment: 0,
-                  nextChequePayment: 0,
-                  activeDeedReceiving: 0,
-                  nextDeedReceiving: 0,
-                  activeDeedPayment: 0,
-                  nextDeedPayment: 0,
-                ),
-              ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            DashboardCard(
+              dashboardTitle: "Güncel",
+              dashboardItem: dashboard,
+            ),
+            const SizedBox(height: 16),
+            DashboardNextCard(
+              dashboardItem: dashboard,
+            ),
+          ],
+        ),
+      ),
     );
   }
+  // class DashboardNextCard moved outside of _DashboardPageState.
 
   Widget _buildBody() {
     if (_isLoading) {
@@ -254,6 +263,130 @@ class _DashboardPageState extends State<DashboardPage> {
         _DataRow('Gelecek Alacaklar', nextReceiving, isReceiving: true),
         _DataRow('Gelecek Borçlar', nextPayment),
       ],
+    );
+  }
+}
+
+class DashboardNextCard extends StatelessWidget {
+  final DashboardItem dashboardItem;
+
+  const DashboardNextCard({super.key, required this.dashboardItem});
+
+  @override
+  Widget build(BuildContext context) {
+    final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
+    String bankBalance =
+        dashboardItem.totalBankAccountBalances.isNotEmpty
+            ? formatter.format(
+                dashboardItem.totalBankAccountBalances.first.totalBankAccountBalance,
+              )
+            : formatter.format(0);
+
+    return Card(
+      elevation: 4,
+      surfaceTintColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Gelecek Dönem (${_getNextMonthYear()})"),
+            SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Varlıklar sütunu
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Varlıklar",
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Kasa",
+                        imagePath: 'lib/assets/images/icon_cash_account.svg',
+                        amount: formatter.format(
+                          dashboardItem.totalCashAccountBalance,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Cari Hesap  \n Çek",
+                        imagePath: 'lib/assets/images/icon_cheque.svg',
+                        amount: formatter.format(
+                          dashboardItem.nextChequeReceiving,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Cari Hesap  \n Senet",
+                        imagePath: 'lib/assets/images/icon_bond.svg',
+                        amount: formatter.format(
+                          dashboardItem.nextDeedReceiving,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Banka",
+                        imagePath: 'lib/assets/images/icon_bank.svg',
+                        amount: bankBalance,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 24),
+                // Borçlar sütunu
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Borçlar",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Cari Borçlar",
+                        imagePath: 'lib/assets/images/icon_cash_account.svg',
+                        amount: formatter.format(
+                          dashboardItem.nextCustomerAccountPayment,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Ödenecek Çekler",
+                        imagePath: 'lib/assets/images/icon_cheque.svg',
+                        amount: formatter.format(
+                          dashboardItem.nextChequePayment,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      DashboardListItem(
+                        dashboardTitle: "Ödenecek Senetler",
+                        imagePath: 'lib/assets/images/icon_bond.svg',
+                        amount: formatter.format(
+                          dashboardItem.nextDeedPayment,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -503,4 +636,12 @@ class DashboardListItem extends StatelessWidget {
 
 String _getCurrentMonthYear() {
   return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
+}
+
+String _getNextMonthYear() {
+  DateTime now = DateTime.now();
+  int year = now.month == 12 ? now.year + 1 : now.year;
+  int month = now.month == 12 ? 1 : now.month + 1;
+  final next = DateTime(year, month);
+  return DateFormat('MMMM yyyy', 'tr_TR').format(next);
 }
