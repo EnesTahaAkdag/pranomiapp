@@ -14,6 +14,17 @@ class AppLayout extends StatefulWidget {
     this.showAppBar = true,
   });
 
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('apiKey');
+    await prefs.remove('apiSecret');
+    await prefs.remove('subscriptionType');
+    await prefs.remove('isEInvoiceActive');
+    if (context.mounted) {
+      context.go('/login');
+    }
+  }
+
   @override
   State<AppLayout> createState() => _AppLayoutState();
 }
@@ -238,6 +249,7 @@ class _AppLayoutState extends State<AppLayout> {
                     ]),
                   ]),
                 _drawerItems("Duyurularım", '/Announcements'),
+                _drawerItems("Çıkış Yap", '/login'),
               ],
             ),
           ),
