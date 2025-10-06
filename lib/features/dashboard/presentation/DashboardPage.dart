@@ -64,28 +64,28 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final DashboardItem dashboard =
         _dashboardItem ??
-        DashboardItem(
-          totalCashAccountBalance: 0,
-          totalBankAccountBalances: [],
-          activeCustomerAccountReceiving: 0,
-          activeCustomerAccountPayment: 0,
-          nextCustomerAccountReceiving: 0,
-          nextCustomerAccountPayment: 0,
-          totalIncomeAmount: 0,
-          totalExpenseAmount: 0,
-          activeInvoiceReceiving: 0,
-          nextInvoiceReceiving: 0,
-          activeInvoicePayment: 0,
-          nextInvoicePayment: 0,
-          activeChequeReceiving: 0,
-          nextChequeReceiving: 0,
-          activeChequePayment: 0,
-          nextChequePayment: 0,
-          activeDeedReceiving: 0,
-          nextDeedReceiving: 0,
-          activeDeedPayment: 0,
-          nextDeedPayment: 0,
-        );
+            DashboardItem(
+              totalCashAccountBalance: 0,
+              totalBankAccountBalances: [],
+              activeCustomerAccountReceiving: 0,
+              activeCustomerAccountPayment: 0,
+              nextCustomerAccountReceiving: 0,
+              nextCustomerAccountPayment: 0,
+              totalIncomeAmount: 0,
+              totalExpenseAmount: 0,
+              activeInvoiceReceiving: 0,
+              nextInvoiceReceiving: 0,
+              activeInvoicePayment: 0,
+              nextInvoicePayment: 0,
+              activeChequeReceiving: 0,
+              nextChequeReceiving: 0,
+              activeChequePayment: 0,
+              nextChequePayment: 0,
+              activeDeedReceiving: 0,
+              nextDeedReceiving: 0,
+              activeDeedPayment: 0,
+              nextDeedPayment: 0,
+            );
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
@@ -200,7 +200,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         const Divider(),
         ...data.totalBankAccountBalances.map(
-          (bank) => _DataRow(
+              (bank) => _DataRow(
             '${bank.currencyCode} Banka Toplam',
             bank.totalBankAccountBalance,
             isReceiving: true,
@@ -244,18 +244,18 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildInvoiceCard(
-    String title,
-    double activeReceiving,
-    double nextReceiving,
-    double activePayment,
-    double nextPayment,
-  ) {
+      String title,
+      double activeReceiving,
+      double nextReceiving,
+      double activePayment,
+      double nextPayment,
+      ) {
     return _DataCard(
       title: '$title Durumu',
       icon:
-          title == 'Fatura'
-              ? Icons.receipt_long
-              : (title == 'Çek' ? Icons.sticky_note_2 : Icons.description),
+      title == 'Fatura'
+          ? Icons.receipt_long
+          : (title == 'Çek' ? Icons.sticky_note_2 : Icons.description),
       children: [
         _DataRow('Vadesi Gelen Alacaklar', activeReceiving, isReceiving: true),
         _DataRow('Vadesi Gelen Borçlar', activePayment),
@@ -276,11 +276,11 @@ class DashboardNextCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
     String bankBalance =
-        dashboardItem.totalBankAccountBalances.isNotEmpty
-            ? formatter.format(
-                dashboardItem.totalBankAccountBalances.first.totalBankAccountBalance,
-              )
-            : formatter.format(0);
+    dashboardItem.totalBankAccountBalances.isNotEmpty
+        ? formatter.format(
+      dashboardItem.totalBankAccountBalances.first.totalBankAccountBalance,
+    )
+        : formatter.format(0);
 
     return Card(
       elevation: 4,
@@ -479,14 +479,14 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
     String bankBalance =
-        dashboardItem.totalBankAccountBalances.isNotEmpty
-            ? formatter.format(
-              dashboardItem
-                  .totalBankAccountBalances
-                  .first
-                  .totalBankAccountBalance,
-            )
-            : formatter.format(0);
+    dashboardItem.totalBankAccountBalances.isNotEmpty
+        ? formatter.format(
+      dashboardItem
+          .totalBankAccountBalances
+          .first
+          .totalBankAccountBalance,
+    )
+        : formatter.format(0);
 
     return Card(
       elevation: 4,
@@ -614,8 +614,59 @@ class DashboardListItem extends StatelessWidget {
     required this.amount,
   });
 
+  // Helper to parse formatted amount string to double.
+  double _parseAmount(String formattedAmount) {
+    // Remove currency symbol, spaces, dots for thousands, replace comma with dot.
+    String cleaned = formattedAmount
+        .replaceAll('₺', '')
+        .replaceAll(' ', '')
+        .replaceAll('.', '')
+        .replaceAll(',', '.');
+    // There may still be decimals, e.g. 1234.56
+    return double.tryParse(cleaned) ?? 0.0;
+  }
+
+  // Returns color based on rules.
+  Color _getAmountColor(String dashboardTitle, double amount) {
+    // Varlıklar items
+    final varliklarTitles = [
+      "Kasa",
+      "Cari Hesap  \n Çek",
+      "Cari Hesap  \n Senet",
+      "Banka",
+    ];
+    // Borçlar items
+    final borclarTitles = [
+      "Cari Borçlar",
+      "Ödenecek Çekler",
+      "Ödenecek Senetler",
+    ];
+    // If Varlıklar and amount==0 -> green
+    if (varliklarTitles.contains(dashboardTitle) && amount == 0) {
+      return Colors.green;
+    }
+    // If Borçlar and amount==0 -> red
+    if (borclarTitles.contains(dashboardTitle) && amount == 0) {
+      return Colors.red;
+    }
+    // Otherwise: positive → green, negative → red
+    if (amount > 0) {
+      return Colors.green;
+    } else if (amount < 0) {
+      return Colors.red;
+    } else {
+      // Fallback: default text color
+      return Colors.black;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final parsedAmount = _parseAmount(amount);
+    final absAmount = parsedAmount.abs();
+    final color = _getAmountColor(dashboardTitle, parsedAmount);
+    final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
+    final formattedAbsAmount = formatter.format(absAmount);
     return Row(
       children: [
         SvgPicture.asset(
@@ -635,8 +686,9 @@ class DashboardListItem extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                amount,
+                formattedAbsAmount,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: color, fontWeight: FontWeight.bold),
               ),
             ],
           ),
