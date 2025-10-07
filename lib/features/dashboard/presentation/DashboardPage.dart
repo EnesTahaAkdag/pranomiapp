@@ -62,8 +62,32 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final DashboardItem dashboard =
-        _dashboardItem ??
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: Color(0xFFF5F5F5),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF5F5F5),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                const SizedBox(height: 20),
+                ElevatedButton(onPressed: _fetchDashboard, child: const Text("Tekrar Dene")),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    final DashboardItem dashboard = _dashboardItem ??
         DashboardItem(
           totalCashAccountBalance: 0,
           totalBankAccountBalances: [],
@@ -86,16 +110,20 @@ class _DashboardPageState extends State<DashboardPage> {
           activeDeedPayment: 0,
           nextDeedPayment: 0,
         );
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            DashboardCard(dashboardTitle: "Güncel", dashboardItem: dashboard),
-            const SizedBox(height: 16),
-            DashboardNextCard(dashboardItem: dashboard),
-          ],
+      body: RefreshIndicator(
+        onRefresh: _fetchDashboard,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              DashboardCard(dashboardTitle: "Güncel", dashboardItem: dashboard),
+              const SizedBox(height: 16),
+              DashboardNextCard(dashboardItem: dashboard),
+            ],
+          ),
         ),
       ),
     );
@@ -109,17 +137,6 @@ class DashboardNextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
-    String bankBalance =
-        dashboardItem.totalBankAccountBalances.isNotEmpty
-            ? formatter.format(
-              dashboardItem
-                  .totalBankAccountBalances
-                  .first
-                  .totalBankAccountBalance,
-            )
-            : formatter.format(0);
-
     return Card(
       elevation: 4,
       surfaceTintColor: Colors.white,
@@ -154,32 +171,25 @@ class DashboardNextCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
-                        amount: formatter.format(
-                          dashboardItem.totalCashAccountBalance,
-                        ),
+                        amount: dashboardItem.totalCashAccountBalance,
+                        isAsset: true,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
-                        amount: formatter.format(
-                          dashboardItem.nextChequeReceiving,
-                        ),
+                        amount: dashboardItem.nextChequeReceiving,
+                        isAsset: true,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
-                        amount: formatter.format(
-                          dashboardItem.nextDeedReceiving,
-                        ),
+                        amount: dashboardItem.nextDeedReceiving,
+                        isAsset: true,
                       ),
                       const SizedBox(height: 16),
-                      DashboardListItem(
-                        dashboardTitle: "Banka",
-                        imagePath: 'lib/assets/images/icon_bank.svg',
-                        amount: bankBalance,
-                      ),
+                      _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
                     ],
                   ),
                 ),
@@ -200,23 +210,19 @@ class DashboardNextCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
-                        amount: formatter.format(
-                          dashboardItem.nextCustomerAccountPayment,
-                        ),
+                        amount: dashboardItem.nextCustomerAccountPayment,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
-                        amount: formatter.format(
-                          dashboardItem.nextChequePayment,
-                        ),
+                        amount: dashboardItem.nextChequePayment,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
-                        amount: formatter.format(dashboardItem.nextDeedPayment),
+                        amount: dashboardItem.nextDeedPayment,
                       ),
                     ],
                   ),
@@ -242,17 +248,6 @@ class DashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
-    String bankBalance =
-        dashboardItem.totalBankAccountBalances.isNotEmpty
-            ? formatter.format(
-              dashboardItem
-                  .totalBankAccountBalances
-                  .first
-                  .totalBankAccountBalance,
-            )
-            : formatter.format(0);
-
     return Card(
       elevation: 4,
       surfaceTintColor: Colors.white,
@@ -267,7 +262,6 @@ class DashboardCard extends StatelessWidget {
               "Güncel (${_getCurrentMonthYear()})",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-
             const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,34 +282,25 @@ class DashboardCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
-                        amount: formatter.format(
-                          dashboardItem.totalCashAccountBalance,
-                        ),
+                        amount: dashboardItem.totalCashAccountBalance,
+                        isAsset: true,
                       ),
                       const SizedBox(height: 16),
-
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
-                        amount: formatter.format(
-                          dashboardItem.activeChequeReceiving,
-                        ),
+                        amount: dashboardItem.activeChequeReceiving,
+                        isAsset: true,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
-                        amount: formatter.format(
-                          dashboardItem.activeDeedReceiving,
-                        ),
+                        amount: dashboardItem.activeDeedReceiving,
+                        isAsset: true,
                       ),
                       const SizedBox(height: 16),
-
-                      DashboardListItem(
-                        dashboardTitle: "Banka",
-                        imagePath: 'lib/assets/images/icon_bank.svg',
-                        amount: bankBalance,
-                      ),
+                      _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
                     ],
                   ),
                 ),
@@ -336,27 +321,19 @@ class DashboardCard extends StatelessWidget {
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
-                        amount: formatter.format(
-                          dashboardItem.activeCustomerAccountPayment,
-                        ),
+                        amount: dashboardItem.activeCustomerAccountPayment,
                       ),
                       const SizedBox(height: 16),
-
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
-                        amount: formatter.format(
-                          dashboardItem.activeChequePayment,
-                        ),
+                        amount: dashboardItem.activeChequePayment,
                       ),
                       const SizedBox(height: 16),
-
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
-                        amount: formatter.format(
-                          dashboardItem.activeDeedPayment,
-                        ),
+                        amount: dashboardItem.activeDeedPayment,
                       ),
                     ],
                   ),
@@ -370,71 +347,104 @@ class DashboardCard extends StatelessWidget {
   }
 }
 
+class _BankBalanceList extends StatelessWidget {
+  final List<BankAccountBalance> balances;
+
+  const _BankBalanceList({required this.balances});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SvgPicture.asset(
+          'lib/assets/images/icon_bank.svg',
+          width: 32,
+          height: 32,
+          alignment: Alignment.center,
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Banka", overflow: TextOverflow.ellipsis),
+              const SizedBox(height: 8),
+              if (balances.isEmpty)
+                Text(
+                  "0,00 ₺", // Default display
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade700, // Assets are green by default for 0
+                  ),
+                )
+              else
+                ...balances.map((balance) {
+                  Color color;
+                  if (balance.totalBankAccountBalance > 0) {
+                    color = Colors.green.shade700;
+                  } else if (balance.totalBankAccountBalance < 0) {
+                    color = Colors.red.shade700;
+                  } else {
+                    color = Colors.green.shade700; // Bank balances are assets, so 0 is green
+                  }
+
+                  final formatter = NumberFormat.decimalPattern('tr_TR');
+
+                  String formattedAmount = formatter.format(balance.totalBankAccountBalance.abs());
+
+                  if (balance.currencyCode == "TRY") {
+                    formattedAmount = "$formattedAmount ₺";
+                  } else {
+                    formattedAmount = "$formattedAmount ${balance.currencyCode}";
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4.0),
+                    child: Text(
+                      formattedAmount,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }).toList(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class DashboardListItem extends StatelessWidget {
   final String dashboardTitle;
   final String imagePath;
-  final String amount;
+  final double amount;
+  final bool isAsset;
 
   const DashboardListItem({
     super.key,
     required this.dashboardTitle,
     required this.imagePath,
     required this.amount,
+    this.isAsset = false, // Default to liability
   });
-
-  // Helper to parse formatted amount string to double.
-  double _parseAmount(String formattedAmount) {
-    // Remove currency symbol, spaces, dots for thousands, replace comma with dot.
-    String cleaned = formattedAmount
-        .replaceAll('₺', '')
-        .replaceAll(' ', '')
-        .replaceAll('.', '')
-        .replaceAll(',', '.');
-    // There may still be decimals, e.g. 1234.56
-    return double.tryParse(cleaned) ?? 0.0;
-  }
-
-  // Returns color based on rules.
-  Color _getAmountColor(String dashboardTitle, double amount) {
-    // Varlıklar items
-    final varliklarTitles = [
-      "Kasa",
-      "Cari Hesap  \n Çek",
-      "Cari Hesap  \n Senet",
-      "Banka",
-    ];
-    // Borçlar items
-    final borclarTitles = [
-      "Cari Borçlar",
-      "Ödenecek Çekler",
-      "Ödenecek Senetler",
-    ];
-    // If Varlıklar and amount==0 -> green
-    if (varliklarTitles.contains(dashboardTitle) && amount == 0) {
-      return Colors.green;
-    }
-    // If Borçlar and amount==0 -> red
-    if (borclarTitles.contains(dashboardTitle) && amount == 0) {
-      return Colors.red;
-    }
-    // Otherwise: positive → green, negative → red
-    if (amount > 0) {
-      return Colors.green;
-    } else if (amount < 0) {
-      return Colors.red;
-    } else {
-      // Fallback: default text color
-      return Colors.black;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final parsedAmount = _parseAmount(amount);
-    final absAmount = parsedAmount.abs();
-    final color = _getAmountColor(dashboardTitle, parsedAmount);
     final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
-    final formattedAbsAmount = formatter.format(absAmount);
+
+    Color color;
+    if (amount > 0) {
+      color = Colors.green.shade700;
+    } else if (amount < 0) {
+      color = Colors.red.shade700;
+    } else {
+      // For 0, color depends on whether it's an asset or liability
+      color = isAsset ? Colors.green.shade700 : Colors.red.shade700;
+    }
+
+    final formattedAmount = formatter.format(amount.abs());
+
     return Row(
       children: [
         SvgPicture.asset(
@@ -451,10 +461,10 @@ class DashboardListItem extends StatelessWidget {
               Text(dashboardTitle, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 8),
               Text(
-                formattedAbsAmount,
+                formattedAmount,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: color, fontWeight: FontWeight.bold),
-              ),
+                style: TextStyle(fontWeight: FontWeight.bold, color: color),
+              )
             ],
           ),
         ),
