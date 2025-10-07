@@ -354,6 +354,17 @@ class _BankBalanceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sort the balances to have 'TRY' first.
+    final sortedBalances = List<BankAccountBalance>.from(balances);
+    sortedBalances.sort((a, b) {
+      if (a.currencyCode == 'TRY') {
+        return -1; // a should come first
+      } else if (b.currencyCode == 'TRY') {
+        return 1; // b should come first
+      }
+      return 0; // Otherwise, maintain relative order
+    });
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -379,7 +390,7 @@ class _BankBalanceList extends StatelessWidget {
                   ),
                 )
               else
-                ...balances.map((balance) {
+                ...sortedBalances.map((balance) {
                   Color color;
                   if (balance.totalBankAccountBalance > 0) {
                     color = Colors.green.shade700;
