@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:pranomiapp/core/SortOrder.dart';
 import 'package:pranomiapp/core/di/Injection.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardModel.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardService.dart';
@@ -358,11 +359,11 @@ class _BankBalanceList extends StatelessWidget {
     final sortedBalances = List<BankAccountBalance>.from(balances);
     sortedBalances.sort((a, b) {
       if (a.currencyCode == 'TRY') {
-        return -1; // a should come first
+        return SortOrder.before.value; // a should come first
       } else if (b.currencyCode == 'TRY') {
-        return 1; // b should come first
+        return SortOrder.after.value; // b should come first
       }
-      return 0; // Otherwise, maintain relative order
+      return SortOrder.equal.value; // Otherwise, maintain relative order
     });
 
     return Row(
@@ -487,3 +488,4 @@ class DashboardListItem extends StatelessWidget {
 String _getCurrentMonthYear() {
   return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
 }
+
