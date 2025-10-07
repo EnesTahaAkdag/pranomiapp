@@ -130,8 +130,11 @@ class DashboardNextCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-           const Text("Gelecek Dönem"),
-           const SizedBox(height: 16),
+            const Text(
+              "Gelecek Dönem",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -147,7 +150,7 @@ class DashboardNextCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                     const  SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
@@ -155,7 +158,7 @@ class DashboardNextCard extends StatelessWidget {
                           dashboardItem.totalCashAccountBalance,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
@@ -163,7 +166,7 @@ class DashboardNextCard extends StatelessWidget {
                           dashboardItem.nextChequeReceiving,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -171,7 +174,7 @@ class DashboardNextCard extends StatelessWidget {
                           dashboardItem.nextDeedReceiving,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Banka",
                         imagePath: 'lib/assets/images/icon_bank.svg',
@@ -186,14 +189,14 @@ class DashboardNextCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                     const Text(
+                      const Text(
                         "Borçlar",
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
@@ -201,7 +204,7 @@ class DashboardNextCard extends StatelessWidget {
                           dashboardItem.nextCustomerAccountPayment,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
@@ -209,7 +212,7 @@ class DashboardNextCard extends StatelessWidget {
                           dashboardItem.nextChequePayment,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -260,7 +263,10 @@ class DashboardCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Güncel (${_getCurrentMonthYear()})"),
+            Text(
+              "Güncel (${_getCurrentMonthYear()})",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
 
             const SizedBox(height: 16),
             Row(
@@ -271,14 +277,14 @@ class DashboardCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                     const Text(
+                      const Text(
                         "Varlıklar",
                         style: TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
@@ -295,7 +301,7 @@ class DashboardCard extends StatelessWidget {
                           dashboardItem.activeChequeReceiving,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap  \n Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -303,7 +309,7 @@ class DashboardCard extends StatelessWidget {
                           dashboardItem.activeDeedReceiving,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Banka",
@@ -319,14 +325,14 @@ class DashboardCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                     const Text(
+                      const Text(
                         "Borçlar",
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                     const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
@@ -334,7 +340,7 @@ class DashboardCard extends StatelessWidget {
                           dashboardItem.activeCustomerAccountPayment,
                         ),
                       ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
@@ -343,7 +349,7 @@ class DashboardCard extends StatelessWidget {
                           dashboardItem.activeChequePayment,
                         ),
                       ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
@@ -437,7 +443,7 @@ class DashboardListItem extends StatelessWidget {
           height: 32,
           alignment: Alignment.center,
         ),
-       const SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
