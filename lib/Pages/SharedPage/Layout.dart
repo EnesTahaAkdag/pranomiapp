@@ -72,7 +72,7 @@ class _AppLayoutState extends State<AppLayout> {
       case '/expenseclaim':
         return 3;
       default:
-        return 0;
+        return -1; // 👈 Drawer’dan açılan diğer sayfalar için
     }
   }
 
@@ -292,7 +292,11 @@ class _AppLayoutState extends State<AppLayout> {
               : null,
       body: widget.body,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+          currentIndex: _currentIndex >= 0 ? _currentIndex : 0,
+          selectedItemColor: _currentIndex >= 0 ? const Color(0xFFB00034) : Colors.white,
+          unselectedItemColor: Colors.white,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
         onTap: (index) async {
           switch (index) {
             case 0:
@@ -316,8 +320,6 @@ class _AppLayoutState extends State<AppLayout> {
           }
         },
         backgroundColor: const Color(0xFF3F3F3F),
-        selectedItemColor: const Color(0xFFB00034),
-        unselectedItemColor: Colors.white,
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
