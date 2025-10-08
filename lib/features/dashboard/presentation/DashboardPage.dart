@@ -2,93 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/core/SortOrder.dart';
-import 'package:pranomiapp/core/di/Injection.dart';
+import 'package:provider/provider.dart';
 import 'package:pranomiapp/features/dashboard/data/DashboardModel.dart';
-import 'package:pranomiapp/features/dashboard/data/DashboardService.dart';
+import 'package:pranomiapp/features/dashboard/presentation/DashboardViewModel.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => DashboardViewModel(),
+      child: const _DashboardView(),
+    );
+  }
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  late final DashboardService _dashboardService;
-  DashboardItem? _dashboardItem;
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _dashboardService = locator<DashboardService>();
-    _fetchDashboard();
-  }
-
-  Future<void> _fetchDashboard() async {
-    if (!mounted) return;
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final response = await _dashboardService.fetchDashboard();
-      if (mounted) {
-        if (response != null && response.success) {
-          setState(() {
-            _dashboardItem = response.item;
-          });
-        } else {
-          setState(() {
-            _error = response?.errorMessages.join('\n') ?? "Veriler alınamadı.";
-          });
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = "Bir hata oluştu: ${e.toString()}";
-        });
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
+class _DashboardView extends StatelessWidget {
+  const _DashboardView();
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFF5F5F5),
-        body: Center(child: CircularProgressIndicator()),
-      );
+    final viewModel = context.watch<DashboardViewModel>();
+
+    return Scaffold(
+      backgroundColor: Colors.grey[200],
+      body: _buildBody(context, viewModel),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, DashboardViewModel viewModel) {
+    if (viewModel.isLoading && viewModel.dashboardItem == null) {
+      return const Center(child: CircularProgressIndicator());
     }
-    if (_error != null) {
-      return Scaffold(
-        backgroundColor: const Color(0xFFF5F5F5),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
-                const SizedBox(height: 20),
-                ElevatedButton(onPressed: _fetchDashboard, child: const Text("Tekrar Dene")),
-              ],
-            ),
+
+    if (viewModel.error != null && viewModel.dashboardItem == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(viewModel.error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => viewModel.fetchDashboard(),
+                child: const Text("Tekrar Dene"),
+              ),
+            ],
           ),
         ),
       );
     }
 
-    final DashboardItem dashboard = _dashboardItem ??
+    final DashboardItem dashboard = viewModel.dashboardItem ??
+        // Provide a default empty item to prevent null issues in UI
         DashboardItem(
           totalCashAccountBalance: 0,
           totalBankAccountBalances: [],
@@ -112,19 +80,16 @@ class _DashboardPageState extends State<DashboardPage> {
           nextDeedPayment: 0,
         );
 
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: RefreshIndicator(
-        onRefresh: _fetchDashboard,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              DashboardCard(dashboardTitle: "Güncel", dashboardItem: dashboard),
-              const SizedBox(height: 16),
-              DashboardNextCard(dashboardItem: dashboard),
-            ],
-          ),
+    return RefreshIndicator(
+      onRefresh: () => viewModel.fetchDashboard(),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            DashboardCard(dashboardTitle: "Güncel", dashboardItem: dashboard),
+            const SizedBox(height: 16),
+            DashboardNextCard(dashboardItem: dashboard),
+          ],
         ),
       ),
     );
@@ -488,4 +453,3 @@ class DashboardListItem extends StatelessWidget {
 String _getCurrentMonthYear() {
   return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
 }
-
