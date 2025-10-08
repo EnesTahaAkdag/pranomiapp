@@ -75,6 +75,14 @@ class PranomiApp extends StatelessWidget {
     return apiKey != null && apiSecret != null;
   }
 
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('apiKey');
+    await prefs.remove('apiSecret');
+    await prefs.remove('subscriptionType');
+    await prefs.remove('isEInvoiceActive');
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
@@ -91,7 +99,10 @@ class PranomiApp extends StatelessWidget {
         final router = GoRouter(
           initialLocation: isLoggedIn ? '/' : '/login',
           routes: [
-            GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
+            GoRoute(path: '/login', builder: (context,state) {
+              _logout(context);
+              return const LoginPage();
+            }),
             ShellRoute(
               builder:
                   (context, state, child) => AppLayout(
