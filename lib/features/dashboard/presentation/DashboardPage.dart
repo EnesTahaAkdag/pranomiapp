@@ -387,11 +387,13 @@ class _BankBalanceList extends StatelessWidget {
                     balance.totalBankAccountBalance.abs(),
                   );
 
-                  if (balance.currencyCode == "TRY") {
+                  final currencyCode = _convertCurrencyCodesToSymbols(balance.currencyCode);
+
+                  if (currencyCode == "TRY") {
                     formattedAmount = "$formattedAmount ₺";
                   } else {
                     formattedAmount =
-                        "$formattedAmount ${balance.currencyCode}";
+                        "$formattedAmount ${currencyCode}";
                   }
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),
@@ -473,4 +475,17 @@ class DashboardListItem extends StatelessWidget {
 
 String _getCurrentMonthYear() {
   return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
+}
+
+String _convertCurrencyCodesToSymbols(String currencyCode) {
+  switch (currencyCode) {
+    case "TRY":
+      return "₺";
+    case "EUR":
+      return "€";
+    case "USD":
+      return "\$";
+    default:
+      return currencyCode;
+  }
 }
