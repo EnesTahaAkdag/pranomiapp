@@ -43,7 +43,11 @@ class _DashboardView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(viewModel.error!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+              Text(
+                viewModel.error!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => viewModel.fetchDashboard(),
@@ -55,7 +59,8 @@ class _DashboardView extends StatelessWidget {
       );
     }
 
-    final DashboardItem dashboard = viewModel.dashboardItem ??
+    final DashboardItem dashboard =
+        viewModel.dashboardItem ??
         // Provide a default empty item to prevent null issues in UI
         DashboardItem(
           totalCashAccountBalance: 0,
@@ -155,7 +160,9 @@ class DashboardNextCard extends StatelessWidget {
                         isAsset: true,
                       ),
                       const SizedBox(height: 16),
-                      _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
+                      _BankBalanceList(
+                        balances: dashboardItem.totalBankAccountBalances,
+                      ),
                     ],
                   ),
                 ),
@@ -266,7 +273,9 @@ class DashboardCard extends StatelessWidget {
                         isAsset: true,
                       ),
                       const SizedBox(height: 16),
-                      _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
+                      _BankBalanceList(
+                        balances: dashboardItem.totalBankAccountBalances,
+                      ),
                     ],
                   ),
                 ),
@@ -352,7 +361,10 @@ class _BankBalanceList extends StatelessWidget {
                   "0,00 ₺", // Default display
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.green.shade700, // Assets are green by default for 0
+                    color:
+                        Colors
+                            .green
+                            .shade700, // Assets are green by default for 0
                   ),
                 )
               else
@@ -363,23 +375,32 @@ class _BankBalanceList extends StatelessWidget {
                   } else if (balance.totalBankAccountBalance < 0) {
                     color = Colors.red.shade700;
                   } else {
-                    color = Colors.green.shade700; // Bank balances are assets, so 0 is green
+                    color =
+                        Colors
+                            .green
+                            .shade700; // Bank balances are assets, so 0 is green
                   }
 
                   final formatter = NumberFormat.decimalPattern('tr_TR');
 
-                  String formattedAmount = formatter.format(balance.totalBankAccountBalance.abs());
+                  String formattedAmount = formatter.format(
+                    balance.totalBankAccountBalance.abs(),
+                  );
 
                   if (balance.currencyCode == "TRY") {
                     formattedAmount = "$formattedAmount ₺";
                   } else {
-                    formattedAmount = "$formattedAmount ${balance.currencyCode}";
+                    formattedAmount =
+                        "$formattedAmount ${balance.currencyCode}";
                   }
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),
                     child: Text(
                       formattedAmount,
-                      style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   );
@@ -441,7 +462,7 @@ class DashboardListItem extends StatelessWidget {
                 formattedAmount,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontWeight: FontWeight.bold, color: color),
-              )
+              ),
             ],
           ),
         ),

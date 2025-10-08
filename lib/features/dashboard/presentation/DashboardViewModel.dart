@@ -7,12 +7,15 @@ class DashboardViewModel extends ChangeNotifier {
   final DashboardService _dashboardService = locator<DashboardService>();
 
   DashboardItem? _dashboardItem;
+
   DashboardItem? get dashboardItem => _dashboardItem;
 
   bool _isLoading = true;
+
   bool get isLoading => _isLoading;
 
   String? _error;
+
   String? get error => _error;
 
   DashboardViewModel() {
