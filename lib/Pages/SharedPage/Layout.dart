@@ -219,24 +219,6 @@ class _AppLayoutState extends State<AppLayout> {
                   ]),
                 _drawerItems("Kontör", '/Credits'),
                 _drawerItems("Bildirimler", '/Notifications'),
-                if (showEDocuments)
-                  _buildExpandableTile("Ayarlar", "c", [
-                    _drawerItem("Kullanıcılar", '/an'),
-                    _buildExpandableTile("Ana Cari Ayarları", "b", [
-                      _drawerItem("Ana Cariler", '/am'),
-                      _drawerItem("Ana Cari Kaynağı", '/aö'),
-                    ]),
-                    _drawerItem("API Anahtarım", '/aç'),
-                    _drawerItem("Kategoriler", '/ai'),
-                    _drawerItem("Talepler", '/aı'),
-                    _drawerItem("Genel Ayarlar", '/ao'),
-                    _buildExpandableTile("E-Belge Ayarları", "a", [
-                      _drawerItem("E-Belge Ekle - Güncelle", '/at'),
-                      _drawerItem("E-Belge Bildirimlerim", '/ar'),
-                      _drawerItem("E-Belge Serileri", '/aw'),
-                      _drawerItem("E-Belge Şablon", '/aü'),
-                    ]),
-                  ]),
                 _drawerItems("Duyurularım", '/Announcements'),
                 _drawerItems("Çıkış Yap", '/login'),
               ],
