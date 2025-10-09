@@ -61,16 +61,20 @@ class _AppLayoutState extends State<AppLayout> {
     switch (route) {
       case '/':
         return 0;
-      case '/ProductsandServices':
-        return 1;
+
       case '/incomeorder':
       case '/incomeinvoice':
       case '/incomeclaim':
-        return 2;
+        return 1;
+
       case '/expenseorder':
       case '/expenseinvoice':
       case '/expenseclaim':
+        return 2;
+
+       case '/ProductsandServices':
         return 3;
+
       default:
         return -1; // 👈 Drawer’dan açılan diğer sayfalar için
     }
