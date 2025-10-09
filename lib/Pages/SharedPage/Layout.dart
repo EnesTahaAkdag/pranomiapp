@@ -340,7 +340,7 @@ class _AppLayoutState extends State<AppLayout> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
-            label: 'E Belgeler',
+            label: 'E-Belgeler',
           ),
         ],
       ),
