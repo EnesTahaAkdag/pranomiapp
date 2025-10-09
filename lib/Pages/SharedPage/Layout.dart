@@ -103,6 +103,25 @@ class _AppLayoutState extends State<AppLayout> {
     }
   }
 
+  Future<void> _showEDocumentsSubMenu(BuildContext context) async {
+    await showModalBottomSheet(context: context,
+    backgroundColor: const Color(0xFF2c2c2c),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+        builder: (_) {
+          return Column(mainAxisSize: MainAxisSize.min,
+            children: [
+            _incomeListTile("Giden", '/edoc_out'),
+            _incomeListTile("Gelen", "/g")
+            ],);
+        }
+    );
+    
+  }
+  
+
+
   Future<void> _showIncomeSubMenu(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
@@ -320,7 +339,8 @@ class _AppLayoutState extends State<AppLayout> {
               });
               break;
             case 3:
-              _navigateTo('/ProductsandServices');
+              await _showEDocumentsSubMenu(context);  
+              //_navigateTo('/ProductsandServices');
               break;
           }
         },
@@ -346,4 +366,5 @@ class _AppLayoutState extends State<AppLayout> {
       ),
     );
   }
+
 }
