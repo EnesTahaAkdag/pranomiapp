@@ -13,8 +13,8 @@ class CustomerService extends ApiServiceBase {
   }) {
     final path =
         (search != null && search.isNotEmpty)
-            ? '/Customer/$search'
-            : '/Customer';
+            ? 'Customer/Customers/$search'
+            : 'Customer/Customers';
 
     return getRequest<CustomerResponseModel>(
       path: path,

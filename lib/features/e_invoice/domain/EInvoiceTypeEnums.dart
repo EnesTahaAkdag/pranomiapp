@@ -3,7 +3,7 @@ enum EInvoiceTypeEnum { eInvoice, eArchive, eDespacth, gibEArchive }
 EInvoiceTypeEnum parseEInvoceType(dynamic value) {
   if (value is String) {
     switch (value.toLowerCase()) {
-      case 'e_invoice':
+      case 'einvoice':
         return EInvoiceTypeEnum.eInvoice;
       case 'earchive':
         return EInvoiceTypeEnum.eArchive;

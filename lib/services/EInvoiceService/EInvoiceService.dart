@@ -16,7 +16,7 @@ class EInvoiceService extends ApiServiceBase {
     try {
       final headers = await getAuthHeaders();
       final response = await dio.get(
-        "EInvoice?size=$size&page=$page"
+        "/EInvoice/EInvoices?size=$size&page=$page"
         "&invoiceType=$eInvoiceType"
         "${eInvoiceDate != null ? '&invoiceDate=${eInvoiceDate.toIso8601String().split('T')[0]}' : ''}"
         "&recordType=$recordType",

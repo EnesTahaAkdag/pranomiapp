@@ -16,8 +16,8 @@ class ProductService extends ApiServiceBase {
       final headers = await getAuthHeaders();
       final response = await dio.get(
         hasSearch
-            ? "/Product/$query?size=$size&page=$page"
-            : "/Product?page=$page&size=$size",
+            ? "Product/Products/$query?size=$size&page=$page"
+            : "Product/Products?page=$page&size=$size",
         options: Options(headers: headers),
       );
 

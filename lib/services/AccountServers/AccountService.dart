@@ -14,9 +14,9 @@ class AccountService extends ApiServiceBase {
 
       String path;
       if (search != null && search.isNotEmpty) {
-        path = '/Account/$search'; // MODIFIED: Search term becomes part of the path
+        path = 'Account/Accounts/$search'; // MODIFIED: Search term becomes part of the path
       } else {
-        path = '/Account';
+        path = '/Account/Accounts';
       }
 
       // MODIFIED: 'search' is removed from queryParameters as it's now in the path
