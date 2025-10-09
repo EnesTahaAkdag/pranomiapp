@@ -292,30 +292,31 @@ class _AppLayoutState extends State<AppLayout> {
               : null,
       body: widget.body,
       bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex >= 0 ? _currentIndex : 0,
-          selectedItemColor: _currentIndex >= 0 ? const Color(0xFFB00034) : Colors.white,
-          unselectedItemColor: Colors.white,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
+        currentIndex: _currentIndex >= 0 ? _currentIndex : 0,
+        selectedItemColor:
+            _currentIndex >= 0 ? const Color(0xFFB00034) : Colors.white,
+        unselectedItemColor: Colors.white,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         onTap: (index) async {
           switch (index) {
             case 0:
               _navigateTo('/');
-              break;
+
             case 1:
-              _navigateTo('/ProductsandServices');
-              break;
-            case 2:
               await _showIncomeSubMenu(context);
               setState(() {
                 _currentIndex = getIndexFromRoute(_currentRoute);
               });
               break;
-            case 3:
+            case 2:
               await _showExpenseSubMenu(context);
               setState(() {
                 _currentIndex = getIndexFromRoute(_currentRoute);
               });
+              break;
+            case 3:
+              _navigateTo('/ProductsandServices');
               break;
           }
         },
@@ -326,16 +327,16 @@ class _AppLayoutState extends State<AppLayout> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Ana Sayfa'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Ürünler',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.attach_money_sharp),
             label: 'Gelirler',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.money_off),
             label: 'Giderler',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: 'E Belgeler',
           ),
         ],
       ),
