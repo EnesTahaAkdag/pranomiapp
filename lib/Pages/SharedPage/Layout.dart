@@ -211,8 +211,8 @@ class _AppLayoutState extends State<AppLayout> {
                   _drawerItem("Gelir İrsaliyeleri", '/IncomeWayBill'),
                   _drawerItem("Gider İrsaliyeleri", '/ExpenseWayBill'),
                 ]),
-                _drawerItems("Cari Hesaplar", '/CustomerAccounts'),
-                _drawerItems("Çalışanlar", '/EmployeAccounts'),
+                _drawerItems("icon_users.svg","Cari Hesaplar", '/CustomerAccounts'),
+                _drawerItems("icon_usertie.svg","Çalışanlar", '/EmployeAccounts'),
                 if (showIncomeExpense)
                   _buildExpandableTile("icon_caret_square_down.svg","Gelirler", "income", [
                     _drawerItem("Alınan Siparişler", '/InComeOrder'),
@@ -241,10 +241,10 @@ class _AppLayoutState extends State<AppLayout> {
                   _buildExpandableTile("icon_money.svg","Nakit", "f", [
                     _drawerItem("Kasa ve Bankalar", '/DepositAndBanks'),
                   ]),
-                _drawerItems("Kontör", '/Credits'),
-                _drawerItems("Bildirimler", '/Notifications'),
-                _drawerItems("Duyurularım", '/Announcements'),
-                _drawerItems("Çıkış Yap", '/login'),
+                _drawerItems("icon_lira.svg","Kontör", '/Credits'),
+                _drawerItems("icon_bell.svg","Bildirimler", '/Notifications'),
+                _drawerItems("icon_bullhorn.svg","Duyurularım", '/Announcements'),
+                _drawerItems("icon_logout.svg","Çıkış Yap", '/login'),
               ],
             ),
           ),
@@ -253,11 +253,18 @@ class _AppLayoutState extends State<AppLayout> {
     );
   }
 
-  Widget _drawerItems(String title, String route) {
+  Widget _drawerItems(String imagePath,String title, String route) {
     final isActive = route == _currentRoute;
     return Container(
       color: isActive ? const Color(0xFFB00034) : Colors.transparent,
       child: ListTile(
+        leading: SvgPicture.asset(
+          'lib/assets/images/${imagePath}',
+          width: 32,
+          height: 32,
+          alignment: Alignment.center,
+        )
+        ,
         title: Text(title, style: const TextStyle(color: Colors.white)),
         tileColor:
             _currentRoute == route
