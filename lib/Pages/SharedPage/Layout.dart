@@ -280,7 +280,7 @@ class _AppLayoutState extends State<AppLayout> {
     return Container(
       color: isActive ? const Color(0xFFB00034) : Colors.transparent,
       child: ListTile(
-        title: Text(title, style: TextStyle(color: Colors.white)),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
         tileColor:
             _currentRoute == route
                 ? const Color(0xFFB00034)
@@ -293,7 +293,7 @@ class _AppLayoutState extends State<AppLayout> {
   Widget _buildExpandableTile(String imagePath,String title, String id, List<Widget> children) {
     return ExpansionTile(
       leading:  SvgPicture.asset(
-        'lib/assets/images/${imagePath}',
+        'lib/assets/images/$imagePath',
         width: 32,
         height: 32,
         alignment: Alignment.center,
