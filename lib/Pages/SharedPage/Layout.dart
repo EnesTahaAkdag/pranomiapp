@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -199,12 +200,12 @@ class _AppLayoutState extends State<AppLayout> {
           Expanded(
             child: ListView(
               children: [
-                _buildExpandableTile("Güncel Durum", "Current", [
+                _buildExpandableTile("icon_tachometer.svg","Güncel Durum", "Current", [
                   _drawerItem("Genel Bakış", '/'),
                   _drawerItem("Analizler", '/graphs'),
                   _drawerItem("Ödemeler ve Tahsilatlar", '/sayfaC'),
                 ]),
-                _buildExpandableTile("Stok", "stock", [
+                _buildExpandableTile("icon_archieve.svg","Stok", "stock", [
                   _drawerItem("Ürünler ve Hizmetler", '/ProductsandServices'),
                   _drawerItem("Masraflar", '/zsdxcf'),
                   _drawerItem("Gelir İrsaliyeleri", '/IncomeWayBill'),
@@ -213,31 +214,31 @@ class _AppLayoutState extends State<AppLayout> {
                 _drawerItems("Cari Hesaplar", '/CustomerAccounts'),
                 _drawerItems("Çalışanlar", '/EmployeAccounts'),
                 if (showIncomeExpense)
-                  _buildExpandableTile("Gelirler", "income", [
+                  _buildExpandableTile("icon_caret_square_down.svg","Gelirler", "income", [
                     _drawerItem("Alınan Siparişler", '/InComeOrder'),
                     _drawerItem("Satış Faturası", '/InComeInvoice'),
                     _drawerItem("Satış İade Faturası", '/InComeClaim'),
                   ]),
                 if (showIncomeExpense)
-                  _buildExpandableTile("Giderler", "u", [
+                  _buildExpandableTile("icon_caret_square_up.svg","Giderler", "u", [
                     _drawerItem("Verilen Siparişler", '/ExpenseOrder'),
                     _drawerItem("Alış Faturası", '/ExpenseInvoice'),
                     _drawerItem("Alış İade Faturası", '/ExpenseClaim'),
                   ]),
                 if (showEDocuments)
-                  _buildExpandableTile("E-Belgeler", "ğ", [
-                    _buildExpandableTile("Giden", "edoc_out", [
+                  _buildExpandableTile("icon_note_sticky.svg","E-Belgeler", "ğ", [
+                    _buildExpandableTile("icon_arrow_up.svg","Giden", "edoc_out", [
                       _drawerItem("E-Faturalar", '/OutGoingE-Invoice'),
                       _drawerItem("E-Arşiv Faturalar", '/OutGoingE-Archive'),
                       _drawerItem("E-İrsaliyeler", '/OutGoingE-Dispatch'),
                     ]),
-                    _buildExpandableTile("Gelen", "g", [
+                    _buildExpandableTile("icon_arrow_down.svg","Gelen", "g", [
                       _drawerItem("E-Faturalar", '/ApprovedE-Invoice'),
                       _drawerItem("E-İrsaliyeler", '/ApprovedE-Dispatch'),
                     ]),
                   ]),
                 if (showIncomeExpense)
-                  _buildExpandableTile("Nakit", "f", [
+                  _buildExpandableTile("icon_money.svg","Nakit", "f", [
                     _drawerItem("Kasa ve Bankalar", '/DepositAndBanks'),
                   ]),
                 _drawerItems("Kontör", '/Credits'),
@@ -282,8 +283,14 @@ class _AppLayoutState extends State<AppLayout> {
     );
   }
 
-  Widget _buildExpandableTile(String title, String id, List<Widget> children) {
+  Widget _buildExpandableTile(String imagePath,String title, String id, List<Widget> children) {
     return ExpansionTile(
+      leading:  SvgPicture.asset(
+        'lib/assets/images/${imagePath}',
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
+      ),
       title: Text(title, style: const TextStyle(color: Colors.white)),
       backgroundColor: const Color(0xFF2C2C2C),
       collapsedBackgroundColor: const Color(0xFF3F3F3F),
