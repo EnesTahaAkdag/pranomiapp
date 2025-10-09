@@ -73,7 +73,11 @@ class _AppLayoutState extends State<AppLayout> {
       case '/expenseclaim':
         return 2;
 
-       case '/ProductsandServices':
+       case '/OutGoingE-Invoice':
+       case '/OutGoingE-Archive':
+       case '/OutGoingE-Dispatch':
+       case '/ApprovedE-Invoice':
+       case '/ApprovedE-Dispatch':
         return 3;
 
       default:
@@ -105,20 +109,53 @@ class _AppLayoutState extends State<AppLayout> {
   }
 
   Future<void> _showEDocumentsSubMenu(BuildContext context) async {
-    await showModalBottomSheet(context: context,
-    backgroundColor: const Color(0xFF2c2c2c),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-        builder: (_) {
-          return Column(mainAxisSize: MainAxisSize.min,
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF2c2c2c),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-            _incomeListTile("Giden", '/edoc_out'),
-            _incomeListTile("Gelen", "/g")
-            ],);
-        }
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  unselectedWidgetColor: Colors.white,
+                ),
+                child: ExpansionTile(
+                  title: const Text("Giden", style: TextStyle(color: Colors.white)),
+                  iconColor: Colors.white,
+                  collapsedIconColor: Colors.white,
+                  children: [
+                    _incomeListTile("E-Faturalar", '/OutGoingE-Invoice'),
+                    _incomeListTile("E-Arşiv Faturalar", '/OutGoingE-Archive'),
+                    _incomeListTile("E-İrsaliyeler", '/OutGoingE-Dispatch'),
+                  ],
+                ),
+              ),
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  unselectedWidgetColor: Colors.white,
+                ),
+                child: ExpansionTile(
+                  title: const Text("Gelen", style: TextStyle(color: Colors.white)),
+                  iconColor: Colors.white,
+                  collapsedIconColor: Colors.white,
+                  children: [
+                    _incomeListTile("E-Faturalar", '/ApprovedE-Invoice'),
+                    _incomeListTile("E-İrsaliyeler", '/ApprovedE-Dispatch'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
-    
   }
   
 
@@ -354,7 +391,9 @@ class _AppLayoutState extends State<AppLayout> {
               break;
             case 3:
               await _showEDocumentsSubMenu(context);  
-              //_navigateTo('/ProductsandServices');
+              setState(() {
+                _currentIndex = getIndexFromRoute(_currentRoute);
+              });
               break;
           }
         },
