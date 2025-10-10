@@ -501,7 +501,7 @@ class _AppLayoutState extends State<AppLayout> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -565,7 +565,7 @@ class _AppLayoutState extends State<AppLayout> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF3B82F6) : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
