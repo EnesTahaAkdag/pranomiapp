@@ -238,45 +238,45 @@ class _AppLayoutState extends State<AppLayout> {
             child: ListView(
               children: [
                 _buildExpandableTile("icon_tachometer.svg","Güncel Durum", "Current", [
-                  _drawerItem("Genel Bakış", '/'),
-                  _drawerItem("Analizler", '/graphs'),
-                  _drawerItem("Ödemeler ve Tahsilatlar", '/sayfaC'),
+                  _drawerItem("icon_signature.svg","Genel Bakış", '/'),
+                  _drawerItem("icon_chart.svg","Analizler", '/graphs'),
+                  _drawerItem("icon_money_bill.svg","Ödemeler ve Tahsilatlar", '/sayfaC'),
                 ]),
                 _buildExpandableTile("icon_archieve.svg","Stok", "stock", [
-                  _drawerItem("Ürünler ve Hizmetler", '/ProductsandServices'),
-                  _drawerItem("Masraflar", '/zsdxcf'),
-                  _drawerItem("Gelir İrsaliyeleri", '/IncomeWayBill'),
-                  _drawerItem("Gider İrsaliyeleri", '/ExpenseWayBill'),
+                  _drawerItem("icon_cubes.svg","Ürünler ve Hizmetler", '/ProductsandServices'),
+                  _drawerItem("icon_briefcase.svg","Masraflar", '/zsdxcf'),
+                  _drawerItem("icon_file_invoice.svg","Gelir İrsaliyeleri", '/IncomeWayBill'),
+                  _drawerItem("icon_file_lines.svg","Gider İrsaliyeleri", '/ExpenseWayBill'),
                 ]),
                 _drawerItems("icon_users.svg","Cari Hesaplar", '/CustomerAccounts'),
                 _drawerItems("icon_usertie.svg","Çalışanlar", '/EmployeAccounts'),
                 if (showIncomeExpense)
                   _buildExpandableTile("icon_caret_square_down.svg","Gelirler", "income", [
-                    _drawerItem("Alınan Siparişler", '/InComeOrder'),
-                    _drawerItem("Satış Faturası", '/InComeInvoice'),
-                    _drawerItem("Satış İade Faturası", '/InComeClaim'),
+                    _drawerItem("icon_file_contract.svg","Alınan Siparişler", '/InComeOrder'),
+                    _drawerItem("icon_file_download.svg","Satış Faturası", '/InComeInvoice'),
+                    _drawerItem("icon_file_upload.svg","Satış İade Faturası", '/InComeClaim'),
                   ]),
                 if (showIncomeExpense)
                   _buildExpandableTile("icon_caret_square_up.svg","Giderler", "u", [
-                    _drawerItem("Verilen Siparişler", '/ExpenseOrder'),
-                    _drawerItem("Alış Faturası", '/ExpenseInvoice'),
-                    _drawerItem("Alış İade Faturası", '/ExpenseClaim'),
+                    _drawerItem("icon_file_contract.svg","Verilen Siparişler", '/ExpenseOrder'),
+                    _drawerItem("icon_file_download.svg","Alış Faturası", '/ExpenseInvoice'),
+                    _drawerItem("icon_file_upload.svg","Alış İade Faturası", '/ExpenseClaim'),
                   ]),
                 if (showEDocuments)
                   _buildExpandableTile("icon_note_sticky.svg","E-Belgeler", "ğ", [
                     _buildExpandableTile("icon_arrow_up.svg","Giden", "edoc_out", [
-                      _drawerItem("E-Faturalar", '/OutGoingE-Invoice'),
-                      _drawerItem("E-Arşiv Faturalar", '/OutGoingE-Archive'),
-                      _drawerItem("E-İrsaliyeler", '/OutGoingE-Dispatch'),
+                      _drawerItem("icon_file_invoice.svg","E-Faturalar", '/OutGoingE-Invoice'),
+                      _drawerItem("icon_file_contract.svg","E-Arşiv Faturalar", '/OutGoingE-Archive'),
+                      _drawerItem("icon_file_lines.svg","E-İrsaliyeler", '/OutGoingE-Dispatch'),
                     ]),
                     _buildExpandableTile("icon_arrow_down.svg","Gelen", "g", [
-                      _drawerItem("E-Faturalar", '/ApprovedE-Invoice'),
-                      _drawerItem("E-İrsaliyeler", '/ApprovedE-Dispatch'),
+                      _drawerItem("icon_file_invoice.svg","E-Faturalar", '/ApprovedE-Invoice'),
+                      _drawerItem("icon_file_lines.svg","E-İrsaliyeler", '/ApprovedE-Dispatch'),
                     ]),
                   ]),
                 if (showIncomeExpense)
                   _buildExpandableTile("icon_money.svg","Nakit", "f", [
-                    _drawerItem("Kasa ve Bankalar", '/DepositAndBanks'),
+                    _drawerItem("icon_building.svg","Kasa ve Bankalar", '/DepositAndBanks'),
                   ]),
                 _drawerItems("icon_lira.svg","Kontör", '/Credits'),
                 _drawerItems("icon_bell.svg","Bildirimler", '/Notifications'),
@@ -296,7 +296,7 @@ class _AppLayoutState extends State<AppLayout> {
       color: isActive ? const Color(0xFFB00034) : Colors.transparent,
       child: ListTile(
         leading: SvgPicture.asset(
-          'lib/assets/images/${imagePath}',
+          'lib/assets/images/$imagePath',
           width: 32,
           height: 32,
           alignment: Alignment.center,
@@ -312,11 +312,17 @@ class _AppLayoutState extends State<AppLayout> {
     );
   }
 
-  Widget _drawerItem(String title, String route) {
+  Widget _drawerItem(String imagePath,String title, String route) {
     final isActive = route == _currentRoute;
     return Container(
       color: isActive ? const Color(0xFFB00034) : Colors.transparent,
       child: ListTile(
+        leading: SvgPicture.asset(
+          'lib/assets/images/$imagePath',
+          width: 32,
+          height: 32,
+          alignment: Alignment.center,
+        ),
         title: Text(title, style: const TextStyle(color: Colors.white)),
         tileColor:
             _currentRoute == route

@@ -72,8 +72,6 @@ class PranomiApp extends StatelessWidget {
     '/expenseinvoice': 'Giden Faturalar',
     '/expenseorder': 'Giden Siparişler',
     '/expenseclaim': 'Alış İade Faturası',
-
-
   };
 
   Future<bool> _isLoggedIn() async {
