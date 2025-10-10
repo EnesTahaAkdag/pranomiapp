@@ -66,6 +66,14 @@ class PranomiApp extends StatelessWidget {
     '/Announcements': 'Duyurular',
     '/Credits': 'Kontörlerim',
     '/Notifications': 'Bildirimler',
+    '/incomeinvoice': 'Gelen Faturalar',
+    '/incomeorder': 'Gelen Siparişler',
+    '/incomeclaim': 'Satış İade Faturası',
+    '/expenseinvoice': 'Giden Faturalar',
+    '/expenseorder': 'Giden Siparişler',
+    '/expenseclaim': 'Alış İade Faturası',
+
+
   };
 
   Future<bool> _isLoggedIn() async {
