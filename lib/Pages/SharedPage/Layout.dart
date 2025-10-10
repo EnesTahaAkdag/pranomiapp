@@ -36,7 +36,7 @@ class _AppLayoutState extends State<AppLayout> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final uri =
-        GoRouter.of(context).routeInformationProvider.value.uri.toString();
+    GoRouter.of(context).routeInformationProvider.value.uri.toString();
     setState(() {
       _currentRoute = uri;
       _currentIndex = getIndexFromRoute(uri);
@@ -81,7 +81,7 @@ class _AppLayoutState extends State<AppLayout> {
         return 3;
 
       default:
-        return -1; // 👈 Drawer’dan açılan diğer sayfalar için
+        return -1;
     }
   }
 
@@ -414,9 +414,9 @@ class _AppLayoutState extends State<AppLayout> {
         ),
         title: Text(title, style: const TextStyle(color: Colors.white)),
         tileColor:
-            _currentRoute == route
-                ? const Color(0xFFB00034)
-                : Colors.transparent,
+        _currentRoute == route
+            ? const Color(0xFFB00034)
+            : Colors.transparent,
         onTap: () => _navigateTo(route),
       ),
     );
@@ -436,20 +436,20 @@ class _AppLayoutState extends State<AppLayout> {
         ),
         title: Text(title, style: const TextStyle(color: Colors.white)),
         tileColor:
-            _currentRoute == route
-                ? const Color(0xFFB00034)
-                : Colors.transparent,
+        _currentRoute == route
+            ? const Color(0xFFB00034)
+            : Colors.transparent,
         onTap: () => _navigateTo(route),
       ),
     );
   }
 
   Widget _buildExpandableTile(
-    String imagePath,
-    String title,
-    String id,
-    List<Widget> children,
-  ) {
+      String imagePath,
+      String title,
+      String id,
+      List<Widget> children,
+      ) {
     return ExpansionTile(
       leading: SvgPicture.asset(
         'lib/assets/images/$imagePath',
@@ -474,71 +474,125 @@ class _AppLayoutState extends State<AppLayout> {
     return Scaffold(
       drawer: _buildDrawer(context),
       appBar:
-          widget.showAppBar
-              ? AppBar(
-                title: Text(widget.title),
-                backgroundColor: const Color(0xFF3F3F3F),
-                leading: Builder(
-                  builder:
-                      (ctx) => IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () => Scaffold.of(ctx).openDrawer(),
-                      ),
-                ),
-              )
-              : null,
+      widget.showAppBar
+          ? AppBar(
+        title: Text(widget.title),
+        backgroundColor: const Color(0xFF1F2937),
+        leading: Builder(
+          builder:
+              (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
+        ),
+      )
+          : null,
       body: widget.body,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex >= 0 ? _currentIndex : 0,
-        selectedItemColor:
-            _currentIndex >= 0 ? const Color(0xFFB00034) : Colors.white,
-        unselectedItemColor: Colors.white,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        onTap: (index) async {
-          switch (index) {
-            case 0:
-              _navigateTo('/');
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1F2937),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                  icon: Icons.home_rounded,
+                  label: 'Ana Sayfa',
+                  index: 0,
+                  onTap: () => _navigateTo('/'),
+                ),
+                _buildNavItem(
+                  icon: Icons.attach_money_rounded,
+                  label: 'Gelirler',
+                  index: 1,
+                  onTap: () async {
+                    await _showIncomeSubMenu(context);
+                    setState(() {
+                      _currentIndex = getIndexFromRoute(_currentRoute);
+                    });
+                  },
+                ),
+                _buildNavItem(
+                  icon: Icons.money_off_rounded,
+                  label: 'Giderler',
+                  index: 2,
+                  onTap: () async {
+                    await _showExpenseSubMenu(context);
+                    setState(() {
+                      _currentIndex = getIndexFromRoute(_currentRoute);
+                    });
+                  },
+                ),
+                _buildNavItem(
+                  icon: Icons.description_rounded,
+                  label: 'E-Belgeler',
+                  index: 3,
+                  onTap: () async {
+                    await _showEDocumentsSubMenu(context);
+                    setState(() {
+                      _currentIndex = getIndexFromRoute(_currentRoute);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-            case 1:
-              await _showIncomeSubMenu(context);
-              setState(() {
-                _currentIndex = getIndexFromRoute(_currentRoute);
-              });
-              break;
-            case 2:
-              await _showExpenseSubMenu(context);
-              setState(() {
-                _currentIndex = getIndexFromRoute(_currentRoute);
-              });
-              break;
-            case 3:
-              await _showEDocumentsSubMenu(context);
-              setState(() {
-                _currentIndex = getIndexFromRoute(_currentRoute);
-              });
-              break;
-          }
-        },
-        backgroundColor: const Color(0xFF3F3F3F),
-        type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Ana Sayfa'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.attach_money_sharp),
-            label: 'Gelirler',
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+    required VoidCallback onTap,
+  }) {
+    final bool isSelected = _currentIndex == index;
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF3B82F6) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money_off),
-            label: 'Giderler',
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 26,
+                color: isSelected ? Colors.white : const Color(0xFFD1D5DB),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? Colors.white : const Color(0xFFD1D5DB),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sticky_note_2_sharp),
-            label: 'E-Belgeler',
-          ),
-        ],
+        ),
       ),
     );
   }
