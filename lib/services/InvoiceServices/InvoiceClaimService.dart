@@ -15,8 +15,8 @@ class InvoiceClaimService extends ApiServiceBase {
       final headers = await getAuthHeaders();
       final response = await dio.get(
         hasSearch
-            ? "/${Uri.encodeComponent(search)}?size=$size&page=$page&invoiceType=$invoiceType"
-            : "?size=$size&page=$page&invoiceType=$invoiceType",
+            ? "Claim/Claims/${Uri.encodeComponent(search)}?size=$size&page=$page&invoiceType=$invoiceType"
+            : "Claim/Claims?size=$size&page=$page&invoiceType=$invoiceType",
         options: Options(headers: headers),
       );
 
