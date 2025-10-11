@@ -10,8 +10,6 @@ import 'package:pranomiapp/features/announcement/presentation/announcement_view_
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Announcement Page - MVVM Pattern with Provider
-/// Following Single Responsibility: Only handles UI composition
 class AnnouncementPage extends StatelessWidget {
   const AnnouncementPage({super.key});
 
@@ -24,7 +22,6 @@ class AnnouncementPage extends StatelessWidget {
   }
 }
 
-/// Main view widget - Listens to ViewModel changes
 class _AnnouncementView extends StatelessWidget {
   const _AnnouncementView();
 
@@ -39,7 +36,6 @@ class _AnnouncementView extends StatelessWidget {
     );
   }
 
-  /// Builds body based on current state
   Widget _buildBody(BuildContext context, AnnouncementViewModel viewModel) {
     final state = viewModel.state;
 
@@ -76,16 +72,11 @@ class _AnnouncementView extends StatelessWidget {
       );
     }
 
-    // Initial state or unknown state
     return const SizedBox.shrink();
   }
 }
 
-// ============================================================================
-// REUSABLE UI COMPONENTS (Following Single Responsibility Principle)
-// ============================================================================
 
-/// Error view widget
 class _ErrorView extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
@@ -120,7 +111,6 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
-/// Empty state view widget
 class _EmptyView extends StatelessWidget {
   final VoidCallback onRefresh;
 
@@ -144,7 +134,6 @@ class _EmptyView extends StatelessWidget {
   }
 }
 
-/// Announcement card widget - Encapsulates single announcement display
 class AnnouncementCard extends StatelessWidget {
   final AnnouncementModel announcement;
 
@@ -175,7 +164,6 @@ class AnnouncementCard extends StatelessWidget {
   }
 }
 
-/// Announcement header with title and icon
 class _AnnouncementHeader extends StatelessWidget {
   final AnnouncementModel announcement;
 
@@ -206,7 +194,6 @@ class _AnnouncementHeader extends StatelessWidget {
   }
 }
 
-/// Announcement date display
 class _AnnouncementDate extends StatelessWidget {
   final DateTime date;
   static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
@@ -224,11 +211,9 @@ class _AnnouncementDate extends StatelessWidget {
   }
 }
 
-/// Announcement HTML content display
 class _AnnouncementContent extends StatelessWidget {
   final String description;
 
-  // HTML style configuration - const for performance
   static final _htmlStyle = {
     "body": Style(
       margin: Margins.zero,
@@ -255,11 +240,7 @@ class _AnnouncementContent extends StatelessWidget {
   }
 }
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
 
-/// Launches URL in external browser
 Future<void> _launchURL(String urlAddress) async {
   final Uri url = Uri.parse(urlAddress);
 
@@ -268,7 +249,6 @@ Future<void> _launchURL(String urlAddress) async {
   }
 }
 
-/// Maps announcement type to corresponding icon
 IconData _getIconForType(AnnouncementType type) {
   switch (type) {
     case AnnouncementType.news:
