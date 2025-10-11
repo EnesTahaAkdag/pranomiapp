@@ -68,20 +68,6 @@ class AppDrawer extends StatelessWidget {
             currentRoute: currentRoute,
             onTap: onNavigate,
           ),
-          DrawerMenuItem(
-            imagePath: "icon_chart.svg",
-            title: "Analizler",
-            route: '/graphs',
-            currentRoute: currentRoute,
-            onTap: onNavigate,
-          ),
-          DrawerMenuItem(
-            imagePath: "icon_money_bill.svg",
-            title: "Ödemeler ve Tahsilatlar",
-            route: '/sayfaC',
-            currentRoute: currentRoute,
-            onTap: onNavigate,
-          ),
         ],
       ),
       DrawerExpandableTile(
