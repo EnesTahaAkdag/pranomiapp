@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:pranomiapp/Pages/AccountPages/AccountPage/account_deposit_and_banks.dart';
 import 'package:pranomiapp/core/di/injection.dart';
-import 'package:pranomiapp/Pages/homes_page.dart';
-import 'package:pranomiapp/Pages/SharedPage/layout.dart';
-import 'package:pranomiapp/features/credit/presentation/credit_page.dart';
-import 'package:pranomiapp/features/dashboard/presentation/dashboard_page.dart';
-import 'package:pranomiapp/features/employees/employee_add_page.dart';
-import 'package:pranomiapp/features/employees/employees_page.dart';
-import 'package:pranomiapp/features/notifications/presentation/notifications_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pranomiapp/Models/TypeEnums/customer_type_enum.dart';
-import 'package:pranomiapp/features/authentication/presentation/login_page.dart';
-import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/invoices_page.dart';
-import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/invoice_details.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/customer_page.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/customer_add_page.dart';
-import 'package:pranomiapp/Pages/InvocesPages/InvoicePages/invoices_claim_page.dart';
-import 'package:pranomiapp/Pages/CustomersPages/CustomerPage/customer_edit_page.dart';
-
-import 'features/announcement/presentation/announcement_page.dart';
-import 'features/e_invoice/presentation/e_invoice_page.dart';
-import 'features/products/presentation/products_and_services_page.dart';
+import 'package:pranomiapp/core/router/app_router.dart';
+import 'package:pranomiapp/core/services/auth_service.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 void main() async {
+  // Setup dependency injection
   setupLocator();
+
+  // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Turkish locale for date formatting
   await initializeDateFormatting('tr_TR', null);
+
+  // Configure system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color.fromARGB(255, 41, 41, 41),
@@ -37,290 +25,46 @@ void main() async {
     ),
   );
 
+  // Run the app
   runApp(const PranomiApp());
 }
 
 class PranomiApp extends StatelessWidget {
   const PranomiApp({super.key});
 
-  static const getTitleForRoutes = {
-    '/': 'Genel Bakış',
-    '/ProductsandServices': 'Ürünler ve Hizmetler',
-    '/InComeInvoice': 'Gelen Faturalar',
-    '/ExpenseInvoice': 'Giden Faturalar',
-    '/InComeOrder': 'Gelen Siparişler',
-    '/ExpenseOrder': 'Giden Siparişler',
-    '/IncomeWayBill': 'Gelen İrsaliyeler',
-    '/InComeClaim': 'Satış İade Faturası',
-    '/ExpenseClaim': 'Alış İade Faturası',
-    '/ExpenseWayBill': 'Giden İrsaliyeler',
-    '/ApprovedE-Dispatch': 'Gelen E-İrsaliyeler',
-    '/ApprovedE-Invoice': 'Gelen E-Faturalar',
-    '/OutGoingE-Dispatch': 'Gide E-İrsaliyeler',
-    '/OutGoingE-Archive': 'Giden E-Arşiv Faturalar',
-    '/OutGoingE-Invoice': 'Giden E-Faturalar',
-    '/CustomerAccounts': 'Cari Hesaplar',
-    '/EmployeAccounts': 'Çalışanlar',
-    '/SupplierAccounts': 'Tedarikçiler',
-    '/DepositAndBanks': 'Kasa Ve Bankalar',
-    '/Announcements': 'Duyurular',
-    '/Credits': 'Kontörlerim',
-    '/Notifications': 'Bildirimler',
-    '/incomeinvoice': 'Gelen Faturalar',
-    '/incomeorder': 'Gelen Siparişler',
-    '/incomeclaim': 'Satış İade Faturası',
-    '/expenseinvoice': 'Giden Faturalar',
-    '/expenseorder': 'Giden Siparişler',
-    '/expenseclaim': 'Alış İade Faturası',
-  };
-
-  Future<bool> _isLoggedIn() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? apiKey = prefs.getString('apiKey');
-    String? apiSecret = prefs.getString('apiSecret');
-    return apiKey != null && apiSecret != null;
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('apiKey');
-    await prefs.remove('apiSecret');
-    await prefs.remove('subscriptionType');
-    await prefs.remove('isEInvoiceActive');
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: _isLoggedIn(),
+      future: AuthService.isLoggedIn(),
       builder: (context, snapshot) {
+        // Show loading indicator while checking authentication
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
-            home: Scaffold(body: Center(child: CircularProgressIndicator())),
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
           );
         }
 
+        // Get login status
         final isLoggedIn = snapshot.data ?? false;
 
-        final router = GoRouter(
-          initialLocation: isLoggedIn ? '/' : '/login',
-          routes: [
-            GoRoute(path: '/login', builder: (context,state) {
-              _logout(context);
-              return const LoginPage();
-            }),
-            ShellRoute(
-              builder:
-                  (context, state, child) => AppLayout(
-                    body: child,
-                    title: _getTitleForRoute(state.uri.path),
-                  ),
-              routes: [
-                GoRoute(path: '/', builder: (_, __) => const DashboardPage()),
-
-                GoRoute(
-                  path: '/ProductsandServices',
-                  builder: (_, __) => const ProductsAndServicesPage(),
-                ),
-
-                GoRoute(
-                  path: '/ExpenseClaim',
-                  builder: (_, __) => const InvoicesClaimPage(claimType: 2),
-                ),
-
-                GoRoute(
-                  path: '/ExpenseInvoice',
-                  builder: (_, __) => const InvoicesPage(invoiceType: 2),
-                ),
-
-                GoRoute(
-                  path: '/ExpenseOrder',
-                  builder: (_, __) => const InvoicesPage(invoiceType: 4),
-                ),
-
-                GoRoute(
-                  path: '/ExpenseWayBill',
-                  builder: (_, __) => const InvoicesPage(invoiceType: 6),
-                ),
-
-                GoRoute(
-                  path: '/InComeClaim',
-                  builder: (_, __) => const InvoicesClaimPage(claimType: 1),
-                ),
-
-                GoRoute(
-                  path: '/InComeInvoice',
-                  builder: (_, __) => const InvoicesPage(invoiceType: 1),
-                ),
-
-                GoRoute(
-                  path: '/InComeOrder',
-                  builder: (_, __) => const InvoicesPage(invoiceType: 3),
-                ),
-
-                GoRoute(
-                  path: '/IncomeWayBill',
-                  builder: (_, __) => const InvoicesPage(invoiceType: 5),
-                ),
-
-                GoRoute(
-                  path: '/ApprovedE-Dispatch',
-                  builder:
-                      (_, __) => const EInvoicesPage(
-                        invoiceType: "eDespacth",
-                        recordType: "approved",
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/ApprovedE-Invoice',
-                  builder:
-                      (_, __) => const EInvoicesPage(
-                        invoiceType: "eInvoice",
-                        recordType: "approved",
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/OutGoingE-Dispatch',
-                  builder:
-                      (_, __) => const EInvoicesPage(
-                        invoiceType: "eDespacth",
-                        recordType: "outgoing",
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/OutGoingE-Archive',
-                  builder:
-                      (_, __) => const EInvoicesPage(
-                        invoiceType: "eArchive",
-                        recordType: "outgoing",
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/OutGoingE-Invoice',
-                  builder:
-                      (_, __) => const EInvoicesPage(
-                        invoiceType: "eInvoice",
-                        recordType: "outgoing",
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/CustomerAccounts',
-                  builder:
-                      (_, __) => const CustomerPage(
-                        customerType: CustomerTypeEnum.Customer,
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/EmployeAccounts',
-                  builder:
-                      (_, __) => const EmployeesPage(
-                        customerType: CustomerTypeEnum.Employee,
-                      ),
-                ),
-
-                GoRoute(
-                  path: '/SupplierAccounts',
-                  builder:
-                      (_, __) => const CustomerPage(
-                        customerType: CustomerTypeEnum.Supplier,
-                      ),
-                ),
-
-                GoRoute(
-                  path: "/DepositAndBanks",
-                  builder: (context, state) {
-                    return const AccountDepositAndBanksPage();
-                  },
-                ),
-
-                GoRoute(
-                  path: '/Announcements',
-                  builder: (context, state) {
-                    return AnnouncementPage();
-                  },
-                ),
-
-                GoRoute(
-                  path: '/Credits',
-                  builder: (context, state) => const CreditPage(),
-                ),
-
-                GoRoute(
-                  path: '/Notifications',
-                  builder: (context, state) => const NotificationsPage(),
-                ),
-              ],
-            ),
-
-            GoRoute(
-              path: '/invoice-detail/:id',
-              builder: (context, state) {
-                final invoiceId = int.parse(state.pathParameters['id']!);
-                return InvoiceDetailPage(invoiceId: invoiceId);
-              },
-            ),
-
-            GoRoute(
-              path: '/CustomerAddPage',
-              builder: (context, state) {
-                return CustomerAddPage(customerType: CustomerTypeEnum.Customer);
-              },
-            ),
-
-            GoRoute(
-              path: '/EmployeeAddPage',
-              builder: (context, state) {
-                return EmployeeAddPage(customerType: CustomerTypeEnum.Employee);
-              },
-            ),
-
-            GoRoute(
-              path: '/CustomerEditPage',
-              builder: (context, state) {
-                final customerId = state.extra as int?;
-                if (customerId == null) {
-                  return const Scaffold(
-                    body: Center(child: Text('Geçersiz müşteri ID')),
-                  );
-                }
-                return CustomerEditPage(customerId: customerId);
-              },
-            ),
-          ],
+        // Create router with authentication state
+        final router = AppRouter.createRouter(
+          isLoggedIn: isLoggedIn,
+          onLogout: (context) => AuthService.logout(),
         );
 
+        // Return MaterialApp with router configuration
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primaryColor: const Color(0xFF3D3D3D),
-            scaffoldBackgroundColor: Colors.white,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Color(0xFF3D3D3D),
-              elevation: 0,
-              foregroundColor: Colors.white,
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFB00034),
-                foregroundColor: Colors.white,
-              ),
-            ),
-          ),
+          title: 'Pranomi',
+          theme: AppTheme.lightTheme,
           localizationsDelegates: const [],
           supportedLocales: const [Locale('tr')],
           routerConfig: router,
         );
       },
     );
-  }
-
-  String _getTitleForRoute(String path) {
-    return getTitleForRoutes[path] ?? 'Sayfa';
   }
 }
