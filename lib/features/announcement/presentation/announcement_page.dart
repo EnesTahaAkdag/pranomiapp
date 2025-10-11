@@ -4,93 +4,88 @@ import 'package:intl/intl.dart';
 import 'package:pranomiapp/features/announcement/data/announcement_model.dart';
 import 'package:pranomiapp/features/announcement/data/announcement_service.dart';
 import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/features/announcement/domain/announcement_type.dart';
+import 'package:pranomiapp/features/announcement/presentation/announcement_state.dart';
+import 'package:pranomiapp/features/announcement/presentation/announcement_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../domain/announcement_type.dart';
-
-class AnnouncementPage extends StatefulWidget {
+/// Announcement Page - MVVM Pattern with Provider
+/// Following Single Responsibility: Only handles UI composition
+class AnnouncementPage extends StatelessWidget {
   const AnnouncementPage({super.key});
 
   @override
-  State<AnnouncementPage> createState() => _AnnouncementPageState();
-}
-
-class _AnnouncementPageState extends State<AnnouncementPage> {
-  late final AnnouncementService _announcementService;
-  List<AnnouncementModel>? _announcements;
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _announcementService = locator<AnnouncementService>();
-    _fetchAnnouncements();
-  }
-
-  Future<void> _fetchAnnouncements() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-    try {
-      final announcements = await _announcementService.fetchAnnouncements();
-      if (mounted) {
-        setState(() {
-          _announcements = announcements;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = "Duyurular yüklenirken bir hata oluştu: ${e.toString()}";
-          debugPrint("Error fetching announcements: $e");
-        });
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _buildBody());
-  }
-
-  Widget _buildBody() {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_error != null) {
-      return _ErrorView(
-        error: _error!,
-        onRetry: _fetchAnnouncements,
-      );
-    }
-
-    if (_announcements == null || _announcements!.isEmpty) {
-      return _EmptyView(onRefresh: _fetchAnnouncements);
-    }
-
-    return RefreshIndicator(
-      onRefresh: _fetchAnnouncements,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
-        itemCount: _announcements!.length,
-        itemBuilder: (context, index) {
-          final announcement = _announcements![index];
-          return AnnouncementCard(
-            key: ValueKey(announcement.id ?? index),
-            announcement: announcement,
-          );
-        },
-      ),
+    return ChangeNotifierProvider(
+      create: (_) => AnnouncementViewModel(locator<AnnouncementService>()),
+      child: const _AnnouncementView(),
     );
   }
 }
 
-// Ayrı widget - Gereksiz rebuild'leri önler
+/// Main view widget - Listens to ViewModel changes
+class _AnnouncementView extends StatelessWidget {
+  const _AnnouncementView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Consumer<AnnouncementViewModel>(
+        builder: (context, viewModel, child) {
+          return _buildBody(context, viewModel);
+        },
+      ),
+    );
+  }
+
+  /// Builds body based on current state
+  Widget _buildBody(BuildContext context, AnnouncementViewModel viewModel) {
+    final state = viewModel.state;
+
+    // Pattern matching on state type
+    if (state is AnnouncementLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state is AnnouncementError) {
+      return _ErrorView(
+        error: state.message,
+        onRetry: viewModel.fetchAnnouncements,
+      );
+    }
+
+    if (state is AnnouncementLoaded) {
+      if (state.isEmpty) {
+        return _EmptyView(onRefresh: viewModel.refresh);
+      }
+
+      return RefreshIndicator(
+        onRefresh: viewModel.refresh,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(8.0),
+          itemCount: state.announcements.length,
+          itemBuilder: (context, index) {
+            final announcement = state.announcements[index];
+            return AnnouncementCard(
+              key: ValueKey(announcement.id),
+              announcement: announcement,
+            );
+          },
+        ),
+      );
+    }
+
+    // Initial state or unknown state
+    return const SizedBox.shrink();
+  }
+}
+
+// ============================================================================
+// REUSABLE UI COMPONENTS (Following Single Responsibility Principle)
+// ============================================================================
+
+/// Error view widget
 class _ErrorView extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
@@ -125,7 +120,7 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
-// Ayrı widget - Gereksiz rebuild'leri önler
+/// Empty state view widget
 class _EmptyView extends StatelessWidget {
   final VoidCallback onRefresh;
 
@@ -149,7 +144,7 @@ class _EmptyView extends StatelessWidget {
   }
 }
 
-// Ayrı widget class - Her item bağımsız rebuild olur
+/// Announcement card widget - Encapsulates single announcement display
 class AnnouncementCard extends StatelessWidget {
   final AnnouncementModel announcement;
 
@@ -180,7 +175,7 @@ class AnnouncementCard extends StatelessWidget {
   }
 }
 
-// Header - const olmayan Icon nedeniyle ayrı widget
+/// Announcement header with title and icon
 class _AnnouncementHeader extends StatelessWidget {
   final AnnouncementModel announcement;
 
@@ -211,7 +206,7 @@ class _AnnouncementHeader extends StatelessWidget {
   }
 }
 
-// Tarih - Cache için ayrı widget
+/// Announcement date display
 class _AnnouncementDate extends StatelessWidget {
   final DateTime date;
   static final _dateFormat = DateFormat('dd.MM.yyyy HH:mm');
@@ -223,17 +218,17 @@ class _AnnouncementDate extends StatelessWidget {
     return Text(
       'Yayınlanma Tarihi: ${_dateFormat.format(date)}',
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+            fontWeight: FontWeight.bold,
+          ),
     );
   }
 }
 
-// HTML content - En ağır kısım, ayrı widget olarak cache'lenir
+/// Announcement HTML content display
 class _AnnouncementContent extends StatelessWidget {
   final String description;
 
-  // HTML stil ayarları - const olarak tanımla, her build'de yeniden oluşturulmasın
+  // HTML style configuration - const for performance
   static final _htmlStyle = {
     "body": Style(
       margin: Margins.zero,
@@ -260,6 +255,11 @@ class _AnnouncementContent extends StatelessWidget {
   }
 }
 
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/// Launches URL in external browser
 Future<void> _launchURL(String urlAddress) async {
   final Uri url = Uri.parse(urlAddress);
 
@@ -268,6 +268,7 @@ Future<void> _launchURL(String urlAddress) async {
   }
 }
 
+/// Maps announcement type to corresponding icon
 IconData _getIconForType(AnnouncementType type) {
   switch (type) {
     case AnnouncementType.news:
