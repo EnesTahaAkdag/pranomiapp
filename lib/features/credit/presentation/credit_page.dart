@@ -1,41 +1,41 @@
-// lib/features/credit/presentation/credit_page.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/features/credit/data/credit_model.dart';
 import 'package:pranomiapp/features/credit/data/credit_service.dart';
-import 'package:pranomiapp/core/di/injection.dart'; // Assuming locator is setup
+import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/features/credit/presentation/credit_state.dart';
+import 'package:pranomiapp/features/credit/presentation/credit_view_model.dart';
+import 'package:provider/provider.dart';
 
-class CreditPage extends StatefulWidget {
+/// Credit Page - MVVM Pattern with Provider
+/// Following Single Responsibility: Only handles UI composition
+class CreditPage extends StatelessWidget {
   const CreditPage({super.key});
 
   @override
-  State<CreditPage> createState() => _CreditPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => CreditViewModel(locator<CreditService>()),
+      child: const _CreditView(),
+    );
+  }
 }
 
-class _CreditPageState extends State<CreditPage> {
-  late final CreditService _creditService;
-  final List<CreditTransaction> _transactions = [];
+/// Main view widget - Listens to ViewModel changes
+class _CreditView extends StatefulWidget {
+  const _CreditView();
+
+  @override
+  State<_CreditView> createState() => _CreditViewState();
+}
+
+class _CreditViewState extends State<_CreditView> {
   final ScrollController _scrollController = ScrollController();
-
-  bool _isLoading = true;
-  bool _isLoadingMore = false;
-  int _currentPage = 0;
-  int _totalPages = 1;
-  String? _error;
-
-  // Formatters can be static if they don't depend on instance state
-  static final DateFormat _dateFormatter = DateFormat('dd.MM.yyyy HH:mm');
-  static final NumberFormat _currencyFormatter = NumberFormat.currency(
-    locale: 'tr_TR',
-    symbol: '₺',
-  );
 
   @override
   void initState() {
     super.initState();
-    _creditService = locator<CreditService>();
     _scrollController.addListener(_onScroll);
-    _fetchCreditTransactions(isRefresh: true);
   }
 
   @override
@@ -45,186 +45,130 @@ class _CreditPageState extends State<CreditPage> {
     super.dispose();
   }
 
-  Future<void> _fetchCreditTransactions({bool isRefresh = false}) async {
-    if (isRefresh) {
-      setState(() {
-        _isLoading = true;
-        _currentPage = 0;
-        _transactions.clear();
-        _error = null;
-      });
-    } else {
-      if (_isLoadingMore || _currentPage >= _totalPages) return;
-      setState(() {
-        _isLoadingMore = true;
-        _error = null;
-      });
-    }
-
-    try {
-      final creditItem = await _creditService.fetchCredits(
-        page: _currentPage,
-        size: 20,
-      );
-
-      if (mounted) {
-        if (creditItem != null) {
-          setState(() {
-            _transactions.addAll(creditItem.creditTransactions);
-            _currentPage = creditItem.currentPage + 1;
-            _totalPages = creditItem.totalPages;
-          });
-        } else if (isRefresh) {
-          _error = "Kredi hareketleri yüklenemedi.";
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = "Bir hata oluştu: ${e.toString()}";
-        });
-        debugPrint("Error fetching credit transactions: $e");
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _isLoadingMore = false;
-        });
-      }
-    }
-  }
-
   void _onScroll() {
+    // Trigger load more when near bottom
     if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 200 &&
-        !_isLoadingMore &&
-        _currentPage < _totalPages) {
-      _fetchCreditTransactions();
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<CreditViewModel>().loadMoreTransactions();
     }
-  }
-
-  static String getTransactionTypeDescription(int type) {
-    switch (type) {
-      case 1:
-        return "Diğer";
-      case 2:
-        return "Nakit";
-      case 3:
-        return "Havale/Eft";
-      case 4:
-        return "Kredi Kartı";
-      case 5:
-        return "Hediye";
-      case 6:
-        return "E-Fatura";
-      case 7:
-        return "E-Arşive Fatura";
-      case 8:
-        return "E-İrsaliye";
-    }
-    return "İşlem Tipi: $type";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _CreditPageBody(
-        isLoading: _isLoading,
-        isLoadingMore: _isLoadingMore,
-        error: _error,
-        transactions: _transactions,
-        scrollController: _scrollController,
-        onRefresh: () => _fetchCreditTransactions(isRefresh: true),
-        dateFormatter: _dateFormatter,
-        currencyFormatter: _currencyFormatter,
-        getTransactionTypeDescription: getTransactionTypeDescription,
-      ),
-    );
-  }
-}
-
-// --- New Extracted Body Widget ---
-class _CreditPageBody extends StatelessWidget {
-  final bool isLoading;
-  final bool isLoadingMore;
-  final String? error;
-  final List<CreditTransaction> transactions;
-  final ScrollController scrollController;
-  final Future<void> Function() onRefresh;
-  final DateFormat dateFormatter;
-  final NumberFormat currencyFormatter;
-  final String Function(int) getTransactionTypeDescription;
-
-  const _CreditPageBody({
-    // key is not strictly needed here as it's a private widget, but good practice
-    // super.key,
-    required this.isLoading,
-    required this.isLoadingMore,
-    required this.error,
-    required this.transactions,
-    required this.scrollController,
-    required this.onRefresh,
-    required this.dateFormatter,
-    required this.currencyFormatter,
-    required this.getTransactionTypeDescription,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (isLoading && transactions.isEmpty) {
-      return const _LoadingView();
-    }
-
-    if (error != null && transactions.isEmpty) {
-      return _ErrorView(error: error!, onRetry: onRefresh);
-    }
-
-    if (transactions.isEmpty) {
-      return _EmptyView(onRefresh: onRefresh);
-    }
-
-    return RefreshIndicator(
-      onRefresh: onRefresh,
-      child: ListView.separated(
-        controller: scrollController,
-        padding: const EdgeInsets.all(12.0),
-        itemCount: transactions.length + (isLoadingMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == transactions.length) {
-            return const _LoadingMoreIndicator();
-          }
-          final transaction = transactions[index];
-          return _TransactionListItem(
-            key: ValueKey(transaction.id),
-            transaction: transaction,
-            dateFormatter: dateFormatter,
-            currencyFormatter: currencyFormatter,
-            getTransactionTypeDescription: getTransactionTypeDescription,
-          );
+      body: Consumer<CreditViewModel>(
+        builder: (context, viewModel, child) {
+          return _buildBody(context, viewModel);
         },
-        separatorBuilder: (context, index) => const SizedBox(height: 6),
+      ),
+    );
+  }
+
+  /// Builds body based on current state
+  Widget _buildBody(BuildContext context, CreditViewModel viewModel) {
+    final state = viewModel.state;
+
+    // Pattern matching on state type
+    if (state is CreditLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state is CreditError) {
+      // Show error with existing data if available
+      if (state.hasExistingData) {
+        return _buildTransactionsList(
+          context,
+          viewModel,
+          state.existingTransactions,
+          isLoadingMore: false,
+          hasError: true,
+          errorMessage: state.message,
+        );
+      }
+      return _ErrorView(
+        error: state.message,
+        onRetry: viewModel.fetchTransactions,
+      );
+    }
+
+    if (state is CreditLoaded) {
+      if (state.isEmpty) {
+        return _EmptyView(onRefresh: viewModel.refresh);
+      }
+
+      return _buildTransactionsList(
+        context,
+        viewModel,
+        state.transactions,
+        isLoadingMore: state.isLoadingMore,
+      );
+    }
+
+    // Initial state or unknown state
+    return const SizedBox.shrink();
+  }
+
+  /// Builds the transactions list with pagination
+  Widget _buildTransactionsList(
+    BuildContext context,
+    CreditViewModel viewModel,
+    List<CreditTransaction> transactions, {
+    required bool isLoadingMore,
+    bool hasError = false,
+    String? errorMessage,
+  }) {
+    return RefreshIndicator(
+      onRefresh: viewModel.refresh,
+      child: Column(
+        children: [
+          if (hasError)
+            Container(
+              width: double.infinity,
+              color: Colors.red.shade100,
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                errorMessage ?? 'Bir hata oluştu',
+                style: TextStyle(color: Colors.red.shade900),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          Expanded(
+            child: ListView.separated(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(12.0),
+              itemCount: transactions.length + (isLoadingMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == transactions.length) {
+                  return const _LoadingMoreIndicator();
+                }
+                final transaction = transactions[index];
+                return _TransactionCard(
+                  key: ValueKey(transaction.id),
+                  transaction: transaction,
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 6),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// --- Previously Extracted Widgets (remain the same) ---
+// ============================================================================
+// REUSABLE UI COMPONENTS (Following Single Responsibility Principle)
+// ============================================================================
 
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
-  }
-}
-
+/// Error view widget
 class _ErrorView extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
 
-  const _ErrorView({required this.error, required this.onRetry});
+  const _ErrorView({
+    required this.error,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -251,6 +195,7 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
+/// Empty state view widget
 class _EmptyView extends StatelessWidget {
   final VoidCallback onRefresh;
 
@@ -269,7 +214,10 @@ class _EmptyView extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(onPressed: onRefresh, child: const Text("Yenile")),
+            ElevatedButton(
+              onPressed: onRefresh,
+              child: const Text("Yenile"),
+            ),
           ],
         ),
       ),
@@ -277,18 +225,20 @@ class _EmptyView extends StatelessWidget {
   }
 }
 
-class _TransactionListItem extends StatelessWidget {
+/// Transaction card widget - Encapsulates single transaction display
+class _TransactionCard extends StatelessWidget {
   final CreditTransaction transaction;
-  final DateFormat dateFormatter;
-  final NumberFormat currencyFormatter;
-  final String Function(int) getTransactionTypeDescription;
 
-  const _TransactionListItem({
+  // Static formatters for performance
+  static final DateFormat _dateFormatter = DateFormat('dd.MM.yyyy HH:mm');
+  static final NumberFormat _currencyFormatter = NumberFormat.currency(
+    locale: 'tr_TR',
+    symbol: '₺',
+  );
+
+  const _TransactionCard({
     super.key,
     required this.transaction,
-    required this.dateFormatter,
-    required this.currencyFormatter,
-    required this.getTransactionTypeDescription,
   });
 
   @override
@@ -302,61 +252,16 @@ class _TransactionListItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    transaction.referenceNumber,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Text(
-                  currencyFormatter.format(transaction.transactionAmount),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color:
-                        transaction.transactionAmount >= 0
-                            ? Colors.green.shade700
-                            : Colors.red.shade700,
-                  ),
-                ),
-              ],
+            _TransactionHeader(
+              transaction: transaction,
+              currencyFormatter: _currencyFormatter,
             ),
             const SizedBox(height: 8),
-            Text(
-              'Tarih: ${dateFormatter.format(transaction.transactionDate)}',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+            _TransactionDetails(
+              transaction: transaction,
+              dateFormatter: _dateFormatter,
+              currencyFormatter: _currencyFormatter,
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Bakiye: ${currencyFormatter.format(transaction.totalTransactionAmount)}',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              getTransactionTypeDescription(transaction.transactionType),
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
-            ),
-            if (transaction.description != null &&
-                transaction.description!.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Text(
-                'Açıklama: ${transaction.description}',
-                style: Theme.of(context).textTheme.bodySmall,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
           ],
         ),
       ),
@@ -364,6 +269,95 @@ class _TransactionListItem extends StatelessWidget {
   }
 }
 
+/// Transaction header with reference number and amount
+class _TransactionHeader extends StatelessWidget {
+  final CreditTransaction transaction;
+  final NumberFormat currencyFormatter;
+
+  const _TransactionHeader({
+    required this.transaction,
+    required this.currencyFormatter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            transaction.referenceNumber,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Text(
+          currencyFormatter.format(transaction.transactionAmount),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: transaction.transactionAmount >= 0
+                    ? Colors.green.shade700
+                    : Colors.red.shade700,
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Transaction details (date, balance, type, description)
+class _TransactionDetails extends StatelessWidget {
+  final CreditTransaction transaction;
+  final DateFormat dateFormatter;
+  final NumberFormat currencyFormatter;
+
+  const _TransactionDetails({
+    required this.transaction,
+    required this.dateFormatter,
+    required this.currencyFormatter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tarih: ${dateFormatter.format(transaction.transactionDate)}',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[700],
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Bakiye: ${currencyFormatter.format(transaction.totalTransactionAmount)}',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _getTransactionTypeDescription(transaction.transactionType),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[700],
+              ),
+        ),
+        if (transaction.description != null &&
+            transaction.description!.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(
+            'Açıklama: ${transaction.description}',
+            style: Theme.of(context).textTheme.bodySmall,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Loading more indicator
 class _LoadingMoreIndicator extends StatelessWidget {
   const _LoadingMoreIndicator();
 
@@ -373,5 +367,33 @@ class _LoadingMoreIndicator extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: Center(child: CircularProgressIndicator()),
     );
+  }
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/// Maps transaction type to human-readable description
+String _getTransactionTypeDescription(int type) {
+  switch (type) {
+    case 1:
+      return "Diğer";
+    case 2:
+      return "Nakit";
+    case 3:
+      return "Havale/Eft";
+    case 4:
+      return "Kredi Kartı";
+    case 5:
+      return "Hediye";
+    case 6:
+      return "E-Fatura";
+    case 7:
+      return "E-Arşive Fatura";
+    case 8:
+      return "E-İrsaliye";
+    default:
+      return "İşlem Tipi: $type";
   }
 }
