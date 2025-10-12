@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'drawer_menu_item.dart';
 import 'drawer_expandable_tile.dart';
 
@@ -24,7 +25,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color(0xFF3F3F3F),
+      backgroundColor: AppTheme.darkGrayBackground,
       child: Column(
         children: [
           _buildHeader(),
@@ -42,7 +43,7 @@ class AppDrawer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 50, bottom: 30),
       width: double.infinity,
-      color: const Color(0xFFB00034),
+      color: AppTheme.accentColor,
       child: Center(
         child: Image.asset(
           'lib/assets/images/PranomiLogo.png',

@@ -19,7 +19,7 @@ void main() async {
   // Configure system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Color.fromARGB(255, 41, 41, 41),
+      statusBarColor: AppTheme.statusBarColor,
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.dark,
     ),

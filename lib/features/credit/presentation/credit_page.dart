@@ -5,6 +5,7 @@ import 'package:pranomiapp/features/credit/data/credit_service.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/features/credit/presentation/credit_state.dart';
 import 'package:pranomiapp/features/credit/presentation/credit_view_model.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 /// Credit Page - MVVM Pattern with Provider
@@ -124,11 +125,11 @@ class _CreditViewState extends State<_CreditView> {
           if (hasError)
             Container(
               width: double.infinity,
-              color: Colors.red.shade100,
+              color: AppTheme.errorLightBackground,
               padding: const EdgeInsets.all(8),
               child: Text(
                 errorMessage ?? 'Bir hata oluştu',
-                style: TextStyle(color: Colors.red.shade900),
+                style: const TextStyle(color: AppTheme.errorDarkText),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -181,7 +182,7 @@ class _ErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
+              style: const TextStyle(color: AppTheme.errorColor, fontSize: 16),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -298,8 +299,8 @@ class _TransactionHeader extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: transaction.transactionAmount >= 0
-                    ? Colors.green.shade700
-                    : Colors.red.shade700,
+                    ? AppTheme.successColor
+                    : AppTheme.errorColor,
               ),
         ),
       ],
@@ -327,7 +328,7 @@ class _TransactionDetails extends StatelessWidget {
         Text(
           'Tarih: ${dateFormatter.format(transaction.transactionDate)}',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[700],
+                color: AppTheme.textGray,
               ),
         ),
         const SizedBox(height: 4),
@@ -339,7 +340,7 @@ class _TransactionDetails extends StatelessWidget {
         Text(
           _getTransactionTypeDescription(transaction.transactionType),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[700],
+                color: AppTheme.textGray,
               ),
         ),
         if (transaction.description != null &&

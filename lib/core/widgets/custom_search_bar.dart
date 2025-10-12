@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -17,7 +18,7 @@ class CustomSearchBar extends StatelessWidget {
     this.onClear,
     this.onSubmitted,
     this.onChanged,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = AppTheme.white,
     this.prefixIcon = Icons.search,
     this.borderRadius = const BorderRadius.all(Radius.circular(24)),
   }) : super(key: key);

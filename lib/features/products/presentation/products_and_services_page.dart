@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/Models/ProductsModels/product_model.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 import 'products_and_services_view_model.dart';
 
@@ -51,7 +52,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.gray100,
       body: SafeArea(
         child: Stack(
           children: [
@@ -65,7 +66,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                         ? Center(
                             child: Text(
                               'Hiç ürün bulunamadı.',
-                              style: TextStyle(color: Colors.grey[600]),
+                              style: TextStyle(color: AppTheme.gray600),
                             ),
                           )
                         : ListView.builder(
@@ -90,8 +91,8 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
             ),
             if (_viewModel.isUpdating)
               Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(child: CircularProgressIndicator(color: Colors.white,)),
+                color: AppTheme.blackOverlay50,
+                child: const Center(child: CircularProgressIndicator(color: AppTheme.white,)),
               ),
           ],
         ),
@@ -106,7 +107,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
         controller: _viewModel.searchController,
         decoration: InputDecoration(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           prefixIcon: const Icon(Icons.search),
           hintText: 'Ürün adı ya da stok kodu...',
           suffixIcon: _viewModel.searchController.text.isNotEmpty
@@ -134,7 +135,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         elevation: 4,
-        color: Colors.white,
+        color: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -163,13 +164,13 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                           },
                           errorBuilder: (context, error, stackTrace) =>
                               Container(
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.broken_image_outlined, size: 40, color: Colors.grey),
+                                color: AppTheme.gray200,
+                                child: const Icon(Icons.broken_image_outlined, size: 40, color: AppTheme.gray600),
                               ),
                         )
                       : Container(
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: Colors.grey),
+                          color: AppTheme.gray200,
+                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: AppTheme.gray600),
                         ),
                 ),
               ),
@@ -186,7 +187,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: AppTheme.textBlack87,
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
@@ -199,11 +200,11 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text('Stok Kodu: ${product.stockCode}', style: const TextStyle(color: Colors.black54)),
-                    Text('Stok: ${product.stockAmount}', style: const TextStyle(color: Colors.black87)),
+                    Text('Stok Kodu: ${product.stockCode}', style: const TextStyle(color: AppTheme.textBlack54)),
+                    Text('Stok: ${product.stockAmount}', style: const TextStyle(color: AppTheme.textBlack87)),
                     const SizedBox(height: 4),
-                    Text('Birim Fiyat: ${currencyFormatter.format(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black87)),
-                    Text('Satış Fiyatı: ${currencyFormatter.format(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black87)),
+                    Text('Birim Fiyat: ${currencyFormatter.format(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
+                    Text('Satış Fiyatı: ${currencyFormatter.format(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
                   ],
                 ),
               ),
@@ -273,7 +274,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
             onPressed: () async {
               final newStock = double.tryParse(stockController.text);
               if (newStock == null) {
-                _showSnackBar('Geçerli bir stok miktarı girin.', Colors.red);
+                _showSnackBar('Geçerli bir stok miktarı girin.', AppTheme.errorColor);
                 return;
               }
               Navigator.pop(dialogContext);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 // import 'package:shared_preferences/shared_preferences.dart'; // Handled by ViewModel
 // import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart'; // Handled by ViewModel
 import 'login_page_view_model.dart'; // Import the ViewModel
@@ -27,14 +28,14 @@ class _LoginPageState extends State<LoginPage> {
     if (mounted) {
       // Show messages
       if (_viewModel.errorMessage != null) {
-        _showMessage(_viewModel.errorMessage!, Colors.red);
+        _showMessage(_viewModel.errorMessage!, AppTheme.errorColor);
         _viewModel.clearMessages(); // Clear message after showing
       } else if (_viewModel.warningMessage != null) {
-        _showMessage(_viewModel.warningMessage!, Colors.orange);
+        _showMessage(_viewModel.warningMessage!, AppTheme.warningColor);
         _viewModel.clearMessages();
-      } else if (_viewModel.successMessage != null && !_viewModel.loginSuccessful) { 
+      } else if (_viewModel.successMessage != null && !_viewModel.loginSuccessful) {
         // Show general success messages if not navigating immediately
-        _showMessage(_viewModel.successMessage!, Colors.green);
+        _showMessage(_viewModel.successMessage!, AppTheme.successColor);
         _viewModel.clearMessages();
       }
 
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.transparent,
       body: Stack(
         children: [
           _buildLoginForm(),
@@ -75,11 +76,11 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.7), // Updated withOpacity
+                  color: AppTheme.blackOverlay70,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3), // Updated withOpacity
+                      color: AppTheme.blackOverlay30,
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -92,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 48,
                       width: 48,
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
                         strokeWidth: 5,
                       ),
                     ),
@@ -100,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text(
                       "Giriş yapılıyor...",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppTheme.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: [Color(0xFF3D3D3D), Color(0xFFB00034)],
+          colors: [AppTheme.primaryColor, AppTheme.accentColor],
         ),
       ),
       child: Center(
@@ -133,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
               Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
               const SizedBox(height: 32),
               Card(
-                color: Colors.black.withOpacity(0.6), // Updated withOpacity
+                color: AppTheme.blackOverlay60,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -169,10 +170,10 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 2),
+        border: Border.all(color: AppTheme.white, width: 2),
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.person, color: Colors.white, size: 80),
+      child: const Icon(Icons.person, color: AppTheme.white, size: 80),
     );
   }
 
@@ -184,23 +185,23 @@ class _LoginPageState extends State<LoginPage> {
     return TextField(
       controller: controller,
       obscureText: isPassword,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: AppTheme.white),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white70),
+        hintStyle: const TextStyle(color: AppTheme.textWhite70),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: AppTheme.whiteOverlay10,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 20,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white70),
+          borderSide: const BorderSide(color: AppTheme.textWhite70),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white),
+          borderSide: const BorderSide(color: AppTheme.white),
         ),
       ),
     );
@@ -210,12 +211,12 @@ class _LoginPageState extends State<LoginPage> {
     return ElevatedButton(
       onPressed: _viewModel.isLoading ? null : () async { // Use ViewModel's isLoading and call ViewModel's login
         // Clear previous messages before attempting a new login
-        _viewModel.clearMessages(); 
+        _viewModel.clearMessages();
         await _viewModel.login();
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFB00034),
-        foregroundColor: Colors.white,
+        backgroundColor: AppTheme.accentColor,
+        foregroundColor: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: const EdgeInsets.symmetric(vertical: 16),
       ),

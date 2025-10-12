@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 class DrawerExpandableTile extends StatelessWidget {
   final String imagePath;
@@ -27,13 +28,13 @@ class DrawerExpandableTile extends StatelessWidget {
         width: 32,
         height: 32,
         alignment: Alignment.center,
-        colorFilter: const ColorFilter.mode(Colors.deepOrange, BlendMode.srcIn),
+        colorFilter: const ColorFilter.mode(AppTheme.deepOrange, BlendMode.srcIn),
       ),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      backgroundColor: const Color(0xFF2C2C2C),
-      collapsedBackgroundColor: const Color(0xFF3F3F3F),
-      iconColor: Colors.white,
-      collapsedIconColor: Colors.white,
+      title: Text(title, style: const TextStyle(color: AppTheme.white)),
+      backgroundColor: AppTheme.mediumGrayBackground,
+      collapsedBackgroundColor: AppTheme.darkGrayBackground,
+      iconColor: AppTheme.white,
+      collapsedIconColor: AppTheme.white,
       initiallyExpanded: isExpanded,
       onExpansionChanged: (_) => onToggle(id),
       children: children,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 class DrawerMenuItem extends StatelessWidget {
   final String imagePath;
@@ -22,17 +23,17 @@ class DrawerMenuItem extends StatelessWidget {
     final isActive = route == currentRoute;
 
     return Container(
-      color: isActive ? const Color(0xFFB00034) : Colors.transparent,
+      color: isActive ? AppTheme.accentColor : AppTheme.transparent,
       child: ListTile(
         leading: SvgPicture.asset(
           'lib/assets/images/$imagePath',
           width: 32,
           height: 32,
           alignment: Alignment.center,
-          colorFilter: const ColorFilter.mode(Colors.deepOrange, BlendMode.srcIn),
+          colorFilter: const ColorFilter.mode(AppTheme.deepOrange, BlendMode.srcIn),
         ),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
-        tileColor: isActive ? const Color(0xFFB00034) : Colors.transparent,
+        title: Text(title, style: const TextStyle(color: AppTheme.white)),
+        tileColor: isActive ? AppTheme.accentColor : AppTheme.transparent,
         onTap: () => onTap(route),
       ),
     );

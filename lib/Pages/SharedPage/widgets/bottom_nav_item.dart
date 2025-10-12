@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 class BottomNavItem extends StatelessWidget {
   final IconData icon;
@@ -25,7 +26,7 @@ class BottomNavItem extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF3B82F6) : Colors.transparent,
+            color: isSelected ? AppTheme.selectedItemColor : AppTheme.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -34,7 +35,7 @@ class BottomNavItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 26,
-                color: isSelected ? Colors.white : const Color(0xFFD1D5DB),
+                color: isSelected ? AppTheme.white : AppTheme.unselectedColor,
               ),
               const SizedBox(height: 4),
               Text(
@@ -42,7 +43,7 @@ class BottomNavItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? Colors.white : const Color(0xFFD1D5DB),
+                  color: isSelected ? AppTheme.white : AppTheme.unselectedColor,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

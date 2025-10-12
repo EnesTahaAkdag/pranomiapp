@@ -5,6 +5,7 @@ import 'package:pranomiapp/core/sort_order.dart';
 import 'package:provider/provider.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_view_model.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -26,7 +27,7 @@ class _DashboardView extends StatelessWidget {
     final viewModel = context.watch<DashboardViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: AppTheme.gray200,
       body: _buildBody(context, viewModel),
     );
   }
@@ -46,7 +47,7 @@ class _DashboardView extends StatelessWidget {
               Text(
                 viewModel.error!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red),
+                style: const TextStyle(color: AppTheme.errorColor),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -110,7 +111,7 @@ class DashboardNextCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: AppTheme.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -134,7 +135,7 @@ class DashboardNextCard extends StatelessWidget {
                       const Text(
                         "Varlıklar",
                         style: TextStyle(
-                          color: Colors.green,
+                          color: AppTheme.successColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -175,7 +176,7 @@ class DashboardNextCard extends StatelessWidget {
                       const Text(
                         "Borçlar",
                         style: TextStyle(
-                          color: Colors.red,
+                          color: AppTheme.errorColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -223,7 +224,7 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      surfaceTintColor: Colors.white,
+      surfaceTintColor: AppTheme.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -247,7 +248,7 @@ class DashboardCard extends StatelessWidget {
                       const Text(
                         "Varlıklar",
                         style: TextStyle(
-                          color: Colors.green,
+                          color: AppTheme.successColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -288,7 +289,7 @@ class DashboardCard extends StatelessWidget {
                       const Text(
                         "Borçlar",
                         style: TextStyle(
-                          color: Colors.red,
+                          color: AppTheme.errorColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -361,24 +362,18 @@ class _BankBalanceList extends StatelessWidget {
                   "0,00 ₺", // Default display
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color:
-                        Colors
-                            .green
-                            .shade700, // Assets are green by default for 0
+                    color: AppTheme.successColor, // Assets are green by default for 0
                   ),
                 )
               else
                 ...sortedBalances.map((balance) {
                   Color color;
                   if (balance.totalBankAccountBalance > 0) {
-                    color = Colors.green.shade700;
+                    color = AppTheme.successColor;
                   } else if (balance.totalBankAccountBalance < 0) {
-                    color = Colors.red.shade700;
+                    color = AppTheme.errorColor;
                   } else {
-                    color =
-                        Colors
-                            .green
-                            .shade700; // Bank balances are assets, so 0 is green
+                    color = AppTheme.successColor; // Bank balances are assets, so 0 is green
                   }
 
                   final formatter = NumberFormat.decimalPattern('tr_TR');
@@ -435,12 +430,12 @@ class DashboardListItem extends StatelessWidget {
 
     Color color;
     if (amount > 0) {
-      color = Colors.green.shade700;
+      color = AppTheme.successColor;
     } else if (amount < 0) {
-      color = Colors.red.shade700;
+      color = AppTheme.errorColor;
     } else {
       // For 0, color depends on whether it's an asset or liability
-      color = isAsset ? Colors.green.shade700 : Colors.red.shade700;
+      color = isAsset ? AppTheme.successColor : AppTheme.errorColor;
     }
 
     final formattedAmount = formatter.format(amount.abs());

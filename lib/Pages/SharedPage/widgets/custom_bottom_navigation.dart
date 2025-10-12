@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'bottom_nav_item.dart';
 import 'bottom_sheet_menus.dart';
 
@@ -20,10 +21,10 @@ class CustomBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1F2937),
+        color: AppTheme.appBarDarkBackground,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: AppTheme.blackOverlay10,
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

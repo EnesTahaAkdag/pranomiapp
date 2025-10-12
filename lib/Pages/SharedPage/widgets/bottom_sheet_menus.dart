@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 
 class BottomSheetMenus {
   static Future<void> showIncomeSubMenu(
@@ -8,7 +9,7 @@ class BottomSheetMenus {
       ) async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: AppTheme.mediumGrayBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -32,7 +33,7 @@ class BottomSheetMenus {
       ) async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF2C2C2C),
+      backgroundColor: AppTheme.mediumGrayBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -56,7 +57,7 @@ class BottomSheetMenus {
       ) async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF2c2c2c),
+      backgroundColor: AppTheme.mediumGrayBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -67,13 +68,13 @@ class BottomSheetMenus {
             children: [
               Theme(
                 data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                  unselectedWidgetColor: Colors.white,
+                  dividerColor: AppTheme.transparent,
+                  unselectedWidgetColor: AppTheme.white,
                 ),
                 child: ExpansionTile(
-                  title: const Text("Giden", style: TextStyle(color: Colors.white)),
-                  iconColor: Colors.white,
-                  collapsedIconColor: Colors.white,
+                  title: const Text("Giden", style: TextStyle(color: AppTheme.white)),
+                  iconColor: AppTheme.white,
+                  collapsedIconColor: AppTheme.white,
                   children: [
                     _buildListTile(context, "E-Faturalar", '/OutGoingE-Invoice', currentRoute, onNavigate),
                     _buildListTile(context, "E-Arşiv Faturalar", '/OutGoingE-Archive', currentRoute, onNavigate),
@@ -83,13 +84,13 @@ class BottomSheetMenus {
               ),
               Theme(
                 data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                  unselectedWidgetColor: Colors.white,
+                  dividerColor: AppTheme.transparent,
+                  unselectedWidgetColor: AppTheme.white,
                 ),
                 child: ExpansionTile(
-                  title: const Text("Gelen", style: TextStyle(color: Colors.white)),
-                  iconColor: Colors.white,
-                  collapsedIconColor: Colors.white,
+                  title: const Text("Gelen", style: TextStyle(color: AppTheme.white)),
+                  iconColor: AppTheme.white,
+                  collapsedIconColor: AppTheme.white,
                   children: [
                     _buildListTile(context, "E-Faturalar", '/ApprovedE-Invoice', currentRoute, onNavigate),
                     _buildListTile(context, "E-İrsaliyeler", '/ApprovedE-Dispatch', currentRoute, onNavigate),
@@ -113,10 +114,10 @@ class BottomSheetMenus {
     final bool isSelected = currentRoute == route;
 
     return Container(
-      color: isSelected ? const Color(0xFFB00034) : Colors.transparent,
+      color: isSelected ? AppTheme.accentColor : AppTheme.transparent,
       child: ListTile(
-        leading: const Icon(Icons.arrow_right, color: Colors.white),
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        leading: const Icon(Icons.arrow_right, color: AppTheme.white),
+        title: Text(title, style: const TextStyle(color: AppTheme.white)),
         onTap: () {
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
