@@ -14,8 +14,8 @@ class EmployeesService extends ApiServiceBase {
     return getRequest(
       path:
           search != null && search.isNotEmpty
-              ? '/Customer/Customers/$search'
-              : '/Customer/Customers',
+              ? 'Customer/Customers/$search'
+              : 'Customer/Customers',
       queryParameters: {
         'page': page,
         'size': size,
