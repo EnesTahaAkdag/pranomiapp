@@ -358,11 +358,13 @@ class _BankBalanceList extends StatelessWidget {
               const Text("Banka", overflow: TextOverflow.ellipsis),
               const SizedBox(height: 8),
               if (balances.isEmpty)
-                Text(
+                const Text(
                   "0,00 ₺", // Default display
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.successColor, // Assets are green by default for 0
+                    color:
+                        AppTheme
+                            .successColor, // Assets are green by default for 0
                   ),
                 )
               else
@@ -373,7 +375,9 @@ class _BankBalanceList extends StatelessWidget {
                   } else if (balance.totalBankAccountBalance < 0) {
                     color = AppTheme.errorColor;
                   } else {
-                    color = AppTheme.successColor; // Bank balances are assets, so 0 is green
+                    color =
+                        AppTheme
+                            .successColor; // Bank balances are assets, so 0 is green
                   }
 
                   final formatter = NumberFormat.decimalPattern('tr_TR');
@@ -382,13 +386,14 @@ class _BankBalanceList extends StatelessWidget {
                     balance.totalBankAccountBalance.abs(),
                   );
 
-                  final currencyCode = _convertCurrencyCodesToSymbols(balance.currencyCode);
+                  final currencyCode = _convertCurrencyCodesToSymbols(
+                    balance.currencyCode,
+                  );
 
                   if (currencyCode == "TRY") {
                     formattedAmount = "$formattedAmount ₺";
                   } else {
-                    formattedAmount =
-                        "$formattedAmount ${currencyCode}";
+                    formattedAmount = "$formattedAmount ${currencyCode}";
                   }
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),

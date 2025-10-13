@@ -40,9 +40,7 @@ class PranomiApp extends StatelessWidget {
         // Show loading indicator while checking authentication
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
-            home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
+            home: Scaffold(body: Center(child: CircularProgressIndicator())),
           );
         }
 
