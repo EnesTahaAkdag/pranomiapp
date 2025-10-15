@@ -25,11 +25,22 @@ class LoginPageViewModel extends ChangeNotifier {
   bool _loginSuccessful = false;
   bool get loginSuccessful => _loginSuccessful;
 
+  // SMS Verification data
+  bool _requiresSmsVerification = false;
+  bool get requiresSmsVerification => _requiresSmsVerification;
+
+  int? _userId;
+  int? get userId => _userId;
+
+  String? _gsmNumber;
+  String? get gsmNumber => _gsmNumber;
+
   Future<void> login() async {
     if (_isLoading) return;
 
     _isLoading = true;
     _loginSuccessful = false;
+    _requiresSmsVerification = false;
     _errorMessage = null;
     _successMessage = null;
     _warningMessage = null;
@@ -48,18 +59,31 @@ class LoginPageViewModel extends ChangeNotifier {
 
         if (response.success && response.item != null) {
           final item = response.item!;
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('apiKey', item.apiKey);
-          await prefs.setString('apiSecret', item.apiSecret);
-          await prefs.setString('subscriptionType', item.subscriptionType.name);
-          await prefs.setBool('isEInvoiceActive', item.isEInvoiceActive);
-          _loginSuccessful = true;
-          if (_successMessage == null && _errorMessage == null && _warningMessage == null) {
-            _successMessage = "Giriş Başarılı"; // Default success message
+
+          // Check if SMS verification is required
+          if (item.requireSms) {
+            _requiresSmsVerification = true;
+            _userId = item.userId;
+            _gsmNumber = item.gsmNumber;
+            _successMessage = "SMS doğrulaması gerekiyor";
+          } else if (item.apiInfo != null) {
+            // Direct login without SMS verification
+            final apiInfo = item.apiInfo!;
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('apiKey', apiInfo.apiKey);
+            await prefs.setString('apiSecret', apiInfo.apiSecret);
+            await prefs.setString('subscriptionType', apiInfo.subscriptionType.name);
+            await prefs.setBool('isEInvoiceActive', apiInfo.isEInvoiceActive);
+            _loginSuccessful = true;
+            if (_successMessage == null && _errorMessage == null && _warningMessage == null) {
+              _successMessage = "Giriş Başarılı";
+            }
+          } else {
+            _errorMessage = "Giriş bilgileri eksik. Lütfen tekrar deneyin.";
           }
         } else {
           if (_errorMessage == null && _successMessage == null && _warningMessage == null) {
-            _errorMessage = "Giriş bilgileri hatalı veya bir sorun oluştu."; // Default error
+            _errorMessage = "Giriş bilgileri hatalı veya bir sorun oluştu.";
           }
         }
       } else {
@@ -71,6 +95,11 @@ class LoginPageViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  /// Resets the SMS verification flags after navigation
+  void resetSmsVerificationFlags() {
+    _requiresSmsVerification = false;
   }
 
   void clearMessages() {

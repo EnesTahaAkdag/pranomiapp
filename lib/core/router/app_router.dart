@@ -19,6 +19,7 @@ import 'package:pranomiapp/features/employees/employee_add_page.dart';
 import 'package:pranomiapp/features/employees/employees_page.dart';
 import 'package:pranomiapp/features/notifications/presentation/notifications_page.dart';
 import 'package:pranomiapp/features/products/presentation/products_and_services_page.dart';
+import 'package:pranomiapp/features/sms_verification/presentation/sms_verification_page.dart';
 
 class AppRouter {
   static GoRouter createRouter({
@@ -172,6 +173,26 @@ class AppRouter {
         ),
 
         // Routes outside ShellRoute (no AppLayout)
+        GoRoute(
+          path: '/sms-verification',
+          builder: (context, state) {
+            // Handle both test mode (String) and production mode (Map)
+            final extra = state.extra;
+            if (extra is Map<String, dynamic>) {
+              final userId = extra['userId'] as int;
+              final gsmNumber = extra['gsmNumber'] as String;
+              return SmsVerificationPage(
+                phoneNumber: gsmNumber,
+                userId: userId,
+                gsmNumber: gsmNumber,
+              );
+            } else {
+              // Test mode with just phone number
+              final phoneNumber = extra as String? ?? '+905551234567';
+              return SmsVerificationPage(phoneNumber: phoneNumber);
+            }
+          },
+        ),
         GoRoute(
           path: '/invoice-detail/:id',
           builder: (context, state) {

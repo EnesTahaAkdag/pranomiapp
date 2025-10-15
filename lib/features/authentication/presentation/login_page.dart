@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     _viewModel.addListener(_onViewModelChanged);
   }
 
-  void _onViewModelChanged() {
+  void _onViewModelChanged() async {
     // Handle UI updates based on ViewModel changes
     if (mounted) {
       // Show messages
@@ -40,14 +40,29 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       // Handle navigation
-      if (_viewModel.loginSuccessful) {
-        // Show success message before navigating if desired, or rely on ViewModel's message.
-        // For example, if LoginViewModel sets a success message that should be shown on this page
-        // _showMessage("Giriş Başarılı!", Colors.green); 
+      if (_viewModel.requiresSmsVerification) {
+        // Navigate to SMS verification page
+        debugPrint("SMS Verification required, navigating to SMS verification page.");
+        final userId = _viewModel.userId;
+        final gsmNumber = _viewModel.gsmNumber;
+
+        if (userId != null && gsmNumber != null) {
+          _viewModel.resetSmsVerificationFlags();
+          // Navigate and wait for result
+          final result = await context.push('/sms-verification', extra: {
+            'userId': userId,
+            'gsmNumber': gsmNumber,
+          });
+
+          // If verification successful, navigate to home
+          if (result == 'success' && mounted) {
+            context.go('/');
+          }
+        }
+      } else if (_viewModel.loginSuccessful) {
+        // Direct login without SMS verification
         debugPrint("Login Successful, navigating to home.");
         context.go('/');
-        // It's important that the ViewModel resets _loginSuccessful or this could loop
-        // or ensure that navigation truly takes the user away from this listener.
       }
       // Update loading state
       setState(() {

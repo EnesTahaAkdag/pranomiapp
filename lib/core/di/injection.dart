@@ -23,6 +23,7 @@ import 'package:pranomiapp/features/products/data/product_stock_update_service.d
 
 import '../../features/announcement/data/announcement_service.dart';
 import '../../features/products/data/product_service.dart';
+import '../../features/sms_verification/data/sms_verification_service.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -97,5 +98,9 @@ void setupLocator() {
 
   locator.registerLazySingleton<DashboardService>(
         () => DashboardService(),
+  );
+
+  locator.registerLazySingleton<SmsVerificationService>(
+    () => SmsVerificationService(),
   );
 }
