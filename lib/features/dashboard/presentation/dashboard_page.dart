@@ -111,8 +111,8 @@ class DashboardNextCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      surfaceTintColor: AppTheme.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: const Color(0xffe8ecf1),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -224,8 +224,8 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      surfaceTintColor: AppTheme.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: const Color(0xffe8ecf1),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
