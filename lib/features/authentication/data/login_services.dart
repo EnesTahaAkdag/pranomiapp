@@ -4,7 +4,7 @@ import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
 import 'package:pranomiapp/Models/AuthenticationModels/login_model.dart';
 
 class LoginServices extends ApiServiceBase {
-  Future<LoginResponse?> login(String username, String password) async {
+  Future<LoginResponse?>  login(String username, String password) async {
     try {
       final response = await dio.post(
         'Login',
@@ -14,6 +14,9 @@ class LoginServices extends ApiServiceBase {
       debugPrint("Dio Response JSON: ${response.data}");
       return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 401){
+        throw Exception("Kullanıcı adı veya şifre hatalı.");
+      }
       debugPrint("Dio error: ${e.message}");
       return null;
     } catch (e) {
