@@ -167,57 +167,52 @@ class _LoginPageState extends State<LoginPage> {
           colors: [AppTheme.primaryColor, AppTheme.accentColor],
         ),
       ),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
-              const SizedBox(height: 32),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppTheme.primaryColor, AppTheme.accentColor],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.blackOverlay30,
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+      child: SafeArea(
+        child: Column( // ← Center kaldır, Column kullan
+          children: [
+            const Spacer(), // ← Üstten esnek boşluk
+            Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
+            const SizedBox(height: 48),// ← Logo ile form arası esnek boşluk
+            Flexible( // ← Form için flexible
+              flex: 6,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppTheme.primaryColor, AppTheme.accentColor],
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(28),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _icon(),
-                      const SizedBox(height: 32),
-                      _inputField(
-                        "Kullanıcı Adı",
-                        _viewModel.usernameController,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.blackOverlay30,
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
-                      // Use ViewModel's controller
-                      const SizedBox(height: 16),
-                      _inputField(
-                        "Şifre",
-                        _viewModel.passwordController,
-                        // Use ViewModel's controller
-                        isPassword: true,
-                      ),
-                      const SizedBox(height: 24),
-                      _loginBtn(),
                     ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(28),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _icon(),
+                        const SizedBox(height: 32),
+                        _inputField("Kullanıcı Adı", _viewModel.usernameController),
+                        const SizedBox(height: 16),
+                        _inputField("Şifre", _viewModel.passwordController, isPassword: true),
+                        const SizedBox(height: 24),
+                        _loginBtn(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+           const Spacer()// ← Alttan esnek boşluk
+          ],
         ),
       ),
     );
@@ -230,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
         border: Border.all(color: AppTheme.white, width: 2),
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.lock_outline, color: Color(0xFFFFFFFF), size: 48),
+        child: const Icon(Icons.lock, color: Color(0xFFFFFFFF), size: 48),
     );
   }
 
