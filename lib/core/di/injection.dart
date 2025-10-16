@@ -24,6 +24,7 @@ import 'package:pranomiapp/features/products/data/product_stock_update_service.d
 import '../../features/announcement/data/announcement_service.dart';
 import '../../features/products/data/product_service.dart';
 import '../../features/sms_verification/data/sms_verification_service.dart';
+import '../../features/two_factor_auth/data/two_factor_auth_service.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -102,5 +103,9 @@ void setupLocator() {
 
   locator.registerLazySingleton<SmsVerificationService>(
     () => SmsVerificationService(),
+  );
+
+  locator.registerLazySingleton<TwoFactorAuthService>(
+    () => TwoFactorAuthService(),
   );
 }

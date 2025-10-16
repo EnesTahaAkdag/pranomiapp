@@ -18,6 +18,7 @@ class TwoFactorAuthService extends ApiServiceBase {
           'GsmNumber': gsmNumber,
         },
       );
+      return TwoFactorAuthResponse.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint("Dio error: ${e.message}");
       return null;
