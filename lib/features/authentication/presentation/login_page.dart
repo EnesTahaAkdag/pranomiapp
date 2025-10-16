@@ -241,8 +241,14 @@ class _LoginPageState extends State<LoginPage> {
     return TextField(
       cursorColor: Colors.orange,
       controller: controller,
-      obscureText: isPassword ? !_passwordVisible : false, // ← Düzelt
+      obscureText: isPassword ? !_passwordVisible : false,
       style: const TextStyle(color: AppTheme.white),
+      onChanged: (value) {
+        // ← TextField değiştiğinde rebuild et
+        if (isPassword) {
+          setState(() {}); // Sadece opacity'yi güncellemek için
+        }
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: AppTheme.white),
         hintText: hintText,
@@ -261,19 +267,31 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppTheme.white),
         ),
-        suffixIcon: isPassword // ← Sadece şifre alanında göster
-            ? IconButton(
-          icon: Icon(
-            _passwordVisible ? Icons.visibility : Icons.visibility_off,
-            color: AppTheme.white,
+        suffixIcon: isPassword
+            ? Opacity(
+          opacity: _calculateOpacity(controller.text.length), // ← Dinamik opacity
+          child: IconButton(
+            icon: Icon(
+              _passwordVisible ? Icons.visibility : Icons.visibility_off,
+              color: const Color(0xffffffff),
+            ),
+            onPressed: () =>
+                setState(() => _passwordVisible = !_passwordVisible),
           ),
-          onPressed: () =>
-              setState(() => _passwordVisible = !_passwordVisible),
         )
-            : null, // ← Kullanıcı adı için null
+            : null,
       ),
     );
   }
+
+  double _calculateOpacity(int length) {
+    if (length >= 8) {
+      return 1.0; // 7 veya daha fazla karakter
+    } else {
+      return 0.3 + (length * 0.1); // Her karakter için +0.1
+    }
+  }
+
 
   Widget _loginBtn() {
     return ElevatedButton(
