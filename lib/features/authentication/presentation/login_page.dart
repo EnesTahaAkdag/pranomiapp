@@ -40,14 +40,33 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       // Handle navigation
-      if (_viewModel.requiresSmsVerification) {
+      if (_viewModel.requiresTwoFactorAuth) {
+        // Navigate to Two-Factor Authentication page
+        debugPrint("Two-Factor Authentication required, navigating to 2FA page.");
+        final userId = _viewModel.userId;
+        final gsmNumber = _viewModel.gsmNumber;
+
+        if (userId != null && gsmNumber != null) {
+          _viewModel.resetVerificationFlags();
+          // Navigate and wait for result
+          final result = await context.push('/two-factor-auth', extra: {
+            'userId': userId,
+            'gsmNumber': gsmNumber,
+          });
+
+          // If verification successful, navigate to home
+          if (result == 'success' && mounted) {
+            context.go('/');
+          }
+        }
+      } else if (_viewModel.requiresSmsVerification) {
         // Navigate to SMS verification page
         debugPrint("SMS Verification required, navigating to SMS verification page.");
         final userId = _viewModel.userId;
         final gsmNumber = _viewModel.gsmNumber;
 
         if (userId != null && gsmNumber != null) {
-          _viewModel.resetSmsVerificationFlags();
+          _viewModel.resetVerificationFlags();
           // Navigate and wait for result
           final result = await context.push('/sms-verification', extra: {
             'userId': userId,

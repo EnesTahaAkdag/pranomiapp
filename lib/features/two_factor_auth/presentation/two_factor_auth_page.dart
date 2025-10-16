@@ -167,19 +167,14 @@ class _TwoFactorAuthContentState extends State<_TwoFactorAuthContent> {
                 const SizedBox(height: 16),
 
                 // Description
-                Text(
-                  '${viewModel.getMaskedPhoneNumber()} numarasına gelen 6 haneli doğrulama kodunu giriniz.',
-                  style: const TextStyle(
+                const Text(
+                  'Authenticator uygulamasından gelen kodunuzu giriniz',
+                  style: TextStyle(
                     fontSize: 16,
                     color: AppTheme.black,
                   ),
                   textAlign: TextAlign.center,
                 ),
-
-                const SizedBox(height: 32),
-
-                // Countdown Timer Display
-                _buildCountdownDisplay(viewModel),
 
                 const SizedBox(height: 32),
 
