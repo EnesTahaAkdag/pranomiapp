@@ -16,12 +16,15 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late final LoginPageViewModel _viewModel;
+  late bool _passwordVisible;
+
 
   @override
   void initState() {
     super.initState();
     _viewModel = LoginPageViewModel(); // Initialize the ViewModel
     _viewModel.addListener(_onViewModelChanged);
+    _passwordVisible = false;
   }
 
   void _onViewModelChanged() async {
@@ -200,9 +203,9 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         _icon(),
                         const SizedBox(height: 32),
-                        _inputField("Kullanıcı Adı", _viewModel.usernameController),
+                        _inputField(Icons.person_outline,"Kullanıcı Adı", _viewModel.usernameController,isPassword: false),
                         const SizedBox(height: 16),
-                        _inputField("Şifre", _viewModel.passwordController, isPassword: true),
+                        _inputField(Icons.lock_outline,"Şifre", _viewModel.passwordController, isPassword: true),
                         const SizedBox(height: 24),
                         _loginBtn(),
                       ],
@@ -230,15 +233,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _inputField(
-    String hintText,
-    TextEditingController controller, {
-    bool isPassword = false,
-  }) {
+      IconData icon,
+      String hintText,
+      TextEditingController controller, {
+        bool isPassword = false,
+      }) {
     return TextField(
+      cursorColor: Colors.orange,
       controller: controller,
-      obscureText: isPassword,
+      obscureText: isPassword ? !_passwordVisible : false, // ← Düzelt
       style: const TextStyle(color: AppTheme.white),
       decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: AppTheme.white),
         hintText: hintText,
         hintStyle: const TextStyle(color: AppTheme.textWhite70),
         filled: true,
@@ -255,6 +261,16 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppTheme.white),
         ),
+        suffixIcon: isPassword // ← Sadece şifre alanında göster
+            ? IconButton(
+          icon: Icon(
+            _passwordVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppTheme.white,
+          ),
+          onPressed: () =>
+              setState(() => _passwordVisible = !_passwordVisible),
+        )
+            : null, // ← Kullanıcı adı için null
       ),
     );
   }
