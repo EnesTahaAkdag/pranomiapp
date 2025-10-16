@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+
 // import 'package:shared_preferences/shared_preferences.dart'; // Handled by ViewModel
 // import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart'; // Handled by ViewModel
 import 'login_page_view_model.dart'; // Import the ViewModel
@@ -33,7 +34,8 @@ class _LoginPageState extends State<LoginPage> {
       } else if (_viewModel.warningMessage != null) {
         _showMessage(_viewModel.warningMessage!, AppTheme.warningColor);
         _viewModel.clearMessages();
-      } else if (_viewModel.successMessage != null && !_viewModel.loginSuccessful) {
+      } else if (_viewModel.successMessage != null &&
+          !_viewModel.loginSuccessful) {
         // Show general success messages if not navigating immediately
         _showMessage(_viewModel.successMessage!, AppTheme.successColor);
         _viewModel.clearMessages();
@@ -42,17 +44,19 @@ class _LoginPageState extends State<LoginPage> {
       // Handle navigation
       if (_viewModel.requiresTwoFactorAuth) {
         // Navigate to Two-Factor Authentication page
-        debugPrint("Two-Factor Authentication required, navigating to 2FA page.");
+        debugPrint(
+          "Two-Factor Authentication required, navigating to 2FA page.",
+        );
         final userId = _viewModel.userId;
         final gsmNumber = _viewModel.gsmNumber;
 
         if (userId != null && gsmNumber != null) {
           _viewModel.resetVerificationFlags();
           // Navigate and wait for result
-          final result = await context.push('/two-factor-auth', extra: {
-            'userId': userId,
-            'gsmNumber': gsmNumber,
-          });
+          final result = await context.push(
+            '/two-factor-auth',
+            extra: {'userId': userId, 'gsmNumber': gsmNumber},
+          );
 
           // If verification successful, navigate to home
           if (result == 'success' && mounted) {
@@ -61,17 +65,19 @@ class _LoginPageState extends State<LoginPage> {
         }
       } else if (_viewModel.requiresSmsVerification) {
         // Navigate to SMS verification page
-        debugPrint("SMS Verification required, navigating to SMS verification page.");
+        debugPrint(
+          "SMS Verification required, navigating to SMS verification page.",
+        );
         final userId = _viewModel.userId;
         final gsmNumber = _viewModel.gsmNumber;
 
         if (userId != null && gsmNumber != null) {
           _viewModel.resetVerificationFlags();
           // Navigate and wait for result
-          final result = await context.push('/sms-verification', extra: {
-            'userId': userId,
-            'gsmNumber': gsmNumber,
-          });
+          final result = await context.push(
+            '/sms-verification',
+            extra: {'userId': userId, 'gsmNumber': gsmNumber},
+          );
 
           // If verification successful, navigate to home
           if (result == 'success' && mounted) {
@@ -120,14 +126,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                child: Column(
+                child: const Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     SizedBox(
                       height: 48,
                       width: 48,
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppTheme.white,
+                        ),
                         strokeWidth: 5,
                       ),
                     ),
@@ -167,12 +175,22 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
               const SizedBox(height: 32),
-              Card(
-                color: AppTheme.blackOverlay60,
-                shape: RoundedRectangleBorder(
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppTheme.primaryColor, AppTheme.accentColor],
+                  ),
                   borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.blackOverlay30,
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                elevation: 8,
                 child: Padding(
                   padding: const EdgeInsets.all(28),
                   child: Column(
@@ -180,11 +198,16 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       _icon(),
                       const SizedBox(height: 32),
-                      _inputField("Kullanıcı Adı", _viewModel.usernameController), // Use ViewModel's controller
+                      _inputField(
+                        "Kullanıcı Adı",
+                        _viewModel.usernameController,
+                      ),
+                      // Use ViewModel's controller
                       const SizedBox(height: 16),
                       _inputField(
                         "Şifre",
-                        _viewModel.passwordController, // Use ViewModel's controller
+                        _viewModel.passwordController,
+                        // Use ViewModel's controller
                         isPassword: true,
                       ),
                       const SizedBox(height: 24),
@@ -207,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
         border: Border.all(color: AppTheme.white, width: 2),
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.person, color: AppTheme.white, size: 80),
+      child: const Icon(Icons.lock_outline, color: Color(0xFFFFFFFF), size: 48),
     );
   }
 
@@ -243,11 +266,15 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginBtn() {
     return ElevatedButton(
-      onPressed: _viewModel.isLoading ? null : () async { // Use ViewModel's isLoading and call ViewModel's login
-        // Clear previous messages before attempting a new login
-        _viewModel.clearMessages();
-        await _viewModel.login();
-      },
+      onPressed:
+          _viewModel.isLoading
+              ? null
+              : () async {
+                // Use ViewModel's isLoading and call ViewModel's login
+                // Clear previous messages before attempting a new login
+                _viewModel.clearMessages();
+                await _viewModel.login();
+              },
       style: ElevatedButton.styleFrom(
         backgroundColor: AppTheme.accentColor,
         foregroundColor: AppTheme.white,
