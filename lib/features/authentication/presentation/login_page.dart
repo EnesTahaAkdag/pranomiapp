@@ -162,6 +162,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildLoginForm() {
     return Container(
       width: double.infinity,
+      height: double.infinity,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
@@ -170,63 +171,56 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       child: SafeArea(
-        child: Column(
-          // ← Center kaldır, Column kullan
-          children: [
-            const Spacer(), // ← Üstten esnek boşluk
-            Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
-            const SizedBox(height: 48), // ← Logo ile form arası esnek boşluk
-            Flexible(
-              // ← Form için flexible
-              flex: 6,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [AppTheme.primaryColor, AppTheme.accentColor],
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.blackOverlay30,
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: Column(
+            children: [
+              Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
+              const SizedBox(height: 48),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppTheme.primaryColor, AppTheme.accentColor],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(28),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _icon(),
-                        const SizedBox(height: 32),
-                        _inputField(
-                          Icons.person_outline,
-                          "Kullanıcı Adı",
-                          _viewModel.usernameController,
-                          isPassword: false,
-                        ),
-                        const SizedBox(height: 16),
-                        _inputField(
-                          Icons.lock_outline,
-                          "Şifre",
-                          _viewModel.passwordController,
-                          isPassword: true,
-                        ),
-                        const SizedBox(height: 24),
-                        _loginBtn(),
-                      ],
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.blackOverlay30,
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _icon(),
+                      const SizedBox(height: 32),
+                      _inputField(
+                        Icons.person_outline,
+                        "Kullanıcı Adı",
+                        _viewModel.usernameController,
+                        isPassword: false,
+                      ),
+                      const SizedBox(height: 16),
+                      _inputField(
+                        Icons.lock_outline,
+                        "Şifre",
+                        _viewModel.passwordController,
+                        isPassword: true,
+                      ),
+                      const SizedBox(height: 24),
+                      _loginBtn(),
+                    ],
                   ),
                 ),
               ),
-            ),
-            const Spacer(), // ← Alttan esnek boşluk
-          ],
+            ],
+          ),
         ),
       ),
     );
