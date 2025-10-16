@@ -18,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   late final LoginPageViewModel _viewModel;
   late bool _passwordVisible;
 
-
   @override
   void initState() {
     super.initState();
@@ -171,12 +170,14 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       child: SafeArea(
-        child: Column( // ← Center kaldır, Column kullan
+        child: Column(
+          // ← Center kaldır, Column kullan
           children: [
             const Spacer(), // ← Üstten esnek boşluk
             Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
-            const SizedBox(height: 48),// ← Logo ile form arası esnek boşluk
-            Flexible( // ← Form için flexible
+            const SizedBox(height: 48), // ← Logo ile form arası esnek boşluk
+            Flexible(
+              // ← Form için flexible
               flex: 6,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -203,9 +204,19 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         _icon(),
                         const SizedBox(height: 32),
-                        _inputField(Icons.person_outline,"Kullanıcı Adı", _viewModel.usernameController,isPassword: false),
+                        _inputField(
+                          Icons.person_outline,
+                          "Kullanıcı Adı",
+                          _viewModel.usernameController,
+                          isPassword: false,
+                        ),
                         const SizedBox(height: 16),
-                        _inputField(Icons.lock_outline,"Şifre", _viewModel.passwordController, isPassword: true),
+                        _inputField(
+                          Icons.lock_outline,
+                          "Şifre",
+                          _viewModel.passwordController,
+                          isPassword: true,
+                        ),
                         const SizedBox(height: 24),
                         _loginBtn(),
                       ],
@@ -214,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-           const Spacer()// ← Alttan esnek boşluk
+            const Spacer(), // ← Alttan esnek boşluk
           ],
         ),
       ),
@@ -228,70 +239,74 @@ class _LoginPageState extends State<LoginPage> {
         border: Border.all(color: AppTheme.white, width: 2),
         shape: BoxShape.circle,
       ),
-        child: const Icon(Icons.lock, color: Color(0xFFFFFFFF), size: 48),
+      child: const Icon(Icons.lock, color: Color(0xFFFFFFFF), size: 48),
     );
   }
 
   Widget _inputField(
-      IconData icon,
-      String hintText,
-      TextEditingController controller, {
-        bool isPassword = false,
-      }) {
-    return TextField(
-      cursorColor: Colors.orange,
-      controller: controller,
-      obscureText: isPassword ? !_passwordVisible : false,
-      style: const TextStyle(color: AppTheme.white),
-      onChanged: (value) {
-        // ← TextField değiştiğinde rebuild et
-        if (isPassword) {
-          setState(() {}); // Sadece opacity'yi güncellemek için
-        }
-      },
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: AppTheme.white),
-        hintText: hintText,
-        hintStyle: const TextStyle(color: AppTheme.textWhite70),
-        filled: true,
-        fillColor: AppTheme.whiteOverlay10,
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 16,
-          horizontal: 20,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppTheme.textWhite70),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppTheme.white),
-        ),
-        suffixIcon: isPassword
-            ? Opacity(
-          opacity: _calculateOpacity(controller.text.length), // ← Dinamik opacity
-          child: IconButton(
-            icon: Icon(
-              _passwordVisible ? Icons.visibility : Icons.visibility_off,
-              color: const Color(0xffffffff),
+    IconData icon,
+    String hintText,
+    TextEditingController controller, {
+    bool isPassword = false,
+  }) {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable:
+          isPassword ? controller : ValueNotifier(controller.value),
+      builder: (context, value, child) {
+        return TextField(
+          cursorColor: Colors.orange,
+          controller: controller,
+          obscureText: isPassword ? !_passwordVisible : false,
+          style: const TextStyle(color: AppTheme.white),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: AppTheme.white),
+            hintText: hintText,
+            hintStyle: const TextStyle(color: AppTheme.textWhite70),
+            filled: true,
+            fillColor: AppTheme.whiteOverlay10,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 20,
             ),
-            onPressed: () =>
-                setState(() => _passwordVisible = !_passwordVisible),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppTheme.textWhite70),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppTheme.white),
+            ),
+            suffixIcon:
+                isPassword
+                    ? Opacity(
+                      opacity: _calculateOpacity(value.text.length),
+                      child: IconButton(
+                        icon: Icon(
+                          _passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: const Color(0xffffffff),
+                        ),
+                        onPressed:
+                            () => setState(
+                              () => _passwordVisible = !_passwordVisible,
+                            ),
+                      ),
+                    )
+                    : null,
           ),
-        )
-            : null,
-      ),
+        );
+      },
     );
   }
 
   double _calculateOpacity(int length) {
-    if (length >= 8) {
-      return 1.0; // 7 veya daha fazla karakter
+    if (length >= 7) {
+      return 1.0;
     } else {
-      return 0.3 + (length * 0.1); // Her karakter için +0.1
+      return 0.3 + (length * 0.1);
     }
   }
-
 
   Widget _loginBtn() {
     return ElevatedButton(
