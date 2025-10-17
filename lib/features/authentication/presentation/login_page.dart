@@ -16,14 +16,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   late final LoginPageViewModel _viewModel;
-  late bool _passwordVisible;
+  late bool _isPasswordVisible;
 
   @override
   void initState() {
     super.initState();
     _viewModel = LoginPageViewModel(); // Initialize the ViewModel
     _viewModel.addListener(_onViewModelChanged);
-    _passwordVisible = false;
+    _isPasswordVisible = false;
   }
 
   void _onViewModelChanged() async {
@@ -250,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
         return TextField(
           cursorColor: Colors.orange,
           controller: controller,
-          obscureText: isPassword ? !_passwordVisible : false,
+          obscureText: isPassword ? !_isPasswordVisible : false,
           style: const TextStyle(color: AppTheme.white),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: AppTheme.white),
@@ -276,14 +276,14 @@ class _LoginPageState extends State<LoginPage> {
                       opacity: _calculateOpacity(value.text.length),
                       child: IconButton(
                         icon: Icon(
-                          _passwordVisible
+                          _isPasswordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
                           color: const Color(0xffffffff),
                         ),
                         onPressed:
                             () => setState(
-                              () => _passwordVisible = !_passwordVisible,
+                              () => _isPasswordVisible = !_isPasswordVisible,
                             ),
                       ),
                     )
