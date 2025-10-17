@@ -160,10 +160,6 @@ class DashboardNextCard extends StatelessWidget {
                         amount: dashboardItem.nextDeedReceiving,
                         isAsset: true,
                       ),
-                      const SizedBox(height: 16),
-                      _BankBalanceList(
-                        balances: dashboardItem.totalBankAccountBalances,
-                      ),
                     ],
                   ),
                 ),
@@ -202,6 +198,10 @@ class DashboardNextCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            _BankBalanceList(
+              balances: dashboardItem.totalBankAccountBalances,
             ),
           ],
         ),
@@ -273,10 +273,6 @@ class DashboardCard extends StatelessWidget {
                         amount: dashboardItem.activeDeedReceiving,
                         isAsset: true,
                       ),
-                      const SizedBox(height: 16),
-                      _BankBalanceList(
-                        balances: dashboardItem.totalBankAccountBalances,
-                      ),
                     ],
                   ),
                 ),
@@ -315,6 +311,10 @@ class DashboardCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            _BankBalanceList(
+              balances: dashboardItem.totalBankAccountBalances,
             ),
           ],
         ),
@@ -359,58 +359,60 @@ class _BankBalanceList extends StatelessWidget {
               const SizedBox(height: 8),
               if (balances.isEmpty)
                 const Text(
-                  "0,00 ₺", // Default display
+                  "0,00 ₺",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color:
-                        AppTheme
-                            .successColor, // Assets are green by default for 0
+                    color: AppTheme.successColor,
+                    fontSize: 12,
                   ),
                 )
               else
-                ...sortedBalances.map((balance) {
-                  Color color;
-                  if (balance.totalBankAccountBalance > 0) {
-                    color = AppTheme.successColor;
-                  } else if (balance.totalBankAccountBalance < 0) {
-                    color = AppTheme.errorColor;
-                  } else {
-                    color =
-                        AppTheme
-                            .successColor; // Bank balances are assets, so 0 is green
-                  }
-
-                  final formatter = NumberFormat.decimalPattern('tr_TR');
-
-                  String formattedAmount = formatter.format(
-                    balance.totalBankAccountBalance.abs(),
-                  );
-
-                  final currencyCode = _convertCurrencyCodesToSymbols(
-                    balance.currencyCode,
-                  );
-
-                  if (currencyCode == "TRY") {
-                    formattedAmount = "$formattedAmount ₺";
-                  } else {
-                    formattedAmount = "$formattedAmount ${currencyCode}";
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
-                    child: Text(
-                      formattedAmount,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }).toList(),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    for (int i = 0; i < sortedBalances.length; i++)
+                      _buildBalanceText(sortedBalances[i]),
+                  ],
+                ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBalanceText(BankAccountBalance balance) {
+    Color color;
+    if (balance.totalBankAccountBalance > 0) {
+      color = AppTheme.successColor;
+    } else if (balance.totalBankAccountBalance < 0) {
+      color = AppTheme.errorColor;
+    } else {
+      color = AppTheme.successColor;
+    }
+
+    final formatter = NumberFormat.decimalPattern('tr_TR');
+    String formattedAmount = formatter.format(
+      balance.totalBankAccountBalance.abs(),
+    );
+
+    final currencySymbol = _convertCurrencyCodesToSymbols(
+      balance.currencyCode,
+    );
+
+    if (currencySymbol == "₺") {
+      formattedAmount = "$formattedAmount ₺";
+    } else {
+      formattedAmount = "$formattedAmount $currencySymbol";
+    }
+
+    return Text(
+      formattedAmount,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+      ).copyWith(color: color),
     );
   }
 }
