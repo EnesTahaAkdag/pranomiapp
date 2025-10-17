@@ -431,8 +431,11 @@ class DashboardListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat.currency(locale: 'tr_TR', symbol: '₺');
-
+    final formatter = NumberFormat.currency(
+      locale: 'tr_TR',
+      symbol: '₺',
+      customPattern: '#,##0.00 ¤', // ← ¤ sembolün yerini gösterir
+    );
     Color color;
     if (amount > 0) {
       color = AppTheme.successColor;
