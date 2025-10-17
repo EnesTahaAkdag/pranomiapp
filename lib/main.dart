@@ -1,3 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -6,12 +9,17 @@ import 'package:pranomiapp/core/router/app_router.dart';
 import 'package:pranomiapp/core/services/auth_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
+
 void main() async {
   // Setup dependency injection
   setupLocator();
 
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Initialize Turkish locale for date formatting
   await initializeDateFormatting('tr_TR', null);
