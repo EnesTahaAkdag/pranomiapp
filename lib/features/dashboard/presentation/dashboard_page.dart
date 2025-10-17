@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:pranomiapp/core/sort_order.dart';
 import 'package:provider/provider.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_view_model.dart';
@@ -326,16 +325,17 @@ class _BankBalanceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Sort the balances to have 'TRY' first.
-    final sortedBalances = List<BankAccountBalance>.from(balances);
-    sortedBalances.sort((a, b) {
-      if (a.currencyCode == 'TRY') {
-        return SortOrder.before.value; // a should come first
-      } else if (b.currencyCode == 'TRY') {
-        return SortOrder.after.value; // b should come first
+    // Separate TRY from other currencies
+    BankAccountBalance? tryBalance;
+    final otherBalances = <BankAccountBalance>[];
+
+    for (final balance in balances) {
+      if (balance.currencyCode == 'TRY') {
+        tryBalance = balance;
+      } else {
+        otherBalances.add(balance);
       }
-      return SortOrder.equal.value; // Otherwise, maintain relative order
-    });
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,12 +363,24 @@ class _BankBalanceList extends StatelessWidget {
                   ),
                 )
               else
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (int i = 0; i < sortedBalances.length; i++)
-                      _buildBalanceText(sortedBalances[i]),
+                    // TRY on its own line
+                    if (tryBalance != null)
+                      _buildBalanceText(tryBalance),
+                    // Other currencies in a row
+                    if (otherBalances.isNotEmpty) ...[
+                      if (tryBalance != null) const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          for (final balance in otherBalances)
+                            _buildBalanceText(balance),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
             ],
