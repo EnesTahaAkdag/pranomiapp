@@ -148,14 +148,14 @@ class DashboardNextCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
-                        dashboardTitle: "Cari Hesap  \n Çek",
+                        dashboardTitle: "Cari Hesap Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
                         amount: dashboardItem.nextChequeReceiving,
                         isAsset: true,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
-                        dashboardTitle: "Cari Hesap  \n Senet",
+                        dashboardTitle: "Cari Hesap Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
                         amount: dashboardItem.nextDeedReceiving,
                         isAsset: true,
@@ -261,14 +261,14 @@ class DashboardCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
-                        dashboardTitle: "Cari Hesap  \n Çek",
+                        dashboardTitle: "Cari Hesap Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
                         amount: dashboardItem.activeChequeReceiving,
                         isAsset: true,
                       ),
                       const SizedBox(height: 16),
                       DashboardListItem(
-                        dashboardTitle: "Cari Hesap  \n Senet",
+                        dashboardTitle: "Cari Hesap Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
                         amount: dashboardItem.activeDeedReceiving,
                         isAsset: true,
@@ -463,7 +463,7 @@ class DashboardListItem extends StatelessWidget {
               Text(
                 formattedAmount,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                style: TextStyle(fontWeight: FontWeight.bold, color: color,fontSize: 12),
               ),
             ],
           ),
