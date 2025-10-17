@@ -200,9 +200,7 @@ class DashboardNextCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _BankBalanceList(
-              balances: dashboardItem.totalBankAccountBalances,
-            ),
+            _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
           ],
         ),
       ),
@@ -313,9 +311,7 @@ class DashboardCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _BankBalanceList(
-              balances: dashboardItem.totalBankAccountBalances,
-            ),
+            _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
           ],
         ),
       ),
@@ -397,9 +393,7 @@ class _BankBalanceList extends StatelessWidget {
       balance.totalBankAccountBalance.abs(),
     );
 
-    final currencySymbol = _convertCurrencyCodesToSymbols(
-      balance.currencyCode,
-    );
+    final currencySymbol = _convertCurrencyCodesToSymbols(balance.currencyCode);
 
     if (currencySymbol == "₺") {
       formattedAmount = "$formattedAmount ₺";
@@ -468,7 +462,11 @@ class DashboardListItem extends StatelessWidget {
               Text(
                 formattedAmount,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, color: color,fontSize: 12),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
