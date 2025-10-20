@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/features/authentication/domain/strategies/auth_result.dart';
 
-// import 'package:shared_preferences/shared_preferences.dart'; // Handled by ViewModel
-// import 'package:pranomiapp/services/AuthenticationService/LoginServices.dart'; // Handled by ViewModel
-import 'login_page_view_model.dart'; // Import the ViewModel
-// import '../../../Injection.dart'; // ViewModel handles its dependencies
+import 'login_page_view_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,75 +25,99 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onViewModelChanged() async {
-    // Handle UI updates based on ViewModel changes
-    if (mounted) {
-      // Show messages
-      if (_viewModel.errorMessage != null) {
-        _showMessage(_viewModel.errorMessage!, AppTheme.errorColor);
-        _viewModel.clearMessages(); // Clear message after showing
-      } else if (_viewModel.warningMessage != null) {
-        _showMessage(_viewModel.warningMessage!, AppTheme.warningColor);
-        _viewModel.clearMessages();
-      } else if (_viewModel.successMessage != null &&
-          !_viewModel.loginSuccessful) {
-        // Show general success messages if not navigating immediately
-        _showMessage(_viewModel.successMessage!, AppTheme.successColor);
-        _viewModel.clearMessages();
-      }
+    if (!mounted) return;
 
-      // Handle navigation
-      if (_viewModel.requiresTwoFactorAuth) {
-        // Navigate to Two-Factor Authentication page
-        debugPrint(
-          "Two-Factor Authentication required, navigating to 2FA page.",
-        );
-        final userId = _viewModel.userId;
-        final gsmNumber = _viewModel.gsmNumber;
+    final authResult = _viewModel.authResult;
+    if (authResult == null) {
+      setState(() {}); // Rebuild for loading state changes
+      return;
+    }
+
+    // Show messages
+    if (authResult.errorMessage != null) {
+      _showMessage(authResult.errorMessage!, AppTheme.errorColor);
+      _viewModel.clearMessages();
+    } else if (authResult.warningMessage != null) {
+      _showMessage(authResult.warningMessage!, AppTheme.warningColor);
+      _viewModel.clearMessages();
+    } else if (authResult.successMessage != null &&
+        authResult.nextAction != AuthenticationAction.navigateToHome) {
+      // Show success message if not navigating to home immediately
+      _showMessage(authResult.successMessage!, AppTheme.successColor);
+      _viewModel.clearMessages();
+    }
+
+    // Handle navigation based on AuthenticationAction from Strategy Pattern
+    if (authResult.nextAction != null) {
+      await _handleAuthenticationAction(authResult);
+    }
+
+    // Update loading state
+    setState(() {});
+  }
+
+  Future<void> _handleAuthenticationAction(
+    AuthenticationResult authResult,
+  ) async {
+    if (!mounted) return;
+
+    switch (authResult.nextAction!) {
+      case AuthenticationAction.navigateToHome:
+        debugPrint("DirectLoginStrategy: Navigating to home");
+        _viewModel.resetVerificationFlags();
+        context.go('/');
+        break;
+
+      case AuthenticationAction.navigateToSmsVerification:
+        debugPrint("SmsVerificationStrategy: Navigating to SMS verification");
+        final userId = authResult.data?['userId'] as int?;
+        final gsmNumber = authResult.data?['gsmNumber'] as String?;
 
         if (userId != null && gsmNumber != null) {
           _viewModel.resetVerificationFlags();
-          // Navigate and wait for result
-          final result = await context.push(
-            '/two-factor-auth',
-            extra: {'userId': userId, 'gsmNumber': gsmNumber},
-          );
-
-          // If verification successful, navigate to home
-          if (result == 'success' && mounted) {
-            context.go('/');
-          }
-        }
-      } else if (_viewModel.requiresSmsVerification) {
-        // Navigate to SMS verification page
-        debugPrint(
-          "SMS Verification required, navigating to SMS verification page.",
-        );
-        final userId = _viewModel.userId;
-        final gsmNumber = _viewModel.gsmNumber;
-
-        if (userId != null && gsmNumber != null) {
-          _viewModel.resetVerificationFlags();
-          // Navigate and wait for result
           final result = await context.push(
             '/sms-verification',
             extra: {'userId': userId, 'gsmNumber': gsmNumber},
           );
 
-          // If verification successful, navigate to home
           if (result == 'success' && mounted) {
             context.go('/');
           }
+        } else {
+          _showMessage(
+            'SMS doğrulama bilgileri eksik',
+            AppTheme.errorColor,
+          );
         }
-      } else if (_viewModel.loginSuccessful) {
-        // Direct login without SMS verification
-        debugPrint("Login Successful, navigating to home.");
-        context.go('/');
-      }
-      // Update loading state
-      setState(() {
-        // This is primarily to rebuild if _isLoading changes,
-        // though other properties might also require a rebuild.
-      });
+        break;
+
+      case AuthenticationAction.navigateToTwoFactorAuth:
+        debugPrint("TwoFactorAuthStrategy: Navigating to 2FA");
+        final userId = authResult.data?['userId'] as int?;
+        final gsmNumber = authResult.data?['gsmNumber'] as String?;
+
+        if (userId != null && gsmNumber != null) {
+          _viewModel.resetVerificationFlags();
+          final result = await context.push(
+            '/two-factor-auth',
+            extra: {'userId': userId, 'gsmNumber': gsmNumber},
+          );
+
+          if (result == 'success' && mounted) {
+            context.go('/');
+          }
+        } else {
+          _showMessage(
+            '2FA doğrulama bilgileri eksik',
+            AppTheme.errorColor,
+          );
+        }
+        break;
+
+      case AuthenticationAction.none:
+        // No navigation action required
+        debugPrint("No navigation action required");
+        break;
     }
   }
 

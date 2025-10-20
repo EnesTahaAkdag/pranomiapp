@@ -4,6 +4,9 @@ import 'package:pranomiapp/features/authentication/data/login_services.dart';
 import 'package:pranomiapp/Models/AuthenticationModels/login_model.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 
+import '../domain/strategies/auth_result.dart';
+import '../domain/strategies/auth_strategy_selector.dart';
+
 class LoginPageViewModel extends ChangeNotifier {
   final LoginServices _loginServices = locator<LoginServices>();
 
@@ -13,46 +16,31 @@ class LoginPageViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  String? _errorMessage;
-  String? get errorMessage => _errorMessage;
+  AuthenticationResult? _authResult;
+  AuthenticationResult? get authResult => _authResult;
 
-  String? _successMessage;
-  String? get successMessage => _successMessage;
+  // Helper getters for backward compatibility
+  String? get errorMessage => _authResult?.errorMessage;
+  String? get successMessage => _authResult?.successMessage;
+  String? get warningMessage => _authResult?.warningMessage;
 
-  String? _warningMessage;
-  String? get warningMessage => _warningMessage;
+  bool get loginSuccessful =>
+      _authResult?.nextAction == AuthenticationAction.navigateToHome;
 
-  bool _loginSuccessful = false;
-  bool get loginSuccessful => _loginSuccessful;
+  bool get requiresSmsVerification =>
+      _authResult?.nextAction == AuthenticationAction.navigateToSmsVerification;
 
-  // SMS Verification data
-  bool _requiresSmsVerification = false;
-  bool get requiresSmsVerification => _requiresSmsVerification;
+  bool get requiresTwoFactorAuth =>
+      _authResult?.nextAction == AuthenticationAction.navigateToTwoFactorAuth;
 
-  // Two-Factor Authentication data
-  bool _requiresTwoFactorAuth = false;
-  bool get requiresTwoFactorAuth => _requiresTwoFactorAuth;
-
-  bool _hasActive2FA = false;
-  bool get hasActive2FA => _hasActive2FA;
-
-  int? _userId;
-  int? get userId => _userId;
-
-  String? _gsmNumber;
-  String? get gsmNumber => _gsmNumber;
+  int? get userId => _authResult?.data?['userId'] as int?;
+  String? get gsmNumber => _authResult?.data?['gsmNumber'] as String?;
 
   Future<void> login() async {
     if (_isLoading) return;
 
     _isLoading = true;
-    _loginSuccessful = false;
-    _requiresSmsVerification = false;
-    _requiresTwoFactorAuth = false;
-    _hasActive2FA = false;
-    _errorMessage = null;
-    _successMessage = null;
-    _warningMessage = null;
+    _authResult = null;
     notifyListeners();
 
     final username = usernameController.text.trim();
@@ -62,77 +50,65 @@ class LoginPageViewModel extends ChangeNotifier {
       final response = await _loginServices.login(username, password);
 
       if (response != null) {
-        _successMessage = response.successMessages.isNotEmpty ? response.successMessages.join('\n') : null;
-        _warningMessage = response.warningMessages.isNotEmpty ? response.warningMessages.join('\n') : null;
-        _errorMessage = response.errorMessages.isNotEmpty ? response.errorMessages.join('\n') : null;
-
         if (response.success && response.item != null) {
-          final item = response.item!;
+          // Strategy Pattern kullanarak authentication işlemi
+          final strategy = AuthenticationStrategySelector.selectStrategy(response);
 
-          // Store user data for potential verification steps
-          _userId = item.userId;
-          _gsmNumber = item.gsmNumber;
-          _hasActive2FA = item.hasActive2FA;
+          debugPrint("Using authentication strategy: ${strategy.strategyName}");
 
-          // Navigation logic:
-          // 1. If requireSms is false -> direct login (ignore hasActive2FA)
-          // 2. If requireSms is true AND hasActive2FA is false -> SMS verification only
-          // 3. If requireSms is true AND hasActive2FA is true -> Two-factor auth
+          _authResult = await strategy.authenticate(
+            response: response,
+            username: username,
+            password: password,
+          );
 
-          if (!item.requireSms) {
-            // Direct login without any verification
-            if (item.apiInfo != null) {
-              final apiInfo = item.apiInfo!;
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString('apiKey', apiInfo.apiKey);
-              await prefs.setString('apiSecret', apiInfo.apiSecret);
-              await prefs.setString('subscriptionType', apiInfo.subscriptionType.name);
-              await prefs.setBool('isEInvoiceActive', apiInfo.isEInvoiceActive);
-              _loginSuccessful = true;
-              if (_successMessage == null && _errorMessage == null && _warningMessage == null) {
-                _successMessage = "Giriş Başarılı";
-              }
-            } else {
-              _errorMessage = "Giriş bilgileri eksik. Lütfen tekrar deneyin.";
-            }
-          } else {
-            // requireSms is true - check for 2FA
-            if (item.hasActive2FA) {
-              // Navigate to Two-Factor Authentication
-              _requiresTwoFactorAuth = true;
-              _successMessage = "İki faktörlü doğrulama gerekiyor";
-            } else {
-              // Navigate to SMS Verification only
-              _requiresSmsVerification = true;
-              _successMessage = "SMS doğrulaması gerekiyor";
-            }
+          // Response'daki mesajları da ekle
+          if (response.successMessages.isNotEmpty) {
+            _authResult = AuthenticationResult(
+              success: _authResult!.success,
+              successMessage: _authResult!.successMessage ?? response.successMessages.join('\n'),
+              errorMessage: _authResult!.errorMessage,
+              warningMessage: response.warningMessages.isNotEmpty
+                  ? response.warningMessages.join('\n')
+                  : _authResult!.warningMessage,
+              nextAction: _authResult!.nextAction,
+              data: _authResult!.data,
+            );
           }
         } else {
-          if (_errorMessage == null && _successMessage == null && _warningMessage == null) {
-            _errorMessage = "Giriş bilgileri hatalı veya bir sorun oluştu.";
-          }
+          _authResult = AuthenticationResult(
+            success: false,
+            errorMessage: response.errorMessages.isNotEmpty
+                ? response.errorMessages.join('\n')
+                : "Giriş bilgileri hatalı veya bir sorun oluştu.",
+            nextAction: AuthenticationAction.none,
+          );
         }
       } else {
-        _errorMessage = "Giriş isteği başarısız oldu. Lütfen internet bağlantınızı kontrol edin.";
+        _authResult = AuthenticationResult(
+          success: false,
+          errorMessage: "Giriş isteği başarısız oldu. Lütfen internet bağlantınızı kontrol edin.",
+          nextAction: AuthenticationAction.none,
+        );
       }
     } catch (e) {
-      _errorMessage = "Bir hata oluştu: ${e.toString()}";
+      _authResult = AuthenticationResult(
+        success: false,
+        errorMessage: "Bir hata oluştu: ${e.toString()}",
+        nextAction: AuthenticationAction.none,
+      );
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Resets the verification flags after navigation
   void resetVerificationFlags() {
-    _requiresSmsVerification = false;
-    _requiresTwoFactorAuth = false;
+    _authResult = null;
   }
 
   void clearMessages() {
-    _errorMessage = null;
-    _successMessage = null;
-    _warningMessage = null;
+    _authResult = null;
   }
 
   @override
