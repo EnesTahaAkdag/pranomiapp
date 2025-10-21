@@ -14,14 +14,18 @@ class LoginPageViewModel extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   AuthenticationResult? _authResult;
+
   AuthenticationResult? get authResult => _authResult;
 
   // Helper getters for backward compatibility
   String? get errorMessage => _authResult?.errorMessage;
+
   String? get successMessage => _authResult?.successMessage;
+
   String? get warningMessage => _authResult?.warningMessage;
 
   bool get loginSuccessful =>
@@ -34,6 +38,7 @@ class LoginPageViewModel extends ChangeNotifier {
       _authResult?.nextAction == AuthenticationAction.navigateToTwoFactorAuth;
 
   int? get userId => _authResult?.data?['userId'] as int?;
+
   String? get gsmNumber => _authResult?.data?['gsmNumber'] as String?;
 
   Future<void> login() async {
@@ -52,7 +57,9 @@ class LoginPageViewModel extends ChangeNotifier {
       if (response != null) {
         if (response.success && response.item != null) {
           // Strategy Pattern kullanarak authentication işlemi
-          final strategy = AuthenticationStrategySelector.selectStrategy(response);
+          final strategy = AuthenticationStrategySelector.selectStrategy(
+            response,
+          );
 
           debugPrint("Using authentication strategy: ${strategy.strategyName}");
 
@@ -66,11 +73,14 @@ class LoginPageViewModel extends ChangeNotifier {
           if (response.successMessages.isNotEmpty) {
             _authResult = AuthenticationResult(
               success: _authResult!.success,
-              successMessage: _authResult!.successMessage ?? response.successMessages.join('\n'),
+              successMessage:
+                  _authResult!.successMessage ??
+                  response.successMessages.join('\n'),
               errorMessage: _authResult!.errorMessage,
-              warningMessage: response.warningMessages.isNotEmpty
-                  ? response.warningMessages.join('\n')
-                  : _authResult!.warningMessage,
+              warningMessage:
+                  response.warningMessages.isNotEmpty
+                      ? response.warningMessages.join('\n')
+                      : _authResult!.warningMessage,
               nextAction: _authResult!.nextAction,
               data: _authResult!.data,
             );
@@ -78,16 +88,18 @@ class LoginPageViewModel extends ChangeNotifier {
         } else {
           _authResult = AuthenticationResult(
             success: false,
-            errorMessage: response.errorMessages.isNotEmpty
-                ? response.errorMessages.join('\n')
-                : "Giriş bilgileri hatalı veya bir sorun oluştu.",
+            errorMessage:
+                response.errorMessages.isNotEmpty
+                    ? response.errorMessages.join('\n')
+                    : "Giriş bilgileri hatalı veya bir sorun oluştu.",
             nextAction: AuthenticationAction.none,
           );
         }
       } else {
         _authResult = AuthenticationResult(
           success: false,
-          errorMessage: "Giriş isteği başarısız oldu. Lütfen internet bağlantınızı kontrol edin.",
+          errorMessage:
+              "Giriş isteği başarısız oldu. Lütfen internet bağlantınızı kontrol edin.",
           nextAction: AuthenticationAction.none,
         );
       }
