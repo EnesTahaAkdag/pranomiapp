@@ -144,7 +144,7 @@ class SmsVerificationViewModel extends ChangeNotifier {
       if (response != null && response.success && response.item != null) {
         // Verification successful - save credentials
         final apiInfo = response.item!;
-        final prefs = await SharedPreferences.getInstance();
+        final prefs = locator<SharedPreferences>();
         await prefs.setString('apiKey', apiInfo.apiKey);
         await prefs.setString('apiSecret', apiInfo.apiSecret);
         await prefs.setString('subscriptionType', apiInfo.subscriptionType.name);

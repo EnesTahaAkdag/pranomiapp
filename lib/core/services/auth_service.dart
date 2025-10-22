@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../di/injection.dart';
+
 class AuthService {
   static const String _apiKeyKey = 'apiKey';
   static const String _apiSecretKey = 'apiSecret';
@@ -8,7 +10,7 @@ class AuthService {
 
   /// Check if user is logged in by verifying if API credentials exist
   static Future<bool> isLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     final apiKey = prefs.getString(_apiKeyKey);
     final apiSecret = prefs.getString(_apiSecretKey);
     return apiKey != null && apiSecret != null;
@@ -16,7 +18,7 @@ class AuthService {
 
   /// Logout user by clearing all authentication data
   static Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     await prefs.remove(_apiKeyKey);
     await prefs.remove(_apiSecretKey);
     await prefs.remove(_subscriptionTypeKey);
@@ -25,13 +27,13 @@ class AuthService {
 
   /// Get API key
   static Future<String?> getApiKey() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     return prefs.getString(_apiKeyKey);
   }
 
   /// Get API secret
   static Future<String?> getApiSecret() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     return prefs.getString(_apiSecretKey);
   }
 
@@ -42,7 +44,7 @@ class AuthService {
     String? subscriptionType,
     bool? isEInvoiceActive,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     await prefs.setString(_apiKeyKey, apiKey);
     await prefs.setString(_apiSecretKey, apiSecret);
 
@@ -57,13 +59,13 @@ class AuthService {
 
   /// Get subscription type
   static Future<String?> getSubscriptionType() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     return prefs.getString(_subscriptionTypeKey);
   }
 
   /// Check if E-Invoice is active
   static Future<bool> isEInvoiceActive() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     return prefs.getBool(_isEInvoiceActiveKey) ?? false;
   }
 }

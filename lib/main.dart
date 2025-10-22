@@ -14,6 +14,9 @@ import 'package:pranomiapp/core/services/fcm_service.dart';
 import 'package:pranomiapp/core/services/local_notification_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
+// SharedPreferences keys
+const String _isSnackbarShowedKey = 'isSnackbarShowed';
+
 // Global variable to store notification permission status
 AuthorizationStatus? _notificationPermissionStatus;
 
@@ -21,13 +24,11 @@ void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Setup dependency injection
-  setupLocator();
+  // Setup dependency injection (including SharedPreferences singleton)
+  await setupLocator();
 
   // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Register background message handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -76,7 +77,11 @@ class _PranomiAppState extends State<PranomiApp> {
         // Show loading indicator while checking authentication
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
-            home: Scaffold(body: Center(child: CircularProgressIndicator())),
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
         }
 
@@ -123,14 +128,12 @@ class _PranomiAppState extends State<PranomiApp> {
   void _setupFcmHandlers(BuildContext context) {
     final fcmService = locator<FcmService>();
     final localNotificationService = locator<LocalNotificationService>();
+    final prefs = locator<SharedPreferences>();
 
     // Show snackbar if notification permission was denied
     if (_notificationPermissionStatus == AuthorizationStatus.denied) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final prefs = await SharedPreferences.getInstance();
-
-        bool isSnackbarShowed = prefs.getBool("isSnackbarShowed") ?? true;
-      
+        bool isSnackbarShowed = prefs.getBool(_isSnackbarShowedKey) ?? true;
 
         if (context.mounted && isSnackbarShowed) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -150,7 +153,7 @@ class _PranomiAppState extends State<PranomiApp> {
             ),
           );
         }
-        prefs.setBool("isSnackbarShowed", false);
+        await prefs.setBool(_isSnackbarShowedKey, false);
       });
     }
 
@@ -186,7 +189,10 @@ class _PranomiAppState extends State<PranomiApp> {
     debugPrint('✅ FCM handlers initialized');
   }
 
-  void _handleNotificationNavigation(BuildContext context, RemoteMessage message) {
+  void _handleNotificationNavigation(
+    BuildContext context,
+    RemoteMessage message,
+  ) {
     final data = message.data;
     final notificationType = data['notificationType'];
     final referenceNumber = data['referenceNumber'];

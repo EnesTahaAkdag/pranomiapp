@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/di/injection.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     await prefs.remove('apiKey');
     await prefs.remove('apiSecret');
     await prefs.remove('subscriptionType');

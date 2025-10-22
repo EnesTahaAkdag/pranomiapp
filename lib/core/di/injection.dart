@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/features/authentication/data/login_services.dart';
 import 'package:pranomiapp/features/credit/data/credit_service.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_service.dart';
@@ -30,7 +31,15 @@ import '../services/local_notification_service.dart';
 
 final GetIt locator = GetIt.instance;
 
-void setupLocator() {
+/// Setup dependency injection
+/// Must be called before accessing any services
+/// SharedPreferences is initialized asynchronously before other services
+Future<void> setupLocator() async {
+  // Register SharedPreferences as singleton (must be initialized first)
+  final sharedPreferences = await SharedPreferences.getInstance();
+  locator.registerSingleton<SharedPreferences>(sharedPreferences);
+
+  // Register all other services
   locator.registerLazySingleton<CustomerDetailService>(
     () => CustomerDetailService(),
   );
@@ -113,7 +122,7 @@ void setupLocator() {
 
   // Register FCM and Local Notification services
   locator.registerLazySingleton<FcmService>(
-    () => FcmService(),
+    () => FcmService(locator<SharedPreferences>()),
   );
 
   locator.registerLazySingleton<LocalNotificationService>(

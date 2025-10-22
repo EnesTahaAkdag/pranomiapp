@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import '../../core/di/injection.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/custom_bottom_navigation.dart';
 import 'utils/route_index_mapper.dart';
@@ -46,7 +47,7 @@ class _AppLayoutState extends State<AppLayout> {
   }
 
   Future<void> _loadMenuVisibility() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     final subscriptionType = prefs.getString('subscriptionType');
     final isEInvoiceActive = prefs.getBool('isEInvoiceActive');
 

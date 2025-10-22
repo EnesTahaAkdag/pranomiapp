@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Models/AuthenticationModels/login_model.dart';
+import '../../../../core/di/injection.dart';
 import 'auth_result.dart';
 import 'auth_strategy.dart';
 
@@ -25,7 +26,7 @@ class DirectLoginStrategy implements AuthenticationStrategy {
 
       // API bilgilerini kaydet
       final apiInfo = response.item!.apiInfo!;
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = locator<SharedPreferences>();
       await prefs.setString('apiKey', apiInfo.apiKey);
       await prefs.setString('apiSecret', apiInfo.apiSecret);
       await prefs.setString('subscriptionType', apiInfo.subscriptionType.name);

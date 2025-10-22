@@ -15,6 +15,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// Firebase Cloud Messaging Service
 /// Handles FCM token management, message reception, and topic subscriptions
 class FcmService {
+  FcmService(this._prefs);
+
+  final SharedPreferences _prefs;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   static const String _fcmTokenKey = 'fcm_token';
@@ -29,8 +32,7 @@ class FcmService {
   Future<AuthorizationStatus> initialize() async {
     try {
       // Check if permission was already requested
-      final prefs = await SharedPreferences.getInstance();
-      final permissionRequested = prefs.getBool(_permissionRequestedKey) ?? false;
+      final permissionRequested = _prefs.getBool(_permissionRequestedKey) ?? false;
 
       NotificationSettings settings;
 
@@ -48,7 +50,7 @@ class FcmService {
         );
 
         // Mark permission as requested
-        await prefs.setBool(_permissionRequestedKey, true);
+        await _prefs.setBool(_permissionRequestedKey, true);
         debugPrint('FCM Permission status: ${settings.authorizationStatus}');
       } else {
         // Permission already requested - just get current settings
@@ -136,8 +138,7 @@ class FcmService {
   /// Get saved FCM token from SharedPreferences
   Future<String?> getSavedFCMToken() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(_fcmTokenKey);
+      return _prefs.getString(_fcmTokenKey);
     } catch (e) {
       debugPrint('Error getting saved FCM token: $e');
       return null;
@@ -147,8 +148,7 @@ class FcmService {
   /// Save FCM token to SharedPreferences
   Future<void> _saveFCMToken(String token) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_fcmTokenKey, token);
+      await _prefs.setString(_fcmTokenKey, token);
     } catch (e) {
       debugPrint('Error saving FCM token: $e');
     }
@@ -158,8 +158,7 @@ class FcmService {
   Future<void> deleteToken() async {
     try {
       await _firebaseMessaging.deleteToken();
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_fcmTokenKey);
+      await _prefs.remove(_fcmTokenKey);
       debugPrint('FCM token deleted');
     } catch (e) {
       debugPrint('Error deleting FCM token: $e');
@@ -202,8 +201,7 @@ class FcmService {
   /// This will allow the permission dialog to be shown again on next app start
   Future<void> resetPermissionRequestedFlag() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_permissionRequestedKey);
+      await _prefs.remove(_permissionRequestedKey);
       debugPrint('Permission requested flag reset');
     } catch (e) {
       debugPrint('Error resetting permission flag: $e');

@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/di/injection.dart';
+
 abstract class ApiServiceBase {
   static final Dio dioInstance = Dio(
     BaseOptions(
@@ -16,7 +18,7 @@ abstract class ApiServiceBase {
   Dio get dio => ApiServiceBase.dioInstance;
 
   Future<Map<String, String>> getAuthHeaders() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
       final apiKey = prefs.getString('apiKey');
     final apiSecret = prefs.getString('apiSecret');
 

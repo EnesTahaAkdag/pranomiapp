@@ -228,10 +228,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
               ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
+                child: CircularProgressIndicator(),
               )
               : const Icon(Icons.save),
       label: const Text('Kaydet'),
