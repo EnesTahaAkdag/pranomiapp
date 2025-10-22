@@ -103,7 +103,7 @@ class _AppLayoutState extends State<AppLayout> {
       appBar: widget.showAppBar
           ? AppBar(
         title: Text(widget.title),
-        backgroundColor: AppTheme.appBarDarkBackground,
+        backgroundColor: Color(0XFF2A2A2A),
         leading: Builder(
           builder: (ctx) => IconButton(
             icon: const Icon(Icons.menu),

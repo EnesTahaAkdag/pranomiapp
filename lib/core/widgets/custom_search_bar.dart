@@ -29,7 +29,7 @@ class CustomSearchBar extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         filled: true,
-        fillColor: backgroundColor,
+        fillColor: Color(0xFFFFF8F0),
         prefixIcon: Icon(prefixIcon),
         hintText: hintText,
         suffixIcon: controller.text.isNotEmpty

@@ -176,7 +176,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                           child: Card(
                             elevation: 4,
                             shadowColor: Colors.black12,
-                            color: Colors.white,
+                            color: Color(0xFFFFF8F0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
