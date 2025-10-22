@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
@@ -125,8 +126,13 @@ class _PranomiAppState extends State<PranomiApp> {
 
     // Show snackbar if notification permission was denied
     if (_notificationPermissionStatus == AuthorizationStatus.denied) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final prefs = await SharedPreferences.getInstance();
+
+        bool isSnackbarShowed = prefs.getBool("isSnackbarShowed") ?? true;
+      
+
+        if (context.mounted && isSnackbarShowed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text(
@@ -144,6 +150,7 @@ class _PranomiAppState extends State<PranomiApp> {
             ),
           );
         }
+        prefs.setBool("isSnackbarShowed", false);
       });
     }
 
