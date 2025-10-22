@@ -13,6 +13,8 @@ import 'package:pranomiapp/core/services/fcm_service.dart';
 import 'package:pranomiapp/core/services/local_notification_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
+// Global variable to store notification permission status
+AuthorizationStatus? _notificationPermissionStatus;
 
 void main() async {
   // Ensure Flutter bindings are initialized
@@ -29,14 +31,17 @@ void main() async {
   // Register background message handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  // Initialize FCM service
+  // Initialize FCM service and get permission status
   final fcmService = locator<FcmService>();
-  await fcmService.initialize();
+  final permissionStatus = await fcmService.initialize();
 
   // Initialize local notifications
   final localNotificationService = locator<LocalNotificationService>();
   await localNotificationService.initialize();
   await localNotificationService.createNotificationChannel();
+
+  // Store permission status globally for snackbar display
+  _notificationPermissionStatus = permissionStatus;
 
   // Initialize Turkish locale for date formatting
   await initializeDateFormatting('tr_TR', null);
@@ -117,6 +122,30 @@ class _PranomiAppState extends State<PranomiApp> {
   void _setupFcmHandlers(BuildContext context) {
     final fcmService = locator<FcmService>();
     final localNotificationService = locator<LocalNotificationService>();
+
+    // Show snackbar if notification permission was denied
+    if (_notificationPermissionStatus == AuthorizationStatus.denied) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Bildirim izni verilmedi. İsterseniz daha sonra ayarlardan izin verebilirsiniz.',
+              ),
+              duration: const Duration(seconds: 5),
+              backgroundColor: AppTheme.accentColor,
+              action: SnackBarAction(
+                label: 'Tamam',
+                textColor: Colors.white,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+              ),
+            ),
+          );
+        }
+      });
+    }
 
     // Handle foreground messages - show local notification
     fcmService.onForegroundMessage = (message) {

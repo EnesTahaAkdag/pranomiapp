@@ -18,32 +18,53 @@ class FcmService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   static const String _fcmTokenKey = 'fcm_token';
+  static const String _permissionRequestedKey = 'fcm_permission_requested';
 
   // Callbacks for handling messages
   Function(RemoteMessage)? onForegroundMessage;
   Function(RemoteMessage)? onNotificationTap;
 
-  /// Initialize FCM and request permissions
-  Future<void> initialize() async {
+  /// Initialize FCM and request permissions (only once)
+  /// Returns the authorization status after initialization
+  Future<AuthorizationStatus> initialize() async {
     try {
-      // Request permission for iOS
-      NotificationSettings settings = await _firebaseMessaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
+      // Check if permission was already requested
+      final prefs = await SharedPreferences.getInstance();
+      final permissionRequested = prefs.getBool(_permissionRequestedKey) ?? false;
 
-      debugPrint('FCM Permission granted: ${settings.authorizationStatus}');
+      NotificationSettings settings;
 
-      // Get and save FCM token
-      final token = await getFCMToken();
-      if (token != null) {
-        await _saveFCMToken(token);
-        debugPrint('FCM Token: $token');
+      if (!permissionRequested) {
+        // First time - request permission
+        debugPrint('📋 Requesting FCM permission for the first time...');
+        settings = await _firebaseMessaging.requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+
+        // Mark permission as requested
+        await prefs.setBool(_permissionRequestedKey, true);
+        debugPrint('FCM Permission status: ${settings.authorizationStatus}');
+      } else {
+        // Permission already requested - just get current settings
+        debugPrint('📋 FCM permission already requested, checking current settings...');
+        settings = await _firebaseMessaging.getNotificationSettings();
+        debugPrint('Current permission status: ${settings.authorizationStatus}');
+      }
+
+      // Get and save FCM token if permissions are granted
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
+        final token = await getFCMToken();
+        if (token != null) {
+          await _saveFCMToken(token);
+          debugPrint('FCM Token: $token');
+        }
       }
 
       // Listen for token refresh
@@ -55,8 +76,11 @@ class FcmService {
 
       // Setup message handlers
       _setupMessageHandlers();
+
+      return settings.authorizationStatus;
     } catch (e) {
       debugPrint('Error initializing FCM: $e');
+      return AuthorizationStatus.notDetermined;
     }
   }
 
@@ -172,5 +196,17 @@ class FcmService {
     final settings = await getNotificationSettings();
     return settings.authorizationStatus == AuthorizationStatus.authorized ||
            settings.authorizationStatus == AuthorizationStatus.provisional;
+  }
+
+  /// Reset permission requested flag (for testing purposes)
+  /// This will allow the permission dialog to be shown again on next app start
+  Future<void> resetPermissionRequestedFlag() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_permissionRequestedKey);
+      debugPrint('Permission requested flag reset');
+    } catch (e) {
+      debugPrint('Error resetting permission flag: $e');
+    }
   }
 }
