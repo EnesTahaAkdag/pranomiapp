@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/TypeEnums/customer_type_enum.dart';
 import 'package:pranomiapp/Models/CustomerModels/customer_edit_model.dart';
 import 'package:pranomiapp/Models/CustomerModels/customer_address_model.dart';
 import 'package:pranomiapp/services/CustomerService/customer_edit_service.dart';
 import 'package:pranomiapp/services/CustomerService/customer_detail_service.dart';
 import 'package:pranomiapp/core/di/injection.dart';
+
+import '../../../core/theme/app_theme.dart';
 
 
 class CustomerEditPage extends StatefulWidget {
@@ -189,7 +192,11 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading || _model == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return  Scaffold(body: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        // LoadingAnimationwidget that call the
+        color: AppTheme.accentColor, // staggereddotwave animation
+        size: 50,
+      )));
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Müşteri Düzenle')),
@@ -463,12 +470,13 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       onPressed: _isSubmitting ? null : _submit,
       icon:
           _isSubmitting
-              ? const SizedBox(
+              ?  SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
+                child:  LoadingAnimationWidget.staggeredDotsWave(
+                  // LoadingAnimationwidget that call the
+                  color: AppTheme.accentColor, // staggereddotwave animation
+                  size: 50,
                 ),
               )
               : const Icon(Icons.save),

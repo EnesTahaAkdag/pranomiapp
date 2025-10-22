@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/AccountModels/account_models.dart';
+
+import '../../../core/theme/app_theme.dart';
 
 class AccountListView extends StatelessWidget {
   final List<AccountModel> accounts;
@@ -19,7 +22,11 @@ class AccountListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading && accounts.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        // LoadingAnimationwidget that call the
+        color: AppTheme.accentColor, // staggereddotwave animation
+        size: 50,
+      ));
     }
 
     if (accounts.isEmpty && !isLoading) {
@@ -113,9 +120,13 @@ class AccountListView extends StatelessWidget {
         }
         if (isLoading && accounts.isNotEmpty) {
           // Loading indicator at the bottom for pagination
-          return const Padding(
+          return  Padding(
             padding: EdgeInsets.all(16),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              // LoadingAnimationwidget that call the
+              color: AppTheme.accentColor, // staggereddotwave animation
+              size: 50,
+            )),
           );
         }
         return const SizedBox.shrink(); // Should not be reached if itemCount is correct

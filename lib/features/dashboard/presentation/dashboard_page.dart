@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_view_model.dart';
@@ -33,7 +34,13 @@ class _DashboardView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, DashboardViewModel viewModel) {
     if (viewModel.isLoading && viewModel.dashboardItem == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: LoadingAnimationWidget.staggeredDotsWave(
+          // LoadingAnimationwidget that call the
+          color: AppTheme.accentColor, // staggereddotwave animation
+          size: 50,
+        ),
+      );
     }
 
     if (viewModel.error != null && viewModel.dashboardItem == null) {
@@ -367,8 +374,7 @@ class _BankBalanceList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // TRY on its own line
-                    if (tryBalance != null)
-                      _buildBalanceText(tryBalance),
+                    if (tryBalance != null) _buildBalanceText(tryBalance),
                     // Other currencies in a row
                     if (otherBalances.isNotEmpty) ...[
                       if (tryBalance != null) const SizedBox(height: 4),

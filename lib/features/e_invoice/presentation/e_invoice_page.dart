@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../data/e_invoice_model.dart';
 import 'e_invoice_view_model.dart';
 
@@ -103,9 +105,13 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                         }
 
                         if (_viewModel.hasMore) {
-                          return const Padding(
+                          return  Padding(
                             padding: EdgeInsets.all(16),
-                            child: Center(child: CircularProgressIndicator()),
+                            child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                              // LoadingAnimationwidget that call the
+                              color: AppTheme.accentColor, // staggereddotwave animation
+                              size: 50,
+                            )),
                           );
                         }
                         return const SizedBox.shrink(); // No more items and not loading
@@ -119,8 +125,12 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                 .isActionLoading) // Loading indicator for PDF/Cancel actions
               Container(
                 color: Colors.black.withOpacity(0.5),
-                child: const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                child:  Center(
+                  child:  LoadingAnimationWidget.staggeredDotsWave(
+                    // LoadingAnimationwidget that call the
+                    color: AppTheme.accentColor, // staggereddotwave animation
+                    size: 50,
+                  ),
                 ),
               ),
           ],

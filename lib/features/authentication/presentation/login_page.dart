@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/authentication/domain/strategies/auth_result.dart';
 
@@ -150,17 +151,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                child: const Column(
+                child:  Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
                       height: 48,
                       width: 48,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppTheme.white,
-                        ),
-                        strokeWidth: 5,
+                      child:  LoadingAnimationWidget.staggeredDotsWave(
+                        // LoadingAnimationwidget that call the
+                        color: AppTheme.accentColor, // staggereddotwave animation
+                        size: 50,
                       ),
                     ),
                     SizedBox(height: 16),

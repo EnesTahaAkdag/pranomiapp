@@ -1,9 +1,11 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/InvoiceModels/invoice_details_model.dart';
 import 'package:pranomiapp/services/InvoiceServices/invoice_details_service.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/theme/app_theme.dart';
 
 class InvoiceDetailPage extends StatefulWidget {
   final int invoiceId;
@@ -195,7 +197,11 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
         future: _futureDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              // LoadingAnimationwidget that call the
+              color: AppTheme.accentColor, // staggereddotwave animation
+              size: 50,
+            ));
           }
           if (snapshot.hasError) {
             return Padding(

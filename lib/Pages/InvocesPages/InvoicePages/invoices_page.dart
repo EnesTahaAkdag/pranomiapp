@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/InvoiceModels/invoice_model.dart';
 import 'package:pranomiapp/services/InvoiceServices/invoice_service.dart';
 import 'package:pranomiapp/Models/InvoiceModels/invoice_cancel_model.dart';
@@ -11,6 +12,7 @@ import 'package:pranomiapp/Models/InvoiceModels/invoice_cancellation_reversal_mo
 import 'package:pranomiapp/services/InvoiceServices/invoice_cancellation_reversal_service.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/theme/app_theme.dart';
 
 class InvoicesPage extends StatefulWidget {
   final int invoiceType;
@@ -170,9 +172,13 @@ class _InvoicesPageState extends State<InvoicesPage> {
                       return _buildInvoiceItem(_invoices[idx]);
                     }
 
-                    return const Padding(
+                    return  Padding(
                       padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                        // LoadingAnimationwidget that call the
+                        color: AppTheme.accentColor, // staggereddotwave animation
+                        size: 50,
+                      )),
                     );
                   },
                 ),

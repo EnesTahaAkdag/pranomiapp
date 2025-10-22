@@ -1,9 +1,11 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/InvoiceModels/invoice_claim_model.dart';
 import 'package:pranomiapp/services/InvoiceServices/invoice_claim_service.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/theme/app_theme.dart';
 
 // Güncellenmiş InvoicesClaimPage (models ve servise göre uyarlanmış)
 
@@ -158,9 +160,13 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
                       return _buildInvoiceItem(_incomeClaim[idx]);
                     }
 
-                    return const Padding(
+                    return  Padding(
                       padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                        // LoadingAnimationwidget that call the
+                        color: AppTheme.accentColor, // staggereddotwave animation
+                        size: 50,
+                      )),
                     );
                   },
                 ),

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
 import 'package:pranomiapp/features/employees/employees_model.dart';
 import 'package:pranomiapp/features/employees/employees_service.dart';
 
 import '../../Models/TypeEnums/customer_type_enum.dart';
 import '../../core/di/injection.dart';
+import '../../core/theme/app_theme.dart';
 
 class EmployeesPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
@@ -231,9 +233,13 @@ class _EmployeesPageState extends State<EmployeesPage> {
                         ),
                       );
                     }
-                    return const Padding(
+                    return  Padding(
                       padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                        // LoadingAnimationwidget that call the
+                        color: AppTheme.accentColor, // staggereddotwave animation
+                        size: 50,
+                      )),
                     );
                   },
                 ),

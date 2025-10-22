@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
 /// Widget to check and request FCM permissions
@@ -111,7 +112,11 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
             ),
             const SizedBox(height: 12),
             if (_isLoading)
-              const Center(child: CircularProgressIndicator())
+               Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                // LoadingAnimationwidget that call the
+                 color: AppTheme.accentColor, // staggereddotwave animation
+                size: 50,
+              ))
             else ...[
               if (_status != null) ...[
                 Text(

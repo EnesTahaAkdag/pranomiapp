@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/TypeEnums/customer_type_enum.dart';
 import 'package:pranomiapp/Models/CustomerModels/customer_add_model.dart';
 import 'package:pranomiapp/Models/CustomerModels/customer_address_model.dart';
 import 'package:pranomiapp/services/CustomerService/customer_add_service.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/theme/app_theme.dart';
 
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
@@ -104,9 +106,13 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
+      return  Scaffold(
         backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+          // LoadingAnimationwidget that call the
+          color: AppTheme.accentColor, // staggereddotwave animation
+          size: 50,
+        )),
       );
     }
 
@@ -265,12 +271,13 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       onPressed: _isSubmitting ? null : _submit,
       icon:
           _isSubmitting
-              ? const SizedBox(
+              ?  SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
+                child:  LoadingAnimationWidget.staggeredDotsWave(
+                  // LoadingAnimationwidget that call the
+                  color: AppTheme.accentColor, // staggereddotwave animation
+                  size: 50,
                 ),
               )
               : const Icon(Icons.save),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/two_factor_auth/presentation/two_factor_auth_state.dart';
@@ -394,14 +395,13 @@ class _TwoFactorAuthContentState extends State<_TwoFactorAuthContent> {
           elevation: 2,
         ),
         child: viewModel.isVerifying
-            ? const SizedBox(
+            ?  SizedBox(
                 height: 24,
                 width: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    AppTheme.textWhite,
-                  ),
+                child:  LoadingAnimationWidget.staggeredDotsWave(
+                  // LoadingAnimationwidget that call the
+                  color: AppTheme.accentColor, // staggereddotwave animation
+                  size: 50,
                 ),
               )
             : Text(

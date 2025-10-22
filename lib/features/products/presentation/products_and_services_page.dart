@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/ProductsModels/product_model.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
@@ -77,9 +78,13 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                                 return _buildProductItem(_viewModel.products[idx]);
                               }
                               if (_viewModel.hasMore) {
-                                 return const Padding(
+                                 return  Padding(
                                    padding: EdgeInsets.all(16),
-                                   child: Center(child: CircularProgressIndicator()),
+                                   child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                                     // LoadingAnimationwidget that call the
+                                     color: AppTheme.accentColor, // staggereddotwave animation
+                                     size: 50,
+                                   )),
                                  );
                               }
                               return const SizedBox.shrink();
@@ -92,7 +97,11 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
             if (_viewModel.isUpdating)
               Container(
                 color: AppTheme.blackOverlay50,
-                child: const Center(child: CircularProgressIndicator(color: AppTheme.white,)),
+                child:  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                  // LoadingAnimationwidget that call the
+                  color: AppTheme.accentColor, // staggereddotwave animation
+                  size: 50,
+                )),
               ),
           ],
         ),
@@ -154,11 +163,10 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
+                              child:  LoadingAnimationWidget.staggeredDotsWave(
+                                // LoadingAnimationwidget that call the
+                                color: AppTheme.accentColor, // staggereddotwave animation
+                                size: 50,
                               ),
                             );
                           },

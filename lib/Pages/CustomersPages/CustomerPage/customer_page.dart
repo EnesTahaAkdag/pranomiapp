@@ -1,12 +1,14 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/TypeEnums/customer_type_enum.dart';
 import 'package:pranomiapp/Models/CustomerModels/customer_model.dart';
 import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
 import 'package:pranomiapp/services/CustomerService/customer_service.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/theme/app_theme.dart';
 
 class CustomerPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
@@ -260,9 +262,13 @@ class AccountListView extends StatelessWidget {
               ),
             );
           }
-          return const Padding(
+          return  Padding(
             padding: EdgeInsets.all(16),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+              // LoadingAnimationwidget that call the
+              color: AppTheme.accentColor, // staggereddotwave animation
+              size: 50,
+            )),
           );
         },
       ),

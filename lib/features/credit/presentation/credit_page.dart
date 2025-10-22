@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/features/credit/data/credit_model.dart';
 import 'package:pranomiapp/features/credit/data/credit_service.dart';
 import 'package:pranomiapp/core/di/injection.dart';
@@ -71,7 +72,11 @@ class _CreditViewState extends State<_CreditView> {
 
     // Pattern matching on state type
     if (state is CreditLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        // LoadingAnimationwidget that call the
+        color: AppTheme.accentColor, // staggereddotwave animation
+        size: 50,
+      ));
     }
 
     if (state is CreditError) {
@@ -364,9 +369,13 @@ class _LoadingMoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return  Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Center(child: CircularProgressIndicator()),
+      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        // LoadingAnimationwidget that call the
+        color: AppTheme.accentColor, // staggereddotwave animation
+        size: 50,
+      )),
     );
   }
 }

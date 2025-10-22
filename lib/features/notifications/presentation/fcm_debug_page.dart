@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/core/services/fcm_service.dart';
 import 'package:pranomiapp/core/services/local_notification_service.dart';
@@ -139,7 +140,11 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
         backgroundColor: AppTheme.primaryColor,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ?  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+        // LoadingAnimationwidget that call the
+        color: AppTheme.accentColor, // staggereddotwave animation
+        size: 50,
+      ))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
