@@ -253,7 +253,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                                 ? const Color(0xFF4CAF50) // Green for positive
                                                 : employee.balance < 0
                                                 ? const Color(0xFFE53935) // Red for negative
-                                                : const Color(0xFF757575), // Gray for zero
+                                                : const Color(0xFF2A2A2A), // Gray for zero
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),

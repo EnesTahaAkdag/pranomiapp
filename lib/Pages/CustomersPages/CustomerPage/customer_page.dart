@@ -105,7 +105,7 @@ class _CustomerPageState extends State<CustomerPage> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Color(0xFFF5F7FA),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
@@ -212,7 +212,7 @@ class AccountListView extends StatelessWidget {
                 child: Card(
                   elevation: 4,
                   shadowColor: Colors.black12,
-                  color: Color(0xFFFFF8F0),
+                  color: Color(0xFFFFFFFF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -229,13 +229,14 @@ class AccountListView extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
+                                    color: Color(0xFF212121),
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             const Icon(
                               Icons.edit,
-                              color: Colors.grey,
+                              color: Color(0xFFA89494),
                             ),
                           ],
                         ),
@@ -243,16 +244,52 @@ class AccountListView extends StatelessWidget {
                         if (customer.customerCode.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 4.0),
-                            child: Text(
-                              'Müşteri Kodu: ${customer.customerCode}',
-                              style: TextStyle(color: Colors.grey[700]),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'Müşteri Kodu: ',
+                                    style: TextStyle(
+                                      color: Color(0xFF424141),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: customer.customerCode,
+                                    style: const TextStyle(
+                                      color: Color(0xFF424242),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         const SizedBox(height: 8),
-                        Text(
-                          'Ödenen Tutar: ${currencyFormatter.format(customer.balance)} ₺',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: 'Ödenen Tutar: ',
+                                style: TextStyle(
+                                  color: Color(0xFF424141),
+                                  fontSize: 14,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '${currencyFormatter.format(customer.balance)} ₺',
+                                style: TextStyle(
+                                  color: customer.balance > 0
+                                      ? const Color(0xFF4CAF50) // Green for positive
+                                      : customer.balance < 0
+                                      ? const Color(0xFFE53935) // Red for negative
+                                      : const Color(0xFF2A2A2A), // Gray for zero
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
