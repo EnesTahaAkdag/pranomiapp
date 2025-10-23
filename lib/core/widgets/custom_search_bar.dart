@@ -20,18 +20,20 @@ class CustomSearchBar extends StatelessWidget {
     this.onChanged,
     this.backgroundColor = AppTheme.white,
     this.prefixIcon = Icons.search,
-    this.borderRadius = const BorderRadius.all(Radius.circular(24)),
+    this.borderRadius = const BorderRadius.all(Radius.circular(20)),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      style: TextStyle(color: Color(0xFF424242)),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Color(0xFFFFF8F0),
-        prefixIcon: Icon(prefixIcon),
+        fillColor: Color(0xFFFFFFFF),
+        prefixIcon: Icon(prefixIcon,color: const Color(0xFF1976D2),),
         hintText: hintText,
+        hintStyle: const TextStyle(color: Color(0xFF757575)),
         suffixIcon: controller.text.isNotEmpty
             ? IconButton(
           icon: const Icon(Icons.close),
@@ -40,7 +42,7 @@ class CustomSearchBar extends StatelessWidget {
             : null,
         border: OutlineInputBorder(
           borderRadius: borderRadius,
-          borderSide: BorderSide.none,
+
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),

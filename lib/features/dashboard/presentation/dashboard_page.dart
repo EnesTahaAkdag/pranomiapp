@@ -36,8 +36,7 @@ class _DashboardView extends StatelessWidget {
     if (viewModel.isLoading && viewModel.dashboardItem == null) {
       return Center(
         child: LoadingAnimationWidget.staggeredDotsWave(
-          // LoadingAnimationwidget that call the
-          color: AppTheme.accentColor, // staggereddotwave animation
+          color: AppTheme.accentColor,
           size: 50,
         ),
       );

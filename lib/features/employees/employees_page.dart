@@ -107,7 +107,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Color(0xFFF5F7FA),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
@@ -178,7 +178,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                           child: Card(
                             elevation: 4,
                             shadowColor: Colors.black12,
-                            color: const Color(0xFFFFF8F0),
+                            color: const Color(0xFFFFFFFF),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -195,13 +195,14 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
+                                            color: Color(0xFF212121)
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       const Icon(
                                         Icons.edit,
-                                        color: Colors.grey,
+                                        color: Color(0xFFA89494),
                                       ),
                                     ],
                                   ),
@@ -214,8 +215,8 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                       ),
                                       child: Text(
                                         'Müşteri Kodu: ${employee.employeeCode}',
-                                        style: TextStyle(
-                                          color: Colors.grey[700],
+                                        style: const TextStyle(
+                                          color: Color(0xFF757575),
                                         ),
                                       ),
                                     ),
@@ -224,6 +225,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                     'Ödenen Tutar: ${currencyFormatter.format(employee.balance)} ₺',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w500,
+                                      color: Color(0xFF757575)
                                     ),
                                   ),
                                 ],
