@@ -216,9 +216,9 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                       child: RichText(
                                         text: TextSpan(
                                           children: [
-                                            TextSpan(
+                                            const TextSpan(
                                               text: 'Müşteri Kodu: ',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color: Color(0xFF424141),
                                                 fontSize: 14,
                                               ),
@@ -239,9 +239,9 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                   RichText(
                                     text: TextSpan(
                                       children: [
-                                        TextSpan(
+                                        const TextSpan(
                                           text: 'Ödenen Tutar: ',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             color: Color(0xFF424141),
                                             fontSize: 14,
                                           ),
@@ -250,10 +250,10 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                           text: '${currencyFormatter.format(employee.balance)} ₺',
                                           style: TextStyle(
                                             color: employee.balance > 0
-                                                ? Color(0xFF4CAF50) // Green for positive
+                                                ? const Color(0xFF4CAF50) // Green for positive
                                                 : employee.balance < 0
-                                                ? Color(0xFFE53935) // Red for negative
-                                                : Color(0xFF757575), // Gray for zero
+                                                ? const Color(0xFFE53935) // Red for negative
+                                                : const Color(0xFF757575), // Gray for zero
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),
