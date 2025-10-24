@@ -24,7 +24,7 @@ InvoiceTypeEnum parseInvoiceType(dynamic value) {
     case 'IncomeWayBill':
     case 5:
       return InvoiceTypeEnum.incomeWayBill;
-    case 'ExpenseveWayBill':
+    case 'ExpenseWayBill':
     case 6:
       return InvoiceTypeEnum.expenseWayBill;
     default:

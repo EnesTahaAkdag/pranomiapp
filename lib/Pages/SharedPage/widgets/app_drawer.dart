@@ -86,13 +86,6 @@ class AppDrawer extends StatelessWidget {
             onTap: onNavigate,
           ),
           DrawerMenuItem(
-            imagePath: "icon_briefcase.svg",
-            title: "Masraflar",
-            route: '/zsdxcf',
-            currentRoute: currentRoute,
-            onTap: onNavigate,
-          ),
-          DrawerMenuItem(
             imagePath: "icon_file_invoice.svg",
             title: "Gelir İrsaliyeleri",
             route: '/IncomeWayBill',

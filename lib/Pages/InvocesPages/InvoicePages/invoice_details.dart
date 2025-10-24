@@ -76,7 +76,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
       color: Colors.white,
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
