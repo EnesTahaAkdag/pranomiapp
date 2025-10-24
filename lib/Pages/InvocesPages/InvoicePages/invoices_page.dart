@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/Models/InvoiceModels/invoice_model.dart';
+import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
 import 'package:pranomiapp/services/InvoiceServices/invoice_service.dart';
 import 'package:pranomiapp/Models/InvoiceModels/invoice_cancel_model.dart';
 import 'package:pranomiapp/services/InvoiceServices/send_e_invoice_service.dart';
@@ -66,6 +67,12 @@ class _InvoicesPageState extends State<InvoicesPage> {
     }
   }
 
+  void _clearSearch() {
+    _searchController.clear();
+    _searchText = '';
+    _fetchInvoices(reset: true);
+  }
+
   Future<void> _fetchInvoices({bool reset = false}) async {
     int type = widget.invoiceType;
     if (reset) {
@@ -117,30 +124,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: TextField(
+              child: CustomSearchBar(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Belge numarası veya Barkod ara...',
-                  suffixIcon:
-                      _searchText.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _searchText = '');
-                              _fetchInvoices(reset: true);
-                            },
-                          )
-                          : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
+                onClear: _clearSearch,
                 onChanged: (val) => setState(() => _searchText = val),
                 onSubmitted: (_) => _fetchInvoices(reset: true),
               ),
