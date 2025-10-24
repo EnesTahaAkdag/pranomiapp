@@ -16,7 +16,7 @@ class InvoiceService extends ApiServiceBase {
       final headers = await getAuthHeaders();
       final response = await dio.get(
         hasSearch
-            ? "Invoice/Invoices${Uri.encodeComponent(search)}?size=$size&page=$page&invoiceType=$invoiceType"
+            ? "Invoice/Invoices/${Uri.encodeComponent(search)}?size=$size&page=$page&invoiceType=$invoiceType"
             : "Invoice/Invoices?size=$size&page=$page&invoiceType=$invoiceType",
         options: Options(headers: headers),
       );

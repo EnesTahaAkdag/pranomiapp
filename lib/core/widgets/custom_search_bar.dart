@@ -36,7 +36,7 @@ class CustomSearchBar extends StatelessWidget {
         hintStyle: const TextStyle(color: Color(0xFF757575)),
         suffixIcon: controller.text.isNotEmpty
             ? IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close,),
           onPressed: onClear,
         )
             : null,
