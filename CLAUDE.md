@@ -152,7 +152,7 @@ The app uses **two state management approaches**:
 ### 4. API Communication
 
 **Base Service Pattern:**
-- All API services extend `ApiServiceBase` (in `lib/Helper/ApiServices/api_service.dart`)
+- All API services extend `ApiServiceBase` (in `lib/core/services/api_service_base.dart`)
 - Base URL: `https://apitest.pranomi.com/`
 - Authentication: Basic Auth with API key/secret stored in SharedPreferences
 - HTTP client: Dio with 10s timeout

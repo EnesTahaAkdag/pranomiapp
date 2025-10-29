@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
+import '../../../core/services/api_service_base.dart';
 import 'package:pranomiapp/features/two_factor_auth/data/two_factor_auth_model.dart';
 
 class TwoFactorAuthService extends ApiServiceBase {

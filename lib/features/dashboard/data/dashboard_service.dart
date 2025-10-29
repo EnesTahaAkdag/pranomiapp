@@ -1,4 +1,4 @@
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
+import '../../../core/services/api_service_base.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
 
 class DashboardService extends ApiServiceBase {

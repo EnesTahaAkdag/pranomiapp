@@ -2,9 +2,9 @@ import 'dart:async';
 
 
 import 'package:flutter/material.dart';
-import 'package:pranomiapp/services/EInvoiceService/e_invoice_service.dart';
-import 'package:pranomiapp/services/EInvoiceService/e_invoice_cancel_service.dart';
-import 'package:pranomiapp/services/EInvoiceService/e_invoice_open_as_pdf_service.dart';
+import 'package:pranomiapp/features/e_invoice/data/services/e_invoice_service.dart';
+import 'package:pranomiapp/features/e_invoice/data/services/e_invoice_cancel_service.dart';
+import 'package:pranomiapp/features/e_invoice/data/services/e_invoice_open_as_pdf_service.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 
 import '../data/e_invoice_model.dart';

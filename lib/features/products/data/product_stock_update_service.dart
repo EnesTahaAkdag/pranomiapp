@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
-import 'package:pranomiapp/Models/ProductsModels/product_stock_update_model.dart';
+import '../../../core/services/api_service_base.dart';
+import '../domain/product_stock_update_model.dart';
 
 /// This class is responsible for updating product stock.
 

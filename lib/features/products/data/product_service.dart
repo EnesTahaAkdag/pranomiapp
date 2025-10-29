@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
-import 'package:pranomiapp/Models/ProductsModels/product_model.dart';
+import '../../../core/services/api_service_base.dart';
+import '../domain/product_model.dart';
 
 /// This class is responsible for fetching and search products from the API.
 

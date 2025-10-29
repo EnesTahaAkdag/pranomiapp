@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pranomiapp/Models/ProductsModels/product_model.dart';
-import 'package:pranomiapp/Models/ProductsModels/product_stock_update_model.dart';
+import '../domain/product_model.dart';
+import '../domain/product_stock_update_model.dart';
 import 'package:pranomiapp/features/products/data/product_service.dart';
 import 'package:pranomiapp/features/products/data/product_stock_update_service.dart';
 import '../../../core/di/injection.dart';

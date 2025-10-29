@@ -1,7 +1,7 @@
 import 'package:pranomiapp/features/authentication/domain/strategies/sms_verificiation_strategy.dart';
 import 'package:pranomiapp/features/authentication/domain/strategies/two_factor_auth_strategy.dart';
 
-import '../../../../Models/AuthenticationModels/login_model.dart';
+import '../login_model.dart';
 import 'auth_strategy.dart';
 import 'direct_login_strategy.dart';
 

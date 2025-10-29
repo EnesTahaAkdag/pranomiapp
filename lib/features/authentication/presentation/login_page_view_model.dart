@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pranomiapp/features/authentication/data/login_services.dart';
-import 'package:pranomiapp/Models/AuthenticationModels/login_model.dart';
+import '../domain/login_model.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 
 import '../domain/strategies/auth_result.dart';

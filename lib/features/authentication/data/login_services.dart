@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
-import 'package:pranomiapp/Models/AuthenticationModels/login_model.dart';
+import '../../../core/services/api_service_base.dart';
+import '../domain/login_model.dart';
 
 class LoginServices extends ApiServiceBase {
   Future<LoginResponse?>  login(String username, String password) async {

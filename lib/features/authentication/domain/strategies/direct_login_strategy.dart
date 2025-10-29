@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../Models/AuthenticationModels/login_model.dart';
+import '../login_model.dart';
 import '../../../../core/di/injection.dart';
 import 'auth_result.dart';
 import 'auth_strategy.dart';

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart';
+import '../../../core/services/api_service_base.dart';
 import 'package:pranomiapp/features/sms_verification/data/sms_verification_model.dart';
 
 class SmsVerificationService extends ApiServiceBase {

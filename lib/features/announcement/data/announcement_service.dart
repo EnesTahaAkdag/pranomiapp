@@ -1,7 +1,7 @@
 // lib/features/announcement/AnnouncementService.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pranomiapp/Helper/ApiServices/api_service.dart'; // Assuming this is your base class
+import '../../../core/services/api_service_base.dart';
 import 'package:pranomiapp/features/announcement/data/announcement_model.dart';
 
 class AnnouncementService extends ApiServiceBase {

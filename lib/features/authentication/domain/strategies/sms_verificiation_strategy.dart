@@ -1,4 +1,4 @@
-import '../../../../Models/AuthenticationModels/login_model.dart';
+import '../login_model.dart';
 import 'auth_result.dart';
 import 'auth_strategy.dart';
 
