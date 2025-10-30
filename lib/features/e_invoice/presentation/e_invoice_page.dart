@@ -6,13 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../data/e_invoice_model.dart';
 import 'e_invoice_view_model.dart';
 
-class EInvoicesPage extends StatefulWidget {
+/// E-Invoice Page - MVVM Pattern with Provider
+/// Using ChangeNotifierProvider to properly manage ViewModel lifecycle
+class EInvoicesPage extends StatelessWidget {
   final String invoiceType;
   final String recordType;
 
@@ -23,42 +26,46 @@ class EInvoicesPage extends StatefulWidget {
   });
 
   @override
-  State<EInvoicesPage> createState() => _EInvoicesPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => EInvoiceViewModel(
+        invoiceType: invoiceType,
+        recordType: recordType,
+      ),
+      child: const _EInvoiceView(),
+    );
+  }
 }
 
-class _EInvoicesPageState extends State<EInvoicesPage> {
-  late final EInvoiceViewModel _viewModel;
+/// Main view widget - Listens to ViewModel changes via Provider
+class _EInvoiceView extends StatefulWidget {
+  const _EInvoiceView();
+
+  @override
+  State<_EInvoiceView> createState() => _EInvoiceViewState();
+}
+
+class _EInvoiceViewState extends State<_EInvoiceView> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _viewModel = EInvoiceViewModel(
-      invoiceType: widget.invoiceType,
-      recordType: widget.recordType,
-    );
-    _viewModel.addListener(_onViewModelChanged);
-    _scrollController.addListener(
-      () => _viewModel.handleScroll(_scrollController),
-    );
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      if (_viewModel.snackBarMessage != null) {
-        _showSnackBar(_viewModel.snackBarMessage!, _viewModel.snackBarColor);
-        _viewModel.clearSnackBarMessage();
-      }
-      setState(() {});
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.addListener(_onScroll);
+    });
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    final viewModel = context.read<EInvoiceViewModel>();
+    viewModel.handleScroll(_scrollController);
   }
 
   void _showSnackBar(String message, Color color) {
@@ -69,95 +76,107 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
+    return Consumer<EInvoiceViewModel>(
+      builder: (context, viewModel, child) {
+        // Handle snackbar messages
+        if (viewModel.snackBarMessage != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showSnackBar(viewModel.snackBarMessage!, viewModel.snackBarColor);
+            viewModel.clearSnackBarMessage();
+          });
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.grey[100],
+          body: SafeArea(
+            child: Stack(
               children: [
-                _buildSearchBar(),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () => _viewModel.fetchEInvoices(reset: true),
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount:
-                          _viewModel.eInvoices.isEmpty && !_viewModel.isLoading
-                              ? 1
-                              : _viewModel.eInvoices.length +
-                                  (_viewModel.hasMore ? 1 : 0),
-                      itemBuilder: (ctx, idx) {
-                        if (_viewModel.eInvoices.isEmpty &&
-                            !_viewModel.isLoading) {
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.5,
-                            child: Center(
-                              child: Text(
-                                'Hiç fatura bulunamadı.',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ),
-                          );
-                        }
+                Column(
+                  children: [
+                    _buildSearchBar(viewModel),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () => viewModel.fetchEInvoices(reset: true),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount:
+                              viewModel.eInvoices.isEmpty && !viewModel.isLoading
+                                  ? 1
+                                  : viewModel.eInvoices.length +
+                                      (viewModel.hasMore ? 1 : 0),
+                          itemBuilder: (ctx, idx) {
+                            if (viewModel.eInvoices.isEmpty &&
+                                !viewModel.isLoading) {
+                              return SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.5,
+                                child: Center(
+                                  child: Text(
+                                    'Hiç fatura bulunamadı.',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
+                                ),
+                              );
+                            }
 
-                        if (idx < _viewModel.eInvoices.length) {
-                          return _buildInvoiceItem(_viewModel.eInvoices[idx]);
-                        }
+                            if (idx < viewModel.eInvoices.length) {
+                              return _buildInvoiceItem(viewModel.eInvoices[idx], viewModel);
+                            }
 
-                        if (_viewModel.hasMore) {
-                          return  Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                              // LoadingAnimationwidget that call the
-                              color: AppTheme.accentColor, // staggereddotwave animation
-                              size: 50,
-                            )),
-                          );
-                        }
-                        return const SizedBox.shrink(); // No more items and not loading
-                      },
+                            if (viewModel.hasMore) {
+                              return  Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                                  // LoadingAnimationwidget that call the
+                                  color: AppTheme.accentColor, // staggereddotwave animation
+                                  size: 50,
+                                )),
+                              );
+                            }
+                            return const SizedBox.shrink(); // No more items and not loading
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (viewModel
+                    .isActionLoading) // Loading indicator for PDF/Cancel actions
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child:  Center(
+                      child:  LoadingAnimationWidget.staggeredDotsWave(
+                        // LoadingAnimationwidget that call the
+                        color: AppTheme.accentColor, // staggereddotwave animation
+                        size: 50,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
-            if (_viewModel
-                .isActionLoading) // Loading indicator for PDF/Cancel actions
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child:  Center(
-                  child:  LoadingAnimationWidget.staggeredDotsWave(
-                    // LoadingAnimationwidget that call the
-                    color: AppTheme.accentColor, // staggereddotwave animation
-                    size: 50,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(EInvoiceViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Expanded(
             child: TextField(
-              controller: _viewModel.searchController,
+              controller: viewModel.searchController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
                 prefixIcon: const Icon(Icons.search),
                 hintText: 'Belge numarası ara...',
                 suffixIcon:
-                    _viewModel.searchController.text.isNotEmpty
+                    viewModel.searchController.text.isNotEmpty
                         ? IconButton(
                           icon: const Icon(Icons.clear),
-                          onPressed: () => _viewModel.clearSearchAndFetch(),
+                          onPressed: () => viewModel.clearSearchAndFetch(),
                         )
                         : null,
                 border: OutlineInputBorder(
@@ -166,13 +185,13 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               ),
-              onSubmitted: (text) => _viewModel.onSearchSubmitted(text),
+              onSubmitted: (text) => viewModel.onSearchSubmitted(text),
             ),
           ),
           const SizedBox(width: 12),
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: () => _showFilterModal(),
+            onPressed: () => _showFilterModal(viewModel),
             tooltip: 'Filtrele',
           ),
         ],
@@ -180,7 +199,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     );
   }
 
-  void _showFilterModal() {
+  void _showFilterModal(EInvoiceViewModel viewModel) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -204,8 +223,8 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                     children: [
                       Expanded(
                         child: Text(
-                          _viewModel.selectedDate != null
-                              ? 'Tarih: ${AppFormatters.dateShort.format(_viewModel.selectedDate!)}'
+                          viewModel.selectedDate != null
+                              ? 'Tarih: ${AppFormatters.dateShort.format(viewModel.selectedDate!)}'
                               : 'Tarih seçilmedi',
                         ),
                       ),
@@ -214,13 +233,13 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                           final DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate:
-                                _viewModel.selectedDate ?? DateTime.now(),
+                                viewModel.selectedDate ?? DateTime.now(),
                             firstDate: DateTime(2000),
                             lastDate: DateTime.now(),
                           );
                           if (picked != null) {
                             // No need for modalSetState if the action closes the modal immediately
-                            _viewModel.selectDateAndFetch(picked, modalContext);
+                            viewModel.selectDateAndFetch(picked, modalContext);
                           }
                         },
                         icon: const Icon(Icons.date_range),
@@ -228,12 +247,12 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                       ),
                     ],
                   ),
-                  if (_viewModel.selectedDate != null)
+                  if (viewModel.selectedDate != null)
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton.icon(
                         onPressed: () {
-                          _viewModel.clearDateAndFetch(modalContext);
+                          viewModel.clearDateAndFetch(modalContext);
                         },
                         icon: const Icon(Icons.clear),
                         label: const Text("Tarihi Temizle"),
@@ -248,7 +267,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     );
   }
 
-  Widget _buildInvoiceItem(EInvoiceModel invoice) {
+  Widget _buildInvoiceItem(EInvoiceModel invoice, EInvoiceViewModel viewModel) {
     final dateFormatted =
         invoice.date != null
             ? AppFormatters.dateShort.format(invoice.date!)
@@ -291,7 +310,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.more_vert),
-                    onPressed: () => _showSimpleBottomSheet(invoice),
+                    onPressed: () => _showSimpleBottomSheet(invoice, viewModel),
                   ),
                 ],
               ),
@@ -345,7 +364,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     }
   }
 
-  void _showSimpleBottomSheet(EInvoiceModel invoice) {
+  void _showSimpleBottomSheet(EInvoiceModel invoice, EInvoiceViewModel viewModel) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -360,7 +379,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                   title: const Text('Fatura Çıktısı'),
                   onTap: () async {
                     Navigator.pop(modalContext);
-                    final base64Pdf = await _viewModel.openPdf(invoice.uuId);
+                    final base64Pdf = await viewModel.openPdf(invoice.uuId);
                     if (base64Pdf != null) {
                       await _openBase64Pdf(base64Pdf);
                     }
@@ -372,7 +391,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                     title: const Text('Faturayı İptal Et'),
                     onTap: () {
                       Navigator.pop(modalContext);
-                      _showCancelReasonDialog(invoice);
+                      _showCancelReasonDialog(invoice, viewModel);
                     },
                   ),
               ],
@@ -381,7 +400,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
     );
   }
 
-  void _showCancelReasonDialog(EInvoiceModel invoice) {
+  void _showCancelReasonDialog(EInvoiceModel invoice, EInvoiceViewModel viewModel) {
     final TextEditingController reasonController = TextEditingController();
     showDialog(
       context: context,
@@ -411,7 +430,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                     content: 'Faturayı iptal etmek istediğinize emin misiniz?',
                   );
                   if (confirmed == true) {
-                    await _viewModel.cancelInvoice(
+                    await viewModel.cancelInvoice(
                       invoice,
                       reasonController.text.trim(),
                     );

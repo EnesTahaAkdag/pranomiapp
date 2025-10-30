@@ -3,69 +3,69 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/authentication/domain/strategies/auth_result.dart';
+import 'package:provider/provider.dart';
 
 import 'login_page_view_model.dart';
 
-class LoginPage extends StatefulWidget {
+/// Login Page - MVVM Pattern with Provider
+/// Using ChangeNotifierProvider to properly manage ViewModel lifecycle
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => LoginPageViewModel(),
+      child: const _LoginView(),
+    );
+  }
 }
 
-class _LoginPageState extends State<LoginPage> {
-  late final LoginPageViewModel _viewModel;
-  late bool _isPasswordVisible;
+/// Main view widget - Listens to ViewModel changes via Provider
+class _LoginView extends StatefulWidget {
+  const _LoginView();
 
   @override
-  void initState() {
-    super.initState();
-    _viewModel = LoginPageViewModel(); // Initialize the ViewModel
-    _viewModel.addListener(_onViewModelChanged);
-    _isPasswordVisible = false;
-  }
+  State<_LoginView> createState() => _LoginViewState();
+}
 
-  void _onViewModelChanged() async {
-    if (!mounted) return;
+class _LoginViewState extends State<_LoginView> {
+  bool _isPasswordVisible = false;
 
-    final authResult = _viewModel.authResult;
-    if (authResult == null) {
-      setState(() {}); // Rebuild for loading state changes
-      return;
-    }
+  void _handleAuthResult(BuildContext context, LoginPageViewModel viewModel) async {
+    final authResult = viewModel.authResult;
+    if (authResult == null) return;
 
     // Show messages
     if (authResult.errorMessage != null) {
       _showMessage(authResult.errorMessage!, AppTheme.errorColor);
-      _viewModel.clearMessages();
+      viewModel.clearMessages();
     } else if (authResult.warningMessage != null) {
       _showMessage(authResult.warningMessage!, AppTheme.warningColor);
-      _viewModel.clearMessages();
+      viewModel.clearMessages();
     } else if (authResult.successMessage != null &&
         authResult.nextAction != AuthenticationAction.navigateToHome) {
       // Show success message if not navigating to home immediately
       _showMessage(authResult.successMessage!, AppTheme.successColor);
-      _viewModel.clearMessages();
+      viewModel.clearMessages();
     }
 
     // Handle navigation based on AuthenticationAction from Strategy Pattern
     if (authResult.nextAction != null) {
-      await _handleAuthenticationAction(authResult);
+      await _handleAuthenticationAction(authResult, viewModel);
     }
-
-    // Update loading state
-    setState(() {});
   }
 
   Future<void> _handleAuthenticationAction(
     AuthenticationResult authResult,
+    LoginPageViewModel viewModel,
   ) async {
     if (!mounted) return;
 
     switch (authResult.nextAction!) {
       case AuthenticationAction.navigateToHome:
         debugPrint("DirectLoginStrategy: Navigating to home");
-        _viewModel.resetVerificationFlags();
+        viewModel.resetVerificationFlags();
         context.go('/');
         break;
 
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
         final gsmNumber = authResult.data?['gsmNumber'] as String?;
 
         if (userId != null && gsmNumber != null) {
-          _viewModel.resetVerificationFlags();
+          viewModel.resetVerificationFlags();
           final result = await context.push(
             '/sms-verification',
             extra: {'userId': userId, 'gsmNumber': gsmNumber},
@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
         final gsmNumber = authResult.data?['gsmNumber'] as String?;
 
         if (userId != null && gsmNumber != null) {
-          _viewModel.resetVerificationFlags();
+          viewModel.resetVerificationFlags();
           final result = await context.push(
             '/two-factor-auth',
             extra: {'userId': userId, 'gsmNumber': gsmNumber},
@@ -123,65 +123,69 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose(); // Dispose the ViewModel
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.transparent,
-      body: Stack(
-        children: [
-          _buildLoginForm(),
-          if (_viewModel.isLoading) // Use ViewModel's isLoading
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: AppTheme.blackOverlay70,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.blackOverlay30,
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+    return Consumer<LoginPageViewModel>(
+      builder: (context, viewModel, child) {
+        // Handle auth result changes
+        if (viewModel.authResult != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _handleAuthResult(context, viewModel);
+          });
+        }
+
+        return Scaffold(
+          backgroundColor: AppTheme.transparent,
+          body: Stack(
+            children: [
+              _buildLoginForm(viewModel),
+              if (viewModel.isLoading) // Use ViewModel's isLoading
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppTheme.blackOverlay70,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.blackOverlay30,
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
+                    child:  Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 48,
+                          width: 48,
+                          child:  LoadingAnimationWidget.staggeredDotsWave(
+                            // LoadingAnimationwidget that call the
+                            color: AppTheme.accentColor, // staggereddotwave animation
+                            size: 50,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Giriş yapılıyor...",
+                          style: TextStyle(
+                            color: AppTheme.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                child:  Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 48,
-                      width: 48,
-                      child:  LoadingAnimationWidget.staggeredDotsWave(
-                        // LoadingAnimationwidget that call the
-                        color: AppTheme.accentColor, // staggereddotwave animation
-                        size: 50,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "Giriş yapılıyor...",
-                      style: TextStyle(
-                        color: AppTheme.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildLoginForm(LoginPageViewModel viewModel) {
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -225,18 +229,18 @@ class _LoginPageState extends State<LoginPage> {
                       _inputField(
                         Icons.person_outline,
                         "Kullanıcı Adı",
-                        _viewModel.usernameController,
+                        viewModel.usernameController,
                         isPassword: false,
                       ),
                       const SizedBox(height: 16),
                       _inputField(
                         Icons.lock_outline,
                         "Şifre",
-                        _viewModel.passwordController,
+                        viewModel.passwordController,
                         isPassword: true,
                       ),
                       const SizedBox(height: 24),
-                      _loginBtn(),
+                      _loginBtn(viewModel),
                     ],
                   ),
                 ),
@@ -324,16 +328,16 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Widget _loginBtn() {
+  Widget _loginBtn(LoginPageViewModel viewModel) {
     return ElevatedButton(
       onPressed:
-          _viewModel.isLoading
+          viewModel.isLoading
               ? null
               : () async {
                 // Use ViewModel's isLoading and call ViewModel's login
                 // Clear previous messages before attempting a new login
-                _viewModel.clearMessages();
-                await _viewModel.login();
+                viewModel.clearMessages();
+                await viewModel.login();
               },
       style: ElevatedButton.styleFrom(
         backgroundColor: AppTheme.accentColor,

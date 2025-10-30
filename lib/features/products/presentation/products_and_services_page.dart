@@ -2,46 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/utils/formatters.dart';
+import 'package:provider/provider.dart';
 
 import '../domain/product_model.dart';
 import 'products_and_services_view_model.dart';
 
-class ProductsAndServicesPage extends StatefulWidget {
+/// Products and Services Page - MVVM Pattern with Provider
+/// Using ChangeNotifierProvider to properly manage ViewModel lifecycle
+class ProductsAndServicesPage extends StatelessWidget {
   const ProductsAndServicesPage({super.key});
 
   @override
-  State<ProductsAndServicesPage> createState() =>
-      _ProductsAndServicesPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ProductsAndServicesViewModel(),
+      child: const _ProductsAndServicesView(),
+    );
+  }
 }
 
-class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
-  late final ProductsAndServicesViewModel _viewModel;
+/// Main view widget - Listens to ViewModel changes via Provider
+class _ProductsAndServicesView extends StatefulWidget {
+  const _ProductsAndServicesView();
+
+  @override
+  State<_ProductsAndServicesView> createState() => _ProductsAndServicesViewState();
+}
+
+class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ProductsAndServicesViewModel();
-    _viewModel.addListener(_onViewModelChanged);
-    _scrollController.addListener(() => _viewModel.handleScroll(_scrollController));
-  }
-
-  void _onViewModelChanged() {
-    if (mounted) {
-      if (_viewModel.snackBarMessage != null) {
-        _showSnackBar(_viewModel.snackBarMessage!, _viewModel.snackBarColor);
-        _viewModel.clearSnackBarMessage();
-      }
-      setState(() {});
-    }
+    // Access ViewModel via Provider context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.addListener(_onScroll);
+    });
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    final viewModel = context.read<ProductsAndServicesViewModel>();
+    viewModel.handleScroll(_scrollController);
   }
 
   void _showSnackBar(String message, Color color) {
@@ -52,77 +61,87 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.gray100,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
+    return Consumer<ProductsAndServicesViewModel>(
+      builder: (context, viewModel, child) {
+        // Handle snackbar messages
+        if (viewModel.snackBarMessage != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showSnackBar(viewModel.snackBarMessage!, viewModel.snackBarColor);
+            viewModel.clearSnackBarMessage();
+          });
+        }
+
+        return Scaffold(
+          backgroundColor: AppTheme.gray100,
+          body: SafeArea(
+            child: Stack(
               children: [
-                _buildSearchBar(),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () => _viewModel.fetchProducts(reset: true),
-                    child: _viewModel.products.isEmpty && !_viewModel.isLoading
-                        ? const Center(
-                            child: Text(
-                              'Hiç ürün bulunamadı.',
-                              style: TextStyle(color: AppTheme.gray600),
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            itemCount: _viewModel.products.length + (_viewModel.hasMore ? 1 : 0),
-                            itemBuilder: (ctx, idx) {
-                              if (idx < _viewModel.products.length) {
-                                return _buildProductItem(_viewModel.products[idx]);
-                              }
-                              if (_viewModel.hasMore) {
-                                 return  Padding(
-                                   padding: const EdgeInsets.all(16),
-                                   child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                                     // LoadingAnimationwidget that call the
-                                     color: AppTheme.accentColor, // staggereddotwave animation
-                                     size: 50,
-                                   )),
-                                 );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                  ),
+                Column(
+                  children: [
+                    _buildSearchBar(viewModel),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () => viewModel.fetchProducts(reset: true),
+                        child: viewModel.products.isEmpty && !viewModel.isLoading
+                            ? const Center(
+                                child: Text(
+                                  'Hiç ürün bulunamadı.',
+                                  style: TextStyle(color: AppTheme.gray600),
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _scrollController,
+                                itemCount: viewModel.products.length + (viewModel.hasMore ? 1 : 0),
+                                itemBuilder: (ctx, idx) {
+                                  if (idx < viewModel.products.length) {
+                                    return _buildProductItem(viewModel.products[idx], viewModel);
+                                  }
+                                  if (viewModel.hasMore) {
+                                     return  Padding(
+                                       padding: const EdgeInsets.all(16),
+                                       child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                                         color: AppTheme.accentColor,
+                                         size: 50,
+                                       )),
+                                     );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
+                if (viewModel.isUpdating)
+                  Container(
+                    color: AppTheme.blackOverlay50,
+                    child:  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                      color: AppTheme.accentColor,
+                      size: 50,
+                    )),
+                  ),
               ],
             ),
-            if (_viewModel.isUpdating)
-              Container(
-                color: AppTheme.blackOverlay50,
-                child:  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                  // LoadingAnimationwidget that call the
-                  color: AppTheme.accentColor, // staggereddotwave animation
-                  size: 50,
-                )),
-              ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(ProductsAndServicesViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: TextField(
-        controller: _viewModel.searchController,
+        controller: viewModel.searchController,
         decoration: InputDecoration(
           filled: true,
           fillColor: AppTheme.white,
           prefixIcon: const Icon(Icons.search),
           hintText: 'Ürün adı ya da stok kodu...',
-          suffixIcon: _viewModel.searchController.text.isNotEmpty
+          suffixIcon: viewModel.searchController.text.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.clear),
-                  onPressed: () => _viewModel.clearSearchAndFetch(),
+                  onPressed: () => viewModel.clearSearchAndFetch(),
                 )
               : null,
           border: OutlineInputBorder(
@@ -131,12 +150,12 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
         ),
-        onSubmitted: (text) => _viewModel.onSearchSubmitted(text),
+        onSubmitted: (text) => viewModel.onSearchSubmitted(text),
       ),
     );
   }
 
-  Widget _buildProductItem(ProductResponseModel product) {
+  Widget _buildProductItem(ProductResponseModel product, ProductsAndServicesViewModel viewModel) {
     double salePrice = product.price * (1 + product.vatRate / 100);
 
     return Padding(
@@ -163,8 +182,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                             if (loadingProgress == null) return child;
                             return Center(
                               child:  LoadingAnimationWidget.staggeredDotsWave(
-                                // LoadingAnimationwidget that call the
-                                color: AppTheme.accentColor, // staggereddotwave animation
+                                color: AppTheme.accentColor,
                                 size: 50,
                               ),
                             );
@@ -202,7 +220,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.more_vert),
-                          onPressed: () => _showProductActions(product),
+                          onPressed: () => _showProductActions(product, viewModel),
                         ),
                       ],
                     ),
@@ -222,7 +240,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
     );
   }
 
-  void _showProductActions(ProductResponseModel product) {
+  void _showProductActions(ProductResponseModel product, ProductsAndServicesViewModel viewModel) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -236,7 +254,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
               title: const Text('Stok Güncelle'),
               onTap: () {
                 Navigator.pop(modalContext);
-                _showStockUpdateDialog(context, product);
+                _showStockUpdateDialog(context, product, viewModel);
               },
             ),
           ],
@@ -248,6 +266,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
   void _showStockUpdateDialog(
     BuildContext context,
     ProductResponseModel product,
+    ProductsAndServicesViewModel viewModel,
   ) {
     final stockController = TextEditingController(text: product.stockAmount.toString());
     final commentController = TextEditingController();
@@ -285,7 +304,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                 return;
               }
               Navigator.pop(dialogContext);
-              await _viewModel.updateStock(product, newStock, commentController.text.trim());
+              await viewModel.updateStock(product, newStock, commentController.text.trim());
             },
             child: const Text('Güncelle'),
           ),
