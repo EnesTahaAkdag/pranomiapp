@@ -193,101 +193,10 @@ class AccountListView extends StatelessWidget {
 
           if (idx < customers.length) {
             final customer = customers[idx];
-            return GestureDetector(
+            return CustomerListItem(
+              key: ValueKey(customer.customerId),
+              customer: customer,
               onTap: () => onTapCustomer(customer),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Card(
-                  elevation: 4,
-                  shadowColor: Colors.black12,
-                  color: const Color(0xFFFFFFFF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                customer.customerName,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                    color: Color(0xFF212121),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.edit,
-                              color: Color(0xFFA89494),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        if (customer.customerCode.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4.0),
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  const TextSpan(
-                                    text: 'Müşteri Kodu: ',
-                                    style: TextStyle(
-                                      color: Color(0xFF424141),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: customer.customerCode,
-                                    style: const TextStyle(
-                                      color: Color(0xFF424242),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              const TextSpan(
-                                text: 'Ödenen Tutar: ',
-                                style: TextStyle(
-                                  color: Color(0xFF424141),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '${AppFormatters.formatCurrency(customer.balance)} ₺',
-                                style: TextStyle(
-                                  color: customer.balance > 0
-                                      ? const Color(0xFF4CAF50) // Green for positive
-                                      : customer.balance < 0
-                                      ? const Color(0xFFE53935) // Red for negative
-                                      : const Color(0xFF2A2A2A), // Gray for zero
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
             );
           }
           return  Padding(
@@ -299,6 +208,119 @@ class AccountListView extends StatelessWidget {
             )),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Optimized Customer List Item Widget
+/// Extracted to separate StatelessWidget for better performance and reusability
+class CustomerListItem extends StatelessWidget {
+  final CustomerModel customer;
+  final VoidCallback onTap;
+
+  const CustomerListItem({
+    super.key,
+    required this.customer,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+        child: Card(
+          elevation: 4,
+          shadowColor: Colors.black12,
+          color: const Color(0xFFFFFFFF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        customer.customerName,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF212121),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.edit,
+                      color: Color(0xFFA89494),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                if (customer.customerCode.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'Müşteri Kodu: ',
+                            style: TextStyle(
+                              color: Color(0xFF424141),
+                              fontSize: 14,
+                            ),
+                          ),
+                          TextSpan(
+                            text: customer.customerCode,
+                            style: const TextStyle(
+                              color: Color(0xFF424242),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 8),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Ödenen Tutar: ',
+                        style: TextStyle(
+                          color: Color(0xFF424141),
+                          fontSize: 14,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '${AppFormatters.formatCurrency(customer.balance)} ₺',
+                        style: TextStyle(
+                          color: customer.balance > 0
+                              ? const Color(0xFF4CAF50) // Green for positive
+                              : customer.balance < 0
+                              ? const Color(0xFFE53935) // Red for negative
+                              : const Color(0xFF2A2A2A), // Gray for zero
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

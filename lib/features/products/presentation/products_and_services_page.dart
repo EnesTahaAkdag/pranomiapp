@@ -94,7 +94,11 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
                                 itemCount: viewModel.products.length + (viewModel.hasMore ? 1 : 0),
                                 itemBuilder: (ctx, idx) {
                                   if (idx < viewModel.products.length) {
-                                    return _buildProductItem(viewModel.products[idx], viewModel);
+                                    return ProductListItem(
+                                      key: ValueKey(viewModel.products[idx].productId),
+                                      product: viewModel.products[idx],
+                                      onMorePressed: () => _showProductActions(viewModel.products[idx], viewModel),
+                                    );
                                   }
                                   if (viewModel.hasMore) {
                                      return  Padding(
@@ -155,90 +159,6 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
     );
   }
 
-  Widget _buildProductItem(ProductResponseModel product, ProductsAndServicesViewModel viewModel) {
-    double salePrice = product.price * (1 + product.vatRate / 100);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: 4,
-        color: AppTheme.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 80,
-                height: 80,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
-                      ? Image.network(
-                          product.imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child:  LoadingAnimationWidget.staggeredDotsWave(
-                                color: AppTheme.accentColor,
-                                size: 50,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                color: AppTheme.gray200,
-                                child: const Icon(Icons.broken_image_outlined, size: 40, color: AppTheme.gray600),
-                              ),
-                        )
-                      : Container(
-                          color: AppTheme.gray200,
-                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: AppTheme.gray600),
-                        ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            product.productName,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.textBlack87,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          onPressed: () => _showProductActions(product, viewModel),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text('Stok Kodu: ${product.stockCode}', style: const TextStyle(color: AppTheme.textBlack54)),
-                    Text('Stok: ${product.stockAmount}', style: const TextStyle(color: AppTheme.textBlack87)),
-                    const SizedBox(height: 4),
-                    Text('Birim Fiyat: ${AppFormatters.formatCurrency(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
-                    Text('Satış Fiyatı: ${AppFormatters.formatCurrency(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   void _showProductActions(ProductResponseModel product, ProductsAndServicesViewModel viewModel) {
     showModalBottomSheet(
@@ -309,6 +229,105 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
             child: const Text('Güncelle'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Optimized Product List Item Widget
+/// Extracted to separate StatelessWidget for better performance and reusability
+class ProductListItem extends StatelessWidget {
+  final ProductResponseModel product;
+  final VoidCallback onMorePressed;
+
+  const ProductListItem({
+    super.key,
+    required this.product,
+    required this.onMorePressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final salePrice = product.price * (1 + product.vatRate / 100);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        elevation: 4,
+        color: AppTheme.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 80,
+                height: 80,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
+                      ? Image.network(
+                          product.imageUrl!,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: LoadingAnimationWidget.staggeredDotsWave(
+                                color: AppTheme.accentColor,
+                                size: 50,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: AppTheme.gray200,
+                                child: const Icon(Icons.broken_image_outlined, size: 40, color: AppTheme.gray600),
+                              ),
+                        )
+                      : Container(
+                          color: AppTheme.gray200,
+                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: AppTheme.gray600),
+                        ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            product.productName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textBlack87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.more_vert),
+                          onPressed: onMorePressed,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text('Stok Kodu: ${product.stockCode}', style: const TextStyle(color: AppTheme.textBlack54)),
+                    Text('Stok: ${product.stockAmount}', style: const TextStyle(color: AppTheme.textBlack87)),
+                    const SizedBox(height: 4),
+                    Text('Birim Fiyat: ${AppFormatters.formatCurrency(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
+                    Text('Satış Fiyatı: ${AppFormatters.formatCurrency(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
