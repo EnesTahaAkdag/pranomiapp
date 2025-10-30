@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/services/customer_service.dart';
@@ -98,12 +98,6 @@ class _CustomerPageState extends State<CustomerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormatter = NumberFormat.currency(
-      locale: 'tr_TR',
-      decimalDigits: 2,
-      symbol: '',
-    );
-
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       floatingActionButton: FloatingActionButton(
@@ -139,7 +133,6 @@ class _CustomerPageState extends State<CustomerPage> {
                 customers: _customers,
                 isLoading: _isLoading,
                 scrollController: _scrollController,
-                currencyFormatter: currencyFormatter,
                 fetchCustomers: () => _fetchCustomers(reset: true),
                 onTapCustomer: (customer) async {
                   final result = await context.push(
@@ -163,7 +156,6 @@ class AccountListView extends StatelessWidget {
   final List<CustomerModel> customers;
   final bool isLoading;
   final ScrollController scrollController;
-  final NumberFormat currencyFormatter;
   final Future<void> Function() fetchCustomers;
   final Future<void> Function(CustomerModel) onTapCustomer;
 
@@ -172,7 +164,6 @@ class AccountListView extends StatelessWidget {
     required this.customers,
     required this.isLoading,
     required this.scrollController,
-    required this.currencyFormatter,
     required this.fetchCustomers,
     required this.onTapCustomer,
   }) : super(key: key);
@@ -278,7 +269,7 @@ class AccountListView extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: '${currencyFormatter.format(customer.balance)} ₺',
+                                text: '${AppFormatters.formatCurrency(customer.balance)} ₺',
                                 style: TextStyle(
                                   color: customer.balance > 0
                                       ? const Color(0xFF4CAF50) // Green for positive

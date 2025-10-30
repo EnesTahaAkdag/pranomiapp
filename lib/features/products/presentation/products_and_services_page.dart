@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/formatters.dart';
 
 import '../domain/product_model.dart';
 import 'products_and_services_view_model.dart';
@@ -138,8 +138,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
 
   Widget _buildProductItem(ProductResponseModel product) {
     double salePrice = product.price * (1 + product.vatRate / 100);
-    final currencyFormatter = NumberFormat.currency(locale: 'tr_TR', decimalDigits: 2, symbol: '');
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
@@ -211,8 +210,8 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                     Text('Stok Kodu: ${product.stockCode}', style: const TextStyle(color: AppTheme.textBlack54)),
                     Text('Stok: ${product.stockAmount}', style: const TextStyle(color: AppTheme.textBlack87)),
                     const SizedBox(height: 4),
-                    Text('Birim Fiyat: ${currencyFormatter.format(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
-                    Text('Satış Fiyatı: ${currencyFormatter.format(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
+                    Text('Birim Fiyat: ${AppFormatters.formatCurrency(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
+                    Text('Satış Fiyatı: ${AppFormatters.formatCurrency(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
                   ],
                 ),
               ),

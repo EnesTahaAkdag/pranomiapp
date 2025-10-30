@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/invoice_cancel_model.dart';
 import '../../data/models/invoice_cancellation_reversal_model.dart';
@@ -177,13 +177,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
   }
 
   Widget _buildInvoiceItem(InvoicesModel invoice) {
-    final dateFormatted = DateFormat('dd.MM.yyyy').format(invoice.date);
+    final dateFormatted = AppFormatters.dateShort.format(invoice.date);
     final isCancelled = invoice.invoiceStatus == "Cancelled";
-    final currencyFormatter = NumberFormat.currency(
-      locale: 'tr_TR',
-      decimalDigits: 2,
-      symbol: '',
-    );
     final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
     final eCommerceImageUrl =
         "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png";
@@ -229,7 +224,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
               Text('Tarih: $dateFormatted', style: TextStyle(color: baseColor)),
               const SizedBox(height: 8),
               Text(
-                'Toplam Tutar: ${currencyFormatter.format(invoice.totalAmount)} ₺',
+                'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -241,7 +236,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Ödenen Tutar: ${currencyFormatter.format(invoice.paidAmount)} ₺',
+                    'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: baseColor,

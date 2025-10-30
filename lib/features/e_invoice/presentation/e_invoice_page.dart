@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/formatters.dart';
 import '../data/e_invoice_model.dart';
 import 'e_invoice_view_model.dart';
 
@@ -205,7 +205,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
                       Expanded(
                         child: Text(
                           _viewModel.selectedDate != null
-                              ? 'Tarih: ${DateFormat('dd.MM.yyyy', 'tr_TR').format(_viewModel.selectedDate!)}'
+                              ? 'Tarih: ${AppFormatters.dateShort.format(_viewModel.selectedDate!)}'
                               : 'Tarih seçilmedi',
                         ),
                       ),
@@ -251,7 +251,7 @@ class _EInvoicesPageState extends State<EInvoicesPage> {
   Widget _buildInvoiceItem(EInvoiceModel invoice) {
     final dateFormatted =
         invoice.date != null
-            ? DateFormat('dd.MM.yyyy').format(invoice.date!)
+            ? AppFormatters.dateShort.format(invoice.date!)
             : "Tarih Yok";
     final isCancelled = invoice.status.toLowerCase() == "canceled";
     final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;

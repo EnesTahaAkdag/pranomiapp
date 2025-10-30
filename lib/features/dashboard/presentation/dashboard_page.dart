@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/formatters.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_view_model.dart';
 import 'package:provider/provider.dart';
@@ -405,8 +405,7 @@ class _BankBalanceList extends StatelessWidget {
       color = AppTheme.successColor;
     }
 
-    final formatter = NumberFormat.decimalPattern('tr_TR');
-    String formattedAmount = formatter.format(
+    String formattedAmount = AppFormatters.decimal.format(
       balance.totalBankAccountBalance.abs(),
     );
 
@@ -444,11 +443,6 @@ class DashboardListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat.currency(
-      locale: 'tr_TR',
-      symbol: '₺',
-      customPattern: '#,##0.00 ¤', // ← ¤ sembolün yerini gösterir
-    );
     Color color;
     if (amount > 0) {
       color = AppTheme.successColor;
@@ -459,7 +453,7 @@ class DashboardListItem extends StatelessWidget {
       color = isAsset ? AppTheme.successColor : AppTheme.errorColor;
     }
 
-    final formattedAmount = formatter.format(amount.abs());
+    final formattedAmount = AppFormatters.currencyWithSymbol.format(amount.abs());
 
     return Row(
       children: [
@@ -494,7 +488,7 @@ class DashboardListItem extends StatelessWidget {
 }
 
 String _getCurrentMonthYear() {
-  return DateFormat('MMMM yyyy', 'tr_TR').format(DateTime.now());
+  return AppFormatters.monthYear.format(DateTime.now());
 }
 
 String _convertCurrencyCodesToSymbols(String currencyCode) {
