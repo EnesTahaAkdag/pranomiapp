@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
@@ -97,11 +97,11 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.notifications_active, color: AppTheme.accentColor),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.notifications_active, color: AppTheme.accentColor),
+                SizedBox(width: 8),
+                Text(
                   'FCM Notifications',
                   style: TextStyle(
                     fontSize: 18,

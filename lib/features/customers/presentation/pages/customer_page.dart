@@ -1,14 +1,14 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../domain/customer_type_enum.dart';
-import '../../data/models/customer_model.dart';
-import '../../../../core/widgets/custom_search_bar.dart';
-import '../../data/services/customer_service.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/custom_search_bar.dart';
+import '../../data/models/customer_model.dart';
+import '../../data/services/customer_service.dart';
+import '../../domain/customer_type_enum.dart';
 
 class CustomerPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
@@ -105,7 +105,7 @@ class _CustomerPageState extends State<CustomerPage> {
     );
 
     return Scaffold(
-      backgroundColor: Color(0xFFF5F7FA),
+      backgroundColor: const Color(0xFFF5F7FA),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFFB00034),
         shape: const CircleBorder(),
@@ -212,7 +212,7 @@ class AccountListView extends StatelessWidget {
                 child: Card(
                   elevation: 4,
                   shadowColor: Colors.black12,
-                  color: Color(0xFFFFFFFF),
+                  color: const Color(0xFFFFFFFF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -300,7 +300,7 @@ class AccountListView extends StatelessWidget {
             );
           }
           return  Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
               // LoadingAnimationwidget that call the
               color: AppTheme.accentColor, // staggereddotwave animation

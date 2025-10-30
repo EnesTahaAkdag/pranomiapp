@@ -1,6 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// Local Notification Service
 /// Handles displaying notifications when app is in foreground
@@ -86,7 +86,7 @@ class LocalNotificationService {
       enableVibration: true,
       icon: '@mipmap/ic_launcher',
       largeIcon: android?.imageUrl != null
-          ? DrawableResourceAndroidBitmap('@mipmap/ic_launcher')
+          ? const DrawableResourceAndroidBitmap('@mipmap/ic_launcher')
           : null,
     );
 

@@ -1,5 +1,6 @@
-import '../../../../core/services/api_service_base.dart';
 import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
+
+import '../../../../core/services/api_service_base.dart';
 import '../models/employees_model.dart';
 
 class EmployeesService extends ApiServiceBase {

@@ -3,12 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
-import '../../data/models/employees_model.dart';
-import '../../data/services/employees_service.dart';
-
 import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
+
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/models/employees_model.dart';
+import '../../data/services/employees_service.dart';
 
 class EmployeesPage extends StatefulWidget {
   final CustomerTypeEnum customerType;

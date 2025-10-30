@@ -163,8 +163,8 @@ class _LoginPageState extends State<LoginPage> {
                         size: 50,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Text(
+                    const SizedBox(height: 16),
+                    const Text(
                       "Giriş yapılıyor...",
                       style: TextStyle(
                         color: AppTheme.white,

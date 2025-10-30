@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
-import 'package:pranomiapp/features/accounting/presentation/pages/account_deposit_and_banks.dart';
-import 'package:pranomiapp/features/customers/presentation/pages/customer_add_page.dart';
-import 'package:pranomiapp/features/customers/presentation/pages/customer_edit_page.dart';
-import 'package:pranomiapp/features/customers/presentation/pages/customer_page.dart';
-import 'package:pranomiapp/features/invoices/presentation/pages/invoice_details.dart';
-import 'package:pranomiapp/features/invoices/presentation/pages/invoices_claim_page.dart';
-import 'package:pranomiapp/features/invoices/presentation/pages/invoices_page.dart';
-import 'package:pranomiapp/core/widgets/layout/layout.dart';
 import 'package:pranomiapp/core/router/route_titles.dart';
+import 'package:pranomiapp/core/widgets/layout/layout.dart';
+import 'package:pranomiapp/features/accounting/presentation/pages/account_deposit_and_banks.dart';
 import 'package:pranomiapp/features/announcement/presentation/announcement_page.dart';
 import 'package:pranomiapp/features/authentication/presentation/login_page.dart';
 import 'package:pranomiapp/features/credit/presentation/credit_page.dart';
+import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
+import 'package:pranomiapp/features/customers/presentation/pages/customer_add_page.dart';
+import 'package:pranomiapp/features/customers/presentation/pages/customer_edit_page.dart';
+import 'package:pranomiapp/features/customers/presentation/pages/customer_page.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_page.dart';
 import 'package:pranomiapp/features/e_invoice/presentation/e_invoice_page.dart';
 import 'package:pranomiapp/features/employees/presentation/pages/employee_add_page.dart';
 import 'package:pranomiapp/features/employees/presentation/pages/employees_page.dart';
+import 'package:pranomiapp/features/invoices/presentation/pages/invoice_details.dart';
+import 'package:pranomiapp/features/invoices/presentation/pages/invoices_claim_page.dart';
+import 'package:pranomiapp/features/invoices/presentation/pages/invoices_page.dart';
 import 'package:pranomiapp/features/notifications/presentation/notifications_page.dart';
 import 'package:pranomiapp/features/products/presentation/products_and_services_page.dart';
 import 'package:pranomiapp/features/sms_verification/presentation/sms_verification_page.dart';
@@ -160,7 +160,7 @@ class AppRouter {
             // Other Routes
             GoRoute(
               path: '/Announcements',
-              builder: (context, state) => AnnouncementPage(),
+              builder: (context, state) => const AnnouncementPage(),
             ),
             GoRoute(
               path: '/Credits',
@@ -224,13 +224,13 @@ class AppRouter {
         GoRoute(
           path: '/CustomerAddPage',
           builder: (context, state) {
-            return CustomerAddPage(customerType: CustomerTypeEnum.Customer);
+            return const CustomerAddPage(customerType: CustomerTypeEnum.Customer);
           },
         ),
         GoRoute(
           path: '/EmployeeAddPage',
           builder: (context, state) {
-            return EmployeeAddPage(customerType: CustomerTypeEnum.Employee);
+            return const EmployeeAddPage(customerType: CustomerTypeEnum.Employee);
           },
         ),
         GoRoute(

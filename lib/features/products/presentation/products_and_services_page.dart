@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../domain/product_model.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
+import '../domain/product_model.dart';
 import 'products_and_services_view_model.dart';
 
 class ProductsAndServicesPage extends StatefulWidget {
@@ -64,7 +64,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                   child: RefreshIndicator(
                     onRefresh: () => _viewModel.fetchProducts(reset: true),
                     child: _viewModel.products.isEmpty && !_viewModel.isLoading
-                        ? Center(
+                        ? const Center(
                             child: Text(
                               'Hiç ürün bulunamadı.',
                               style: TextStyle(color: AppTheme.gray600),
@@ -79,7 +79,7 @@ class _ProductsAndServicesPageState extends State<ProductsAndServicesPage> {
                               }
                               if (_viewModel.hasMore) {
                                  return  Padding(
-                                   padding: EdgeInsets.all(16),
+                                   padding: const EdgeInsets.all(16),
                                    child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
                                      // LoadingAnimationwidget that call the
                                      color: AppTheme.accentColor, // staggereddotwave animation

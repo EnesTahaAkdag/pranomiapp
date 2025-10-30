@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../data/models/account_models.dart';
-import '../../../../core/widgets/custom_search_bar.dart';
-import '../../data/services/account_service.dart';
-import '../../../../core/di/injection.dart';
 
+import '../../../../core/di/injection.dart';
+import '../../../../core/widgets/custom_search_bar.dart';
+import '../../data/models/account_models.dart';
+import '../../data/services/account_service.dart';
 import '../widgets/account_list_view.dart'; // Assuming locator is setup for AccountService
 
 class AccountDepositAndBanksPage extends StatefulWidget {

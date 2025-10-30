@@ -1,15 +1,16 @@
 import 'dart:convert';
+
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../domain/customer_type_enum.dart';
-import '../../data/models/customer_add_model.dart';
-import '../../data/models/customer_address_model.dart';
-import '../../data/services/customer_add_service.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/models/customer_add_model.dart';
+import '../../data/models/customer_address_model.dart';
+import '../../data/services/customer_add_service.dart';
+import '../../domain/customer_type_enum.dart';
 
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
@@ -216,7 +217,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     trailing: Switch(
       value: _model.isCompany,
       onChanged: (v) => setState(() => _model.isCompany = v),
-      activeColor: const Color(0xFFB00034),
+      activeThumbColor: const Color(0xFFB00034),
     ),
   );
 
@@ -261,7 +262,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         value: value,
         onChanged: onChanged,
-        activeColor: const Color(0xFFB00034),
+        activeThumbColor: const Color(0xFFB00034),
       ),
     );
   }
@@ -292,7 +293,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   }
 
   Widget _countryDropdown() => DropdownSearch<Country>(
-    popupProps: PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+    popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
@@ -318,7 +319,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   );
 
   Widget _cityDropdown() => DropdownSearch<City>(
-    popupProps: PopupProps.menu(showSearchBox: true),
+    popupProps: const PopupProps.menu(showSearchBox: true),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
@@ -341,7 +342,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   );
 
   Widget _districtDropdown() => DropdownSearch<District>(
-    popupProps: PopupProps.menu(showSearchBox: true),
+    popupProps: const PopupProps.menu(showSearchBox: true),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',

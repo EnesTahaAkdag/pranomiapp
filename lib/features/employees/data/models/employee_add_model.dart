@@ -1,5 +1,6 @@
-import '../../../../core/extensions/string_extensions.dart';
 import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
+
+import '../../../../core/extensions/string_extensions.dart';
 
 class EmployeeAddModel {
   String name;

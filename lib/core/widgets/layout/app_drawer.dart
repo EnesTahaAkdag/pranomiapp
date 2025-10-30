@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
-import 'drawer_menu_item.dart';
+
 import 'drawer_expandable_tile.dart';
+import 'drawer_menu_item.dart';
 
 class AppDrawer extends StatelessWidget {
   final String currentRoute;

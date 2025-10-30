@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/two_factor_auth/presentation/two_factor_auth_state.dart';
 import 'package:pranomiapp/features/two_factor_auth/presentation/two_factor_auth_view_model.dart';
+import 'package:provider/provider.dart';
 
 /// Two-Factor Authentication Page with countdown timer
 /// Following MVVM pattern with Provider for state management

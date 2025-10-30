@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_view_model.dart';
-import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});

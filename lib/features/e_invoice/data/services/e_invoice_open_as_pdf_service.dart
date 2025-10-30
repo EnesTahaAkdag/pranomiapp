@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/services/api_service_base.dart';
 
+import '../../../../core/services/api_service_base.dart';
 import '../../domain/e_invoice_open_as_pdf_model.dart';
 
 class EInvoiceOpenAsPdfService extends ApiServiceBase {

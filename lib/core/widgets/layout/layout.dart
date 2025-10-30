@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pranomiapp/core/theme/app_theme.dart';
+
 import '../../di/injection.dart';
 import 'app_drawer.dart';
 import 'custom_bottom_navigation.dart';
@@ -104,7 +104,7 @@ class _AppLayoutState extends State<AppLayout> {
       appBar: widget.showAppBar
           ? AppBar(
         title: Text(widget.title),
-        backgroundColor: Color(0XFF2A2A2A),
+        backgroundColor: const Color(0XFF2A2A2A),
         leading: Builder(
           builder: (ctx) => IconButton(
             icon: const Icon(Icons.menu),

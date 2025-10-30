@@ -1,12 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/core/services/fcm_service.dart';
 import 'package:pranomiapp/core/services/local_notification_service.dart';
-import 'package:pranomiapp/features/notifications/data/fcm_notification_handler.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 /// FCM Debug Page - Helps identify notification issues
 class FcmDebugPage extends StatefulWidget {

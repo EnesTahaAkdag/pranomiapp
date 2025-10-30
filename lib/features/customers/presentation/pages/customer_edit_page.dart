@@ -1,17 +1,18 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:collection/collection.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../domain/customer_type_enum.dart';
-import '../../data/models/customer_edit_model.dart';
-import '../../data/models/customer_address_model.dart';
-import '../../data/services/customer_edit_service.dart';
-import '../../data/services/customer_detail_service.dart';
-import '../../../../core/di/injection.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/models/customer_address_model.dart';
+import '../../data/models/customer_edit_model.dart';
+import '../../data/services/customer_detail_service.dart';
+import '../../data/services/customer_edit_service.dart';
+import '../../domain/customer_type_enum.dart';
 
 
 class CustomerEditPage extends StatefulWidget {
@@ -352,7 +353,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   }
 
   Widget _countryDropdown() => DropdownSearch<Country>(
-    popupProps: PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+    popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
@@ -378,7 +379,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   );
 
   Widget _cityDropdown() => DropdownSearch<City>(
-    popupProps: PopupProps.menu(showSearchBox: true),
+    popupProps: const PopupProps.menu(showSearchBox: true),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
@@ -401,7 +402,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   );
 
   Widget _districtDropdown() => DropdownSearch<District>(
-    popupProps: PopupProps.menu(showSearchBox: true),
+    popupProps: const PopupProps.menu(showSearchBox: true),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',

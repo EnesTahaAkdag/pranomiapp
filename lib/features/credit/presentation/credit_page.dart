@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/credit/data/credit_model.dart';
 import 'package:pranomiapp/features/credit/data/credit_service.dart';
-import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/features/credit/presentation/credit_state.dart';
 import 'package:pranomiapp/features/credit/presentation/credit_view_model.dart';
-import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 /// Credit Page - MVVM Pattern with Provider
@@ -370,7 +370,7 @@ class _LoadingMoreIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
         // LoadingAnimationwidget that call the
         color: AppTheme.accentColor, // staggereddotwave animation

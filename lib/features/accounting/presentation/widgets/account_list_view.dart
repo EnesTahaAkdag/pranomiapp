@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../data/models/account_models.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../data/models/account_models.dart';
 
 class AccountListView extends StatelessWidget {
   final List<AccountModel> accounts;

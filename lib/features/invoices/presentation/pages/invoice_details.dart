@@ -1,11 +1,11 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../data/models/invoice_details_model.dart';
-import '../../data/services/invoice_details_service.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/models/invoice_details_model.dart';
+import '../../data/services/invoice_details_service.dart';
 
 class InvoiceDetailPage extends StatefulWidget {
   final int invoiceId;

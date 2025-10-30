@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../../../core/services/api_service_base.dart';
 import 'package:pranomiapp/features/two_factor_auth/data/two_factor_auth_model.dart';
+
+import '../../../core/services/api_service_base.dart';
 
 class TwoFactorAuthService extends ApiServiceBase {
   Future<TwoFactorAuthResponse?> loginWithTwoFactorAuth(

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/features/notifications/data/notification_enum.dart';
 import 'package:pranomiapp/features/notifications/data/notification_model.dart';
 import 'package:pranomiapp/features/notifications/data/notifications_service.dart';
-import 'package:pranomiapp/core/di/injection.dart';
 
 import '../../../core/theme/app_theme.dart'; // Assuming locator is setup
 
@@ -359,40 +359,6 @@ class _NotificationListItem extends StatelessWidget {
         ),
       ),
     );
-
-    /**   return ListTile(
-        leading: iconWidget != null
-        ? CircleAvatar(
-        backgroundColor: Colors.white,
-        child: iconWidget,
-        )
-        : null,
-        title: Html(
-        data: getNotificationNameFromType(getNotificationTypeFromValue(notification.notificationType)),
-        style: {
-        "body": Style(
-        margin: Margins.zero,
-        padding: HtmlPaddings.zero,
-        fontSize: FontSize(15),
-        maxLines: 2,
-        textOverflow: TextOverflow.ellipsis,
-        ),
-        "i": Style(
-        color: Theme.of(context).primaryColor,
-        ),
-        },
-        ),
-        subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: Text(
-        dateFormatter.format(notification.notificationDate),
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-        ),
-        ),
-        onTap: () {
-        debugPrint("Notification tapped: ${notification.id}");
-        },
-        ); **/
   }
 }
 
@@ -402,7 +368,7 @@ class _LoadingMoreIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
         // LoadingAnimationwidget that call the
         color: AppTheme.accentColor, // staggereddotwave animation

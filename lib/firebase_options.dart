@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'pranomi-6a648.firebasestorage.app',
     measurementId: 'G-0LBCX9HT5W',
   );
-
 }

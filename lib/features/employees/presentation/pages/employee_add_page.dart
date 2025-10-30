@@ -1,14 +1,16 @@
 import 'dart:convert';
+
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:pranomiapp/features/customers/data/models/customer_address_model.dart';
 import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
 import 'package:pranomiapp/features/employees/data/models/employee_add_model.dart';
-import 'package:pranomiapp/features/customers/data/models/customer_address_model.dart';
-import '../../data/services/employee_add_service.dart';
+
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../data/services/employee_add_service.dart';
 
 class EmployeeAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;

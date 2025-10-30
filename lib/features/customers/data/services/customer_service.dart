@@ -1,6 +1,6 @@
 import '../../../../core/services/api_service_base.dart';
-import '../models/customer_model.dart';
 import '../../domain/customer_type_enum.dart';
+import '../models/customer_model.dart';
 
 class CustomerService extends ApiServiceBase {
   String? name;
