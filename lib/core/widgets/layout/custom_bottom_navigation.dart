@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
-
 import 'bottom_nav_item.dart';
 import 'bottom_sheet_menus.dart';
 

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -12,6 +14,12 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../data/e_invoice_model.dart';
 import 'e_invoice_view_model.dart';
+
+/// Top-level function to decode base64 in background isolate
+/// Only decodes the string - file operations stay on main thread
+Uint8List _decodeBase64InBackground(String base64String) {
+  return base64Decode(base64String);
+}
 
 /// E-Invoice Page - MVVM Pattern with Provider
 /// Using ChangeNotifierProvider to properly manage ViewModel lifecycle
@@ -350,16 +358,27 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     );
   }
 
+  /// Opens a PDF from base64 string
+  /// Decodes base64 in background isolate to avoid blocking UI
   Future<void> _openBase64Pdf(String base64Str) async {
     try {
-      final bytes = base64Decode(base64Str);
+      // Decode base64 in background isolate (CPU-intensive operation)
+      // Uses the top-level _decodeBase64InBackground function
+      final bytes = await compute(_decodeBase64InBackground, base64Str);
+
+      // File operations must stay on main thread (platform channels)
       final dir = await getTemporaryDirectory();
       final file = File(
         '${dir.path}/invoice_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
+
+      // Write bytes to file (async, won't block UI significantly)
       await file.writeAsBytes(bytes);
+
+      // Open the PDF file
       await OpenFile.open(file.path);
     } catch (e) {
+      if (!mounted) return;
       _showSnackBar('PDF gösterilemedi: $e', Colors.red);
     }
   }
