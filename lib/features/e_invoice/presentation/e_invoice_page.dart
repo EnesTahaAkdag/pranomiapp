@@ -36,10 +36,11 @@ class EInvoicesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EInvoiceViewModel(
-        invoiceType: invoiceType,
-        recordType: recordType,
-      ),
+      create:
+          (_) => EInvoiceViewModel(
+            invoiceType: invoiceType,
+            recordType: recordType,
+          ),
       child: const _EInvoiceView(),
     );
   }
@@ -108,7 +109,8 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                         child: ListView.builder(
                           controller: _scrollController,
                           itemCount:
-                              viewModel.eInvoices.isEmpty && !viewModel.isLoading
+                              viewModel.eInvoices.isEmpty &&
+                                      !viewModel.isLoading
                                   ? 1
                                   : viewModel.eInvoices.length +
                                       (viewModel.hasMore ? 1 : 0),
@@ -116,7 +118,8 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                             if (viewModel.eInvoices.isEmpty &&
                                 !viewModel.isLoading) {
                               return SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.5,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
                                 child: Center(
                                   child: Text(
                                     'Hiç fatura bulunamadı.',
@@ -127,17 +130,24 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                             }
 
                             if (idx < viewModel.eInvoices.length) {
-                              return _buildInvoiceItem(viewModel.eInvoices[idx], viewModel);
+                              return _buildInvoiceItem(
+                                viewModel.eInvoices[idx],
+                                viewModel,
+                              );
                             }
 
                             if (viewModel.hasMore) {
-                              return  Padding(
+                              return Padding(
                                 padding: EdgeInsets.all(16),
-                                child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                                  // LoadingAnimationwidget that call the
-                                  color: AppTheme.accentColor, // staggereddotwave animation
-                                  size: 50,
-                                )),
+                                child: Center(
+                                  child:
+                                      LoadingAnimationWidget.staggeredDotsWave(
+                                        // LoadingAnimationwidget that call the
+                                        color: AppTheme.accentColor,
+                                        // staggereddotwave animation
+                                        size: 50,
+                                      ),
+                                ),
                               );
                             }
                             return const SizedBox.shrink(); // No more items and not loading
@@ -151,10 +161,11 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                     .isActionLoading) // Loading indicator for PDF/Cancel actions
                   Container(
                     color: Colors.black.withOpacity(0.5),
-                    child:  Center(
-                      child:  LoadingAnimationWidget.staggeredDotsWave(
+                    child: Center(
+                      child: LoadingAnimationWidget.staggeredDotsWave(
                         // LoadingAnimationwidget that call the
-                        color: AppTheme.accentColor, // staggereddotwave animation
+                        color: AppTheme.accentColor,
+                        // staggereddotwave animation
                         size: 50,
                       ),
                     ),
@@ -383,7 +394,10 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     }
   }
 
-  void _showSimpleBottomSheet(EInvoiceModel invoice, EInvoiceViewModel viewModel) {
+  void _showSimpleBottomSheet(
+    EInvoiceModel invoice,
+    EInvoiceViewModel viewModel,
+  ) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -419,7 +433,10 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     );
   }
 
-  void _showCancelReasonDialog(EInvoiceModel invoice, EInvoiceViewModel viewModel) {
+  void _showCancelReasonDialog(
+    EInvoiceModel invoice,
+    EInvoiceViewModel viewModel,
+  ) {
     final TextEditingController reasonController = TextEditingController();
     showDialog(
       context: context,

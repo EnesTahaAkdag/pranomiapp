@@ -31,6 +31,7 @@ class AppDrawer extends StatelessWidget {
           _buildHeader(),
           Expanded(
             child: ListView(
+              padding: EdgeInsets.zero,
               children: _buildMenuItems(),
             ),
           ),
@@ -46,7 +47,7 @@ class AppDrawer extends StatelessWidget {
       color: AppTheme.accentColor,
       child: Center(
         child: Image.asset(
-          'lib/assets/images/PranomiLogo.png',
+          'lib/assets/images/PranomiLogo10.png',
           height: 90,
         ),
       ),
