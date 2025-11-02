@@ -23,20 +23,35 @@ class DrawerExpandableTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      // Smaller, more compact icon
       leading: SvgPicture.asset(
         'lib/assets/images/$imagePath',
-        width: 32,
-        height: 32,
+        width: 24,
+        height: 24,
         alignment: Alignment.center,
         colorFilter: const ColorFilter.mode(AppTheme.deepOrange, BlendMode.srcIn),
       ),
-      title: Text(title, style: const TextStyle(color: AppTheme.white)),
+      // Smaller, responsive text
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: AppTheme.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       backgroundColor: AppTheme.mediumGrayBackground,
       collapsedBackgroundColor: AppTheme.darkGrayBackground,
       iconColor: AppTheme.white,
       collapsedIconColor: AppTheme.white,
       initiallyExpanded: isExpanded,
       onExpansionChanged: (_) => onToggle(id),
+      // Compact density for smaller height
+      tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      // Reduce spacing between title and children
+      childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 4),
       children: children,
     );
   }

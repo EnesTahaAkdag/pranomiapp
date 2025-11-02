@@ -25,15 +25,28 @@ class DrawerMenuItem extends StatelessWidget {
     return Container(
       color: isActive ? AppTheme.accentColor : AppTheme.transparent,
       child: ListTile(
+        // Smaller, more compact icon (matches DrawerExpandableTile)
         leading: SvgPicture.asset(
           'lib/assets/images/$imagePath',
-          width: 32,
-          height: 32,
+          width: 24,
+          height: 24,
           alignment: Alignment.center,
           colorFilter: const ColorFilter.mode(AppTheme.deepOrange, BlendMode.srcIn),
         ),
-        title: Text(title, style: const TextStyle(color: AppTheme.white)),
+        // Smaller, responsive text (matches DrawerExpandableTile)
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: AppTheme.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         tileColor: isActive ? AppTheme.accentColor : AppTheme.transparent,
+        // Compact padding (matches DrawerExpandableTile)
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        dense: true,
+        visualDensity: VisualDensity.compact,
         onTap: () => onTap(route),
       ),
     );
