@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/sms_verification/presentation/sms_verification_state.dart';
 import 'package:pranomiapp/features/sms_verification/presentation/sms_verification_view_model.dart';
 import 'package:provider/provider.dart';
@@ -405,14 +405,10 @@ class _SmsVerificationContentState extends State<_SmsVerificationContent> {
         ),
         child:
             viewModel.isVerifying
-                ?  SizedBox(
+                ? const SizedBox(
                   height: 24,
                   width: 24,
-                  child:  LoadingAnimationWidget.staggeredDotsWave(
-                    // LoadingAnimationwidget that call the
-                    color: AppTheme.accentColor, // staggereddotwave animation
-                    size: 50,
-                  ),
+                  child: AppLoadingIndicator(size: 24),
                 )
                 : Text(
                   'Onayla',

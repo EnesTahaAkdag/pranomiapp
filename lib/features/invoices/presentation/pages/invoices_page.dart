@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/invoice_cancel_model.dart';
@@ -158,13 +158,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
                       return _buildInvoiceItem(_invoices[idx]);
                     }
 
-                    return  Padding(
+                    return const Padding(
                       padding: EdgeInsets.all(16),
-                      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                        // LoadingAnimationwidget that call the
-                        color: AppTheme.accentColor, // staggereddotwave animation
-                        size: 50,
-                      )),
+                      child: Center(child: AppLoadingIndicator()),
                     );
                   },
                 ),

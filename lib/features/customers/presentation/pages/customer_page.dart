@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/services/customer_service.dart';
@@ -199,13 +199,9 @@ class AccountListView extends StatelessWidget {
               onTap: () => onTapCustomer(customer),
             );
           }
-          return  Padding(
-            padding: const EdgeInsets.all(16),
-            child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-              // LoadingAnimationwidget that call the
-              color: AppTheme.accentColor, // staggereddotwave animation
-              size: 50,
-            )),
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: AppLoadingIndicator()),
           );
         },
       ),

@@ -4,10 +4,10 @@ import 'package:collection/collection.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/models/customer_address_model.dart';
 import '../../data/models/customer_edit_model.dart';
 import '../../data/services/customer_detail_service.dart';
@@ -193,11 +193,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading || _model == null) {
-      return  Scaffold(body: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-        // LoadingAnimationwidget that call the
-        color: AppTheme.accentColor, // staggereddotwave animation
-        size: 50,
-      )));
+      return const Scaffold(body: Center(child: AppLoadingIndicator()));
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Müşteri Düzenle')),
@@ -471,14 +467,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       onPressed: _isSubmitting ? null : _submit,
       icon:
           _isSubmitting
-              ?  SizedBox(
+              ? const SizedBox(
                 width: 20,
                 height: 20,
-                child:  LoadingAnimationWidget.staggeredDotsWave(
-                  // LoadingAnimationwidget that call the
-                  color: AppTheme.accentColor, // staggereddotwave animation
-                  size: 50,
-                ),
+                child: AppLoadingIndicator(size: 20),
               )
               : const Icon(Icons.save),
       label: Text(_submitSuccess ? 'Kaydedildi' : 'Kaydet'),

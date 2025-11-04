@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/utils/formatters.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../domain/product_model.dart';
@@ -101,12 +101,9 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
                                     );
                                   }
                                   if (viewModel.hasMore) {
-                                     return  Padding(
-                                       padding: const EdgeInsets.all(16),
-                                       child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                                         color: AppTheme.accentColor,
-                                         size: 50,
-                                       )),
+                                     return const Padding(
+                                       padding: EdgeInsets.all(16),
+                                       child: Center(child: AppLoadingIndicator()),
                                      );
                                   }
                                   return const SizedBox.shrink();
@@ -119,10 +116,7 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
                 if (viewModel.isUpdating)
                   Container(
                     color: AppTheme.blackOverlay50,
-                    child:  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                      color: AppTheme.accentColor,
-                      size: 50,
-                    )),
+                    child: const Center(child: AppLoadingIndicator()),
                   ),
               ],
             ),
@@ -272,11 +266,8 @@ class ProductListItem extends StatelessWidget {
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
-                            return Center(
-                              child: LoadingAnimationWidget.staggeredDotsWave(
-                                color: AppTheme.accentColor,
-                                size: 50,
-                              ),
+                            return const Center(
+                              child: AppLoadingIndicator(),
                             );
                           },
                           errorBuilder: (context, error, stackTrace) =>

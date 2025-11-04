@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/features/customers/data/models/customer_address_model.dart';
 import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
 import 'package:pranomiapp/features/employees/data/models/employee_add_model.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/services/employee_add_service.dart';
 
 class EmployeeAddPage extends StatefulWidget {
@@ -108,13 +108,9 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return  Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
-        body: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-          // LoadingAnimationwidget that call the
-          color: AppTheme.accentColor, // staggereddotwave animation
-          size: 50,
-        )),
+        body: Center(child: AppLoadingIndicator()),
       );
     }
 
@@ -233,14 +229,10 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
       onPressed: _isSubmitting ? null : _submit,
       icon:
           _isSubmitting
-              ?  SizedBox(
+              ? const SizedBox(
                 width: 20,
                 height: 20,
-                child:  LoadingAnimationWidget.staggeredDotsWave(
-                  // LoadingAnimationwidget that call the
-                  color: AppTheme.accentColor, // staggereddotwave animation
-                  size: 50,
-                ),
+                child: AppLoadingIndicator(size: 20),
               )
               : const Icon(Icons.save),
       label: const Text('Kaydet'),

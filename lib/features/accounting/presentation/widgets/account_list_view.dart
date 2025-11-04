@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/models/account_models.dart';
 
 class AccountListView extends StatelessWidget {
@@ -22,11 +22,7 @@ class AccountListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading && accounts.isEmpty) {
-      return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-        // LoadingAnimationwidget that call the
-        color: AppTheme.accentColor, // staggereddotwave animation
-        size: 50,
-      ));
+      return const Center(child: AppLoadingIndicator());
     }
 
     if (accounts.isEmpty && !isLoading) {
@@ -120,13 +116,9 @@ class AccountListView extends StatelessWidget {
         }
         if (isLoading && accounts.isNotEmpty) {
           // Loading indicator at the bottom for pagination
-          return  Padding(
+          return const Padding(
             padding: EdgeInsets.all(16),
-            child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-              // LoadingAnimationwidget that call the
-              color: AppTheme.accentColor, // staggereddotwave animation
-              size: 50,
-            )),
+            child: Center(child: AppLoadingIndicator()),
           );
         }
         return const SizedBox.shrink(); // Should not be reached if itemCount is correct

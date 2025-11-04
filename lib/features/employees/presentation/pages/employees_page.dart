@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
 import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
 
@@ -268,13 +268,9 @@ class _EmployeesPageState extends State<EmployeesPage> {
                         ),
                       );
                     }
-                    return  Padding(
+                    return const Padding(
                       padding: EdgeInsets.all(16),
-                      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                        // LoadingAnimationwidget that call the
-                        color: AppTheme.accentColor, // staggereddotwave animation
-                        size: 50,
-                      )),
+                      child: Center(child: AppLoadingIndicator()),
                     );
                   },
                 ),

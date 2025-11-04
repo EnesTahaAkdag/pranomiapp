@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/notifications/data/notification_enum.dart';
 import 'package:pranomiapp/features/notifications/data/notification_model.dart';
 import 'package:pranomiapp/features/notifications/data/notifications_service.dart';
@@ -208,11 +208,7 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-      // LoadingAnimationwidget that call the
-      color: AppTheme.accentColor, // staggereddotwave animation
-      size: 50,
-    ));
+    return const Center(child: AppLoadingIndicator());
   }
 }
 
@@ -367,13 +363,9 @@ class _LoadingMoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-        // LoadingAnimationwidget that call the
-        color: AppTheme.accentColor, // staggereddotwave animation
-        size: 50,
-      )),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: Center(child: AppLoadingIndicator()),
     );
   }
 }

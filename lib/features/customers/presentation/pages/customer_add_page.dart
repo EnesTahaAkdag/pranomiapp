@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/models/customer_add_model.dart';
 import '../../data/models/customer_address_model.dart';
 import '../../data/services/customer_add_service.dart';
@@ -107,13 +107,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return  Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
-        body: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-          // LoadingAnimationwidget that call the
-          color: AppTheme.accentColor, // staggereddotwave animation
-          size: 50,
-        )),
+        body: Center(child: AppLoadingIndicator()),
       );
     }
 
@@ -272,14 +268,10 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       onPressed: _isSubmitting ? null : _submit,
       icon:
           _isSubmitting
-              ?  SizedBox(
+              ? const SizedBox(
                 width: 20,
                 height: 20,
-                child:  LoadingAnimationWidget.staggeredDotsWave(
-                  // LoadingAnimationwidget that call the
-                  color: AppTheme.accentColor, // staggereddotwave animation
-                  size: 50,
-                ),
+                child: AppLoadingIndicator(size: 20),
               )
               : const Icon(Icons.save),
       label: const Text('Kaydet'),

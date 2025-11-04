@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/announcement/data/announcement_model.dart';
 import 'package:pranomiapp/features/announcement/data/announcement_service.dart';
 import 'package:pranomiapp/features/announcement/domain/announcement_type.dart';
@@ -44,11 +44,7 @@ class _AnnouncementView extends StatelessWidget {
 
     // Pattern matching on state type
     if (state is AnnouncementLoading) {
-      return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-        // LoadingAnimationwidget that call the
-        color: AppTheme.accentColor, // staggereddotwave animation
-        size: 50,
-      ));
+      return const Center(child: AppLoadingIndicator());
     }
 
     if (state is AnnouncementError) {

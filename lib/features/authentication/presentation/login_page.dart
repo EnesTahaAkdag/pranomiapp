@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/authentication/domain/strategies/auth_result.dart';
 import 'package:provider/provider.dart';
 
@@ -153,20 +153,16 @@ class _LoginViewState extends State<_LoginView> {
                         ),
                       ],
                     ),
-                    child:  Column(
+                    child: const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
                           height: 48,
                           width: 48,
-                          child:  LoadingAnimationWidget.staggeredDotsWave(
-                            // LoadingAnimationwidget that call the
-                            color: AppTheme.accentColor, // staggereddotwave animation
-                            size: 50,
-                          ),
+                          child: AppLoadingIndicator(),
                         ),
-                        const SizedBox(height: 16),
-                        const Text(
+                        SizedBox(height: 16),
+                        Text(
                           "Giriş yapılıyor...",
                           style: TextStyle(
                             color: AppTheme.white,

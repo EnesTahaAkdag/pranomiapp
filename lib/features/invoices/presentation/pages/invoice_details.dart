@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/models/invoice_details_model.dart';
 import '../../data/services/invoice_details_service.dart';
 
@@ -197,11 +197,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
         future: _futureDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-              // LoadingAnimationwidget that call the
-              color: AppTheme.accentColor, // staggereddotwave animation
-              size: 50,
-            ));
+            return const Center(child: AppLoadingIndicator());
           }
           if (snapshot.hasError) {
             return Padding(

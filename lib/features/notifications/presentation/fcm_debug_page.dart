@@ -1,11 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/core/services/fcm_service.dart';
 import 'package:pranomiapp/core/services/local_notification_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 
 /// FCM Debug Page - Helps identify notification issues
 class FcmDebugPage extends StatefulWidget {
@@ -139,11 +139,7 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
         backgroundColor: AppTheme.primaryColor,
       ),
       body: _isLoading
-          ?  Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-        // LoadingAnimationwidget that call the
-        color: AppTheme.accentColor, // staggereddotwave animation
-        size: 50,
-      ))
+          ? const Center(child: AppLoadingIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
