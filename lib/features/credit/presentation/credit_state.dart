@@ -2,7 +2,7 @@ import 'package:pranomiapp/features/credit/data/credit_model.dart';
 
 /// Base state class for credit transactions
 /// Following Single Responsibility Principle - each state represents one condition
-abstract class CreditState {
+class CreditState {
   const CreditState();
 }
 
