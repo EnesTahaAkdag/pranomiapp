@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_constants.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/models/customer_add_model.dart';
 import '../../data/models/customer_address_model.dart';
@@ -108,21 +109,21 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         body: Center(child: AppLoadingIndicator()),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.gray100,
       appBar: AppBar(
         title: const Text('Yeni Cari Hesap Ekle'),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2C2C2C),
-        elevation: 0,
+        backgroundColor: AppTheme.mediumGrayBackground,
+        elevation: AppConstants.elevationNone,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppConstants.spacing20),
         child: Form(
           key: _formKey,
           child: Column(
@@ -143,20 +144,20 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
                 keyboardType: TextInputType.number,
                 onSaved: (v) => _model.taxNumber = v?.trim() ?? '',
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: AppConstants.spacing15),
               _countryDropdown(),
               if (_selectedCountry != null &&
                   _selectedCountry!.name.toLowerCase() == 'türkiye') ...[
-                const SizedBox(height: 10),
+                const SizedBox(height: AppConstants.spacing10),
                 _cityDropdown(),
                 if (_selectedCity != null) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppConstants.spacing10),
                   _districtDropdown(),
                 ],
               ] else if (_selectedCountry != null) ...[
-                const SizedBox(height: 10),
+                const SizedBox(height: AppConstants.spacing10),
                 _customCityInput(),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppConstants.spacing10),
                 _customDistrictInput(),
               ],
               _modernTextField(
@@ -195,9 +196,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
                   onSaved:
                       (v) => _model.openingBalance = int.tryParse(v ?? '') ?? 0,
                 ),
-              const SizedBox(height: 30),
+              const SizedBox(height: AppConstants.spacing30),
               Center(child: _submitButton()),
-              const SizedBox(height: 30),
+              const SizedBox(height: AppConstants.spacing30),
             ],
           ),
         ),
@@ -213,7 +214,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     trailing: Switch(
       value: _model.isCompany,
       onChanged: (v) => setState(() => _model.isCompany = v),
-      activeThumbColor: const Color(0xFFB00034),
+      activeThumbColor: AppTheme.accentColor,
     ),
   );
 
@@ -225,16 +226,16 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     int maxLines = 1,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
+            horizontal: AppConstants.spacingM,
+            vertical: AppConstants.fontSizeM,
           ),
         ),
         keyboardType: keyboardType,
@@ -251,14 +252,14 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     void Function(bool) onChanged,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingS),
       child: SwitchListTile(
-        tileColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        tileColor: AppTheme.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         value: value,
         onChanged: onChanged,
-        activeThumbColor: const Color(0xFFB00034),
+        activeThumbColor: AppTheme.accentColor,
       ),
     );
   }
@@ -269,16 +270,16 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       icon:
           _isSubmitting
               ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: AppLoadingIndicator(size: 20),
+                width: AppConstants.spacing20,
+                height: AppConstants.spacing20,
+                child: AppLoadingIndicator(size: AppConstants.spacing20),
               )
               : const Icon(Icons.save),
       label: const Text('Kaydet'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFB00034),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+        backgroundColor: AppTheme.accentColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+        padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacing40, vertical: AppConstants.fontSizeXl),
         textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
       ),
     );
@@ -289,9 +290,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _countries,
@@ -315,9 +316,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _cities,
@@ -338,9 +339,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -356,17 +357,17 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
 
   Widget _customCityInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: 'Şehir',
           hintText: 'Şehir giriniz',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
+            horizontal: AppConstants.spacingM,
+            vertical: AppConstants.fontSizeM,
           ),
         ),
         initialValue: _model.city,
@@ -378,17 +379,17 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
 
   Widget _customDistrictInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: 'İlçe',
           hintText: 'İlçe giriniz',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
+            horizontal: AppConstants.spacingM,
+            vertical: AppConstants.fontSizeM,
           ),
         ),
         initialValue: _model.district,

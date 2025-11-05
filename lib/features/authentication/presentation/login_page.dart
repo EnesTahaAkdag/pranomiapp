@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/authentication/domain/strategies/auth_result.dart';
 import 'package:provider/provider.dart';
@@ -141,15 +142,15 @@ class _LoginViewState extends State<_LoginView> {
               if (viewModel.isLoading) // Use ViewModel's isLoading
                 Center(
                   child: Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(AppConstants.spacingL),
                     decoration: BoxDecoration(
                       color: AppTheme.blackOverlay70,
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(AppConstants.borderRadiusXl),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.blackOverlay30,
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                          blurRadius: AppConstants.spacing12,
+                          offset: const Offset(0, AppConstants.spacingXs),
                         ),
                       ],
                     ),
@@ -157,16 +158,16 @@ class _LoginViewState extends State<_LoginView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          height: 48,
-                          width: 48,
+                          height: AppConstants.spacing48,
+                          width: AppConstants.spacing48,
                           child: AppLoadingIndicator(),
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height: AppConstants.spacingM),
                         Text(
                           "Giriş yapılıyor...",
                           style: TextStyle(
                             color: AppTheme.white,
-                            fontSize: 16,
+                            fontSize: AppConstants.fontSizeL,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -194,11 +195,11 @@ class _LoginViewState extends State<_LoginView> {
       ),
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingL, vertical: AppConstants.spacing40),
           child: Column(
             children: [
-              Image.asset('lib/assets/images/PranomiLogo.png', height: 100),
-              const SizedBox(height: 48),
+              Image.asset('lib/assets/images/PranomiLogo.png', height: AppConstants.logoHeightLarge),
+              const SizedBox(height: AppConstants.spacing48),
               Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
@@ -206,36 +207,36 @@ class _LoginViewState extends State<_LoginView> {
                     end: Alignment.bottomRight,
                     colors: [AppTheme.primaryColor, AppTheme.accentColor],
                   ),
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(AppConstants.borderRadiusXl),
                   boxShadow: [
                     BoxShadow(
                       color: AppTheme.blackOverlay30,
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      blurRadius: AppConstants.spacing12,
+                      offset: const Offset(0, AppConstants.spacingXs),
                     ),
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(28),
+                  padding: const EdgeInsets.all(AppConstants.spacing28),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _icon(),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: AppConstants.spacingXl),
                       _inputField(
                         Icons.person_outline,
                         "Kullanıcı Adı",
                         viewModel.usernameController,
                         isPassword: false,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       _inputField(
                         Icons.lock_outline,
                         "Şifre",
                         viewModel.passwordController,
                         isPassword: true,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppConstants.spacingL),
                       _loginBtn(viewModel),
                     ],
                   ),
@@ -250,12 +251,12 @@ class _LoginViewState extends State<_LoginView> {
 
   Widget _icon() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(AppConstants.spacing12),
       decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.white, width: 2),
+        border: Border.all(color: AppTheme.white, width: AppConstants.elevationLow),
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.lock, color: Color(0xFFFFFFFF), size: 48),
+      child: const Icon(Icons.lock, color: AppTheme.white, size: AppConstants.spacing48),
     );
   }
 
@@ -281,15 +282,15 @@ class _LoginViewState extends State<_LoginView> {
             filled: true,
             fillColor: AppTheme.whiteOverlay10,
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 16,
-              horizontal: 20,
+              vertical: AppConstants.spacingM,
+              horizontal: AppConstants.spacing20,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
               borderSide: const BorderSide(color: AppTheme.textWhite70),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
               borderSide: const BorderSide(color: AppTheme.white),
             ),
             suffixIcon:
@@ -301,7 +302,7 @@ class _LoginViewState extends State<_LoginView> {
                           _isPasswordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: const Color(0xffffffff),
+                          color: AppTheme.white,
                         ),
                         onPressed:
                             () => setState(
@@ -338,15 +339,15 @@ class _LoginViewState extends State<_LoginView> {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppTheme.accentColor,
         foregroundColor: AppTheme.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+        padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingM),
       ),
       child: const SizedBox(
         width: double.infinity,
         child: Text(
           "Giriş Yap",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: AppConstants.fontSizeXl, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -359,7 +360,7 @@ class _LoginViewState extends State<_LoginView> {
           content: Text(message),
           backgroundColor: backgroundColor,
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
+          duration: AppConstants.snackBarNormal,
         ),
       );
     }

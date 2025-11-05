@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -20,31 +21,30 @@ class CustomSearchBar extends StatelessWidget {
     this.onChanged,
     this.backgroundColor = AppTheme.white,
     this.prefixIcon = Icons.search,
-    this.borderRadius = const BorderRadius.all(Radius.circular(20)),
+    this.borderRadius = const BorderRadius.all(Radius.circular(AppConstants.borderRadiusBottomSheet)),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      style: const TextStyle(color: Color(0xFF424242)),
+      style: const TextStyle(color: AppTheme.textMedium2),
       decoration: InputDecoration(
         filled: true,
-        fillColor: const Color(0xFFFFFFFF),
-        prefixIcon: Icon(prefixIcon,color: const Color(0xFF1976D2),),
+        fillColor: AppTheme.white,
+        prefixIcon: Icon(prefixIcon, color: AppTheme.searchIconColor),
         hintText: hintText,
-        hintStyle: const TextStyle(color: Color(0xFF757575)),
+        hintStyle: const TextStyle(color: AppTheme.textGrayLight),
         suffixIcon: controller.text.isNotEmpty
             ? IconButton(
-          icon: const Icon(Icons.close,),
+          icon: const Icon(Icons.close),
           onPressed: onClear,
         )
             : null,
         border: OutlineInputBorder(
           borderRadius: borderRadius,
-
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM),
       ),
       onSubmitted: onSubmitted,
       onChanged: onChanged,

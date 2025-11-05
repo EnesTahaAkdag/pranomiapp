@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_constants.dart';
+import '../../../../core/utils/api_constants.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
@@ -42,7 +44,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
   bool _hasMore = true;
 
   int _page = 0;
-  final int _size = 20;
+  final int _size = AppConstants.defaultPageSize;
   String _searchText = '';
 
   @override
@@ -62,7 +64,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
       if (!_isLoading && _hasMore) _fetchInvoices();
     }
   }
@@ -118,12 +120,12 @@ class _InvoicesPageState extends State<InvoicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.gray100,
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppConstants.spacingM),
               child: CustomSearchBar(
                 controller: _searchController,
                 onClear: _clearSearch,
@@ -144,11 +146,11 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   itemBuilder: (ctx, idx) {
                     if (_invoices.isEmpty && !_isLoading) {
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.5,
+                        height: MediaQuery.of(context).size.height * AppConstants.screenHeightMultiplierHalf,
                         child: Center(
                           child: Text(
                             'Hiç fatura bulunamadı.',
-                            style: TextStyle(color: Colors.grey[600]),
+                            style: TextStyle(color: AppTheme.gray600),
                           ),
                         ),
                       );
@@ -159,7 +161,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                     }
 
                     return const Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(AppConstants.spacingM),
                       child: Center(child: AppLoadingIndicator()),
                     );
                   },
@@ -175,19 +177,18 @@ class _InvoicesPageState extends State<InvoicesPage> {
   Widget _buildInvoiceItem(InvoicesModel invoice) {
     final dateFormatted = AppFormatters.dateShort.format(invoice.date);
     final isCancelled = invoice.invoiceStatus == "Cancelled";
-    final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
-    final eCommerceImageUrl =
-        "https://panel.pranomi.com/images/ecommerceLogo/${invoice.eCommerceCode}.png";
+    final baseColor = isCancelled ? AppTheme.gray500 : AppTheme.textPrimary;
+    final eCommerceImageUrl = ApiConstants.eCommerceLogoUrl(invoice.eCommerceCode);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
       child: Card(
-        elevation: 4,
-        shadowColor: Colors.black12,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: AppConstants.elevationMedium,
+        shadowColor: AppTheme.shadowColor,
+        color: AppTheme.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppConstants.spacingM),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -197,7 +198,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                     child: Text(
                       invoice.documentNumber,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: AppConstants.fontSizeL,
                         fontWeight: FontWeight.bold,
                         decoration:
                             isCancelled ? TextDecoration.lineThrough : null,
@@ -212,22 +213,22 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppConstants.spacingXs),
               Text(
                 'Müşteri: ${invoice.customerName}',
                 style: TextStyle(color: baseColor),
               ),
               Text('Tarih: $dateFormatted', style: TextStyle(color: baseColor)),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppConstants.spacingS),
               Text(
                 'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: AppConstants.fontSizeM,
                   color: baseColor,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppConstants.spacingXs),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -241,11 +242,11 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   Row(
                     children: [
                       if (invoice.isEInvoiced)
-                        Image.asset("lib/assets/icons/pdficon.png", height: 40),
+                        Image.asset("lib/assets/icons/pdficon.png", height: AppConstants.iconSizeXl),
                       if (eCommerceImageUrl != null)
                         Image.network(
                           eCommerceImageUrl,
-                          height: 40,
+                          height: AppConstants.iconSizeXl,
                           errorBuilder: (_, __, ___) => const SizedBox(),
                         ),
                     ],
@@ -263,7 +264,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.borderRadiusBottomSheet)),
       ),
       builder:
           (_) => SafeArea(
@@ -358,7 +359,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
       builder:
           (c) => AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
             ),
             title: Text(title),
             content: Text(content),
@@ -369,9 +370,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: AppTheme.successColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppConstants.borderRadiusS),
                   ),
                 ),
                 onPressed: () => Navigator.pop(c, true),
@@ -401,7 +402,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppConstants.spacingS),
 
                 TextField(
                   controller: noteController,

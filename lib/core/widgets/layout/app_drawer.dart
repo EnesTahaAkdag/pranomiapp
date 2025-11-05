@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'drawer_menu_item.dart';
 import 'drawer_expandable_tile.dart';
 
@@ -42,13 +42,13 @@ class AppDrawer extends StatelessWidget {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.only(top: 50, bottom: 30),
+      padding: const EdgeInsets.only(top: AppConstants.headerPaddingTop, bottom: AppConstants.headerPaddingBottom),
       width: double.infinity,
       color: AppTheme.accentColor,
       child: Center(
         child: Image.asset(
           'lib/assets/images/PranomiLogo10.png',
-          height: 90,
+          height: AppConstants.logoHeight,
         ),
       ),
     );

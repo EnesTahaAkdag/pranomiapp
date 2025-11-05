@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 
 class DrawerMenuItem extends StatelessWidget {
   final String imagePath;
@@ -28,8 +29,8 @@ class DrawerMenuItem extends StatelessWidget {
         // Smaller, more compact icon (matches DrawerExpandableTile)
         leading: SvgPicture.asset(
           'lib/assets/images/$imagePath',
-          width: 24,
-          height: 24,
+          width: AppConstants.iconSizeM,
+          height: AppConstants.iconSizeM,
           alignment: Alignment.center,
           colorFilter: const ColorFilter.mode(AppTheme.deepOrange, BlendMode.srcIn),
         ),
@@ -38,13 +39,13 @@ class DrawerMenuItem extends StatelessWidget {
           title,
           style: const TextStyle(
             color: AppTheme.white,
-            fontSize: 14,
+            fontSize: AppConstants.fontSizeM,
             fontWeight: FontWeight.w500,
           ),
         ),
         tileColor: isActive ? AppTheme.accentColor : AppTheme.transparent,
         // Compact padding (matches DrawerExpandableTile)
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingXs),
         dense: true,
         visualDensity: VisualDensity.compact,
         onTap: () => onTap(route),

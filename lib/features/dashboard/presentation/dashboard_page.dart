@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'package:pranomiapp/core/utils/formatters.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_model.dart';
@@ -42,7 +43,7 @@ class _DashboardView extends StatelessWidget {
     if (viewModel.error != null && viewModel.dashboardItem == null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(AppConstants.spacingM),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -51,7 +52,7 @@ class _DashboardView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: AppTheme.errorColor),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppConstants.spacingXl),
               ElevatedButton(
                 onPressed: () => viewModel.fetchDashboard(),
                 child: const Text("Tekrar Dene"),
@@ -91,11 +92,11 @@ class _DashboardView extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: () => viewModel.fetchDashboard(),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
           children: [
             DashboardCard(dashboardTitle: "Güncel", dashboardItem: dashboard),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.spacingM),
             DashboardNextCard(dashboardItem: dashboard),
           ],
         ),
@@ -112,20 +113,20 @@ class DashboardNextCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: const Color(0xffe8ecf1),
+      elevation: AppConstants.elevationMedium,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
+      color: AppTheme.cardBackgroundLight,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
               "Gelecek Dönem",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppConstants.fontSizeL),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.spacingM),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -141,21 +142,21 @@ class DashboardNextCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
                         amount: dashboardItem.totalCashAccountBalance,
                         isAsset: true,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
                         amount: dashboardItem.nextChequeReceiving,
                         isAsset: true,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -165,7 +166,7 @@ class DashboardNextCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: AppConstants.spacingL),
                 // Borçlar sütunu
                 Expanded(
                   child: Column(
@@ -178,19 +179,19 @@ class DashboardNextCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
                         amount: dashboardItem.nextCustomerAccountPayment,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
                         amount: dashboardItem.nextChequePayment,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -201,7 +202,7 @@ class DashboardNextCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.spacingM),
             _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
           ],
         ),
@@ -223,20 +224,20 @@ class DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: const Color(0xffe8ecf1),
+      elevation: AppConstants.elevationMedium,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
+      color: AppTheme.cardBackgroundLight,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               "Güncel (${_getCurrentMonthYear()})",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: AppConstants.fontSizeL),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.spacingM),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -252,21 +253,21 @@ class DashboardCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Kasa",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
                         amount: dashboardItem.totalCashAccountBalance,
                         isAsset: true,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap Çek",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
                         amount: dashboardItem.activeChequeReceiving,
                         isAsset: true,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Cari Hesap Senet",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -276,7 +277,7 @@ class DashboardCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: AppConstants.spacingL),
                 // Borçlar sütunu
                 Expanded(
                   child: Column(
@@ -289,19 +290,19 @@ class DashboardCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Cari Borçlar",
                         imagePath: 'lib/assets/images/icon_cash_account.svg',
                         amount: dashboardItem.activeCustomerAccountPayment,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Çekler",
                         imagePath: 'lib/assets/images/icon_cheque.svg',
                         amount: dashboardItem.activeChequePayment,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppConstants.spacingM),
                       DashboardListItem(
                         dashboardTitle: "Ödenecek Senetler",
                         imagePath: 'lib/assets/images/icon_bond.svg',
@@ -312,7 +313,7 @@ class DashboardCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.spacingM),
             _BankBalanceList(balances: dashboardItem.totalBankAccountBalances),
           ],
         ),
@@ -345,24 +346,24 @@ class _BankBalanceList extends StatelessWidget {
       children: [
         SvgPicture.asset(
           'lib/assets/images/icon_bank.svg',
-          width: 32,
-          height: 32,
+          width: AppConstants.iconSizeL,
+          height: AppConstants.iconSizeL,
           alignment: Alignment.center,
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppConstants.spacingM),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text("Banka", overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppConstants.spacingS),
               if (balances.isEmpty)
                 const Text(
                   "0,00 ₺",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.successColor,
-                    fontSize: 12,
+                    fontSize: AppConstants.fontSizeS,
                   ),
                 )
               else
@@ -373,10 +374,10 @@ class _BankBalanceList extends StatelessWidget {
                     if (tryBalance != null) _buildBalanceText(tryBalance),
                     // Other currencies in a row
                     if (otherBalances.isNotEmpty) ...[
-                      if (tryBalance != null) const SizedBox(height: 4),
+                      if (tryBalance != null) const SizedBox(height: AppConstants.spacingXs),
                       Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
+                        spacing: AppConstants.spacingS,
+                        runSpacing: AppConstants.spacingXs,
                         children: [
                           for (final balance in otherBalances)
                             _buildBalanceText(balance),
@@ -418,7 +419,7 @@ class _BankBalanceList extends StatelessWidget {
       formattedAmount,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 12,
+        fontSize: AppConstants.fontSizeS,
       ).copyWith(color: color),
     );
   }
@@ -456,24 +457,24 @@ class DashboardListItem extends StatelessWidget {
       children: [
         SvgPicture.asset(
           imagePath,
-          width: 32,
-          height: 32,
+          width: AppConstants.iconSizeL,
+          height: AppConstants.iconSizeL,
           alignment: Alignment.center,
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppConstants.spacingM),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(dashboardTitle, overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppConstants.spacingS),
               Text(
                 formattedAmount,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: color,
-                  fontSize: 12,
+                  fontSize: AppConstants.fontSizeS,
                 ),
               ),
             ],

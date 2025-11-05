@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../di/injection.dart';
+import '../utils/api_constants.dart';
 
 abstract class ApiServiceBase {
   static final Dio dioInstance = Dio(
     BaseOptions(
-      baseUrl: 'https://apitest.pranomi.com/',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      headers: {'Content-Type': 'application/json'},
+      baseUrl: ApiConstants.baseUrl,
+      connectTimeout: Duration(seconds: ApiConstants.connectionTimeoutSeconds),
+      receiveTimeout: Duration(seconds: ApiConstants.receiveTimeoutSeconds),
+      headers: {ApiConstants.headerContentType: ApiConstants.contentTypeJson},
     ),
   );
 
@@ -19,8 +20,8 @@ abstract class ApiServiceBase {
 
   Future<Map<String, String>> getAuthHeaders() async {
     final prefs = locator<SharedPreferences>();
-      final apiKey = prefs.getString('apiKey');
-    final apiSecret = prefs.getString('apiSecret');
+      final apiKey = prefs.getString(ApiConstants.prefApiKey);
+    final apiSecret = prefs.getString(ApiConstants.prefApiSecret);
 
     if (apiKey == null || apiSecret == null) {
       throw Exception('API anahtarları bulunamadı.');
@@ -30,9 +31,9 @@ abstract class ApiServiceBase {
         'Basic ${base64.encode(utf8.encode('$apiKey:$apiSecret'))}';
 
     return {
-      'ApiKey': apiKey,
-      'ApiSecret': apiSecret,
-      'Authorization': basicAuth,
+      ApiConstants.headerApiKey: apiKey,
+      ApiConstants.headerApiSecret: apiSecret,
+      ApiConstants.headerAuthorization: basicAuth,
     };
   }
 
@@ -55,7 +56,7 @@ abstract class ApiServiceBase {
         options: Options(headers: headers),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == ApiConstants.statusCodeSuccess && response.data != null) {
         return fromJson(response.data);
       } else {
         debugPrint("GET request failed: ${response.statusCode}");

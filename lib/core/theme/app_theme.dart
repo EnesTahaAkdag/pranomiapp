@@ -27,6 +27,12 @@ class AppTheme {
   /// Light gray background (used in lists, cards)
   static const Color lightGrayBackground = Color(0xFFF5F5F5);
 
+  /// Card background light (used for cards with subtle color)
+  static const Color cardBackgroundLight = Color(0xFFe8ecf1);
+
+  /// Scaffold background light (slightly different from standard)
+  static const Color scaffoldBackgroundLight = Color(0xFFF5F7FA);
+
   /// Medium gray background
   static const Color mediumGrayBackground = Color(0xFF2C2C2C);
 
@@ -61,6 +67,25 @@ class AppTheme {
   /// Light gray text color (600 shade)
   static const Color textGrayLight = Color(0xFF757575);
 
+  /// Dark text color (primary dark text)
+  static const Color textDark = Color(0xFF212121);
+
+  /// Medium text color (secondary dark text)
+  static const Color textMedium = Color(0xFF424141);
+
+  /// Medium text color variant
+  static const Color textMedium2 = Color(0xFF424242);
+
+  // ============================================================================
+  // ICON COLORS
+  // ============================================================================
+
+  /// Gray icon color (for secondary icons)
+  static const Color iconGray = Color(0xFFA89494);
+
+  /// Search icon color (blue)
+  static const Color searchIconColor = Color(0xFF1976D2);
+
   // ============================================================================
   // STATUS COLORS
   // ============================================================================
@@ -87,6 +112,19 @@ class AppTheme {
   static const Color errorDarkText = Color(0xFFB71C1C);  // Colors.red.shade900
 
   // ============================================================================
+  // FINANCIAL/AMOUNT COLORS
+  // ============================================================================
+
+  /// Positive amount color (green for profits/credits)
+  static const Color positiveAmountColor = Color(0xFF4CAF50);
+
+  /// Negative amount color (red for debts/losses)
+  static const Color negativeAmountColor = Color(0xFFE53935);
+
+  /// Neutral amount color (gray for zero balances)
+  static const Color neutralAmountColor = Color(0xFF2A2A2A);
+
+  // ============================================================================
   // NEUTRAL COLORS
   // ============================================================================
 
@@ -105,6 +143,9 @@ class AppTheme {
   /// Gray shade 200
   static const Color gray200 = Color(0xFFEEEEEE);
 
+  /// Gray shade 500
+  static const Color gray500 = Color(0xFF9E9E9E);
+
   /// Gray shade 600
   static const Color gray600 = Color(0xFF757575);
 
@@ -116,6 +157,12 @@ class AppTheme {
 
   /// Deep orange (used for SVG icon tints)
   static const Color deepOrange = Colors.deepOrange;
+
+  /// Shadow color for cards and elevated elements
+  static const Color shadowColor = Color(0x1F000000);  // Colors.black12
+
+  /// Primary text color (black87)
+  static const Color textPrimary = Color(0xDD000000);  // Colors.black87
 
   // ============================================================================
   // OPACITY HELPERS

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'bottom_nav_item.dart';
 import 'bottom_sheet_menus.dart';
 
@@ -25,14 +26,14 @@ class CustomBottomNavigation extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: AppTheme.blackOverlay10,
-            blurRadius: 8,
+            blurRadius: AppConstants.spacingS,
             offset: const Offset(0, -2),
           ),
         ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingXs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

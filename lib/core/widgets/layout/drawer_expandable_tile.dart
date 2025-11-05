@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 
 class DrawerExpandableTile extends StatelessWidget {
   final String imagePath;
@@ -26,8 +27,8 @@ class DrawerExpandableTile extends StatelessWidget {
       // Smaller, more compact icon
       leading: SvgPicture.asset(
         'lib/assets/images/$imagePath',
-        width: 24,
-        height: 24,
+        width: AppConstants.iconSizeM,
+        height: AppConstants.iconSizeM,
         alignment: Alignment.center,
         colorFilter: const ColorFilter.mode(AppTheme.deepOrange, BlendMode.srcIn),
       ),
@@ -36,7 +37,7 @@ class DrawerExpandableTile extends StatelessWidget {
         title,
         style: const TextStyle(
           color: AppTheme.white,
-          fontSize: 14,
+          fontSize: AppConstants.fontSizeM,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -47,11 +48,11 @@ class DrawerExpandableTile extends StatelessWidget {
       initiallyExpanded: isExpanded,
       onExpansionChanged: (_) => onToggle(id),
       // Compact density for smaller height
-      tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      tilePadding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingXs),
       dense: true,
       visualDensity: VisualDensity.compact,
       // Reduce spacing between title and children
-      childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 4),
+      childrenPadding: const EdgeInsets.only(left: AppConstants.spacingM, right: AppConstants.spacingM, bottom: AppConstants.spacingXs),
       children: children,
     );
   }

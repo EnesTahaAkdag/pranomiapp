@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/features/credit/data/credit_model.dart';
 import 'package:pranomiapp/features/credit/data/credit_service.dart';
@@ -50,7 +51,7 @@ class _CreditViewState extends State<_CreditView> {
   void _onScroll() {
     // Trigger load more when near bottom
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
       context.read<CreditViewModel>().loadMoreTransactions();
     }
   }
@@ -127,7 +128,7 @@ class _CreditViewState extends State<_CreditView> {
             Container(
               width: double.infinity,
               color: AppTheme.errorLightBackground,
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(AppConstants.spacingS),
               child: Text(
                 errorMessage ?? 'Bir hata oluştu',
                 style: const TextStyle(color: AppTheme.errorDarkText),
@@ -137,7 +138,7 @@ class _CreditViewState extends State<_CreditView> {
           Expanded(
             child: ListView.separated(
               controller: _scrollController,
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(AppConstants.spacing12),
               itemCount: transactions.length + (isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == transactions.length) {
@@ -149,7 +150,7 @@ class _CreditViewState extends State<_CreditView> {
                   transaction: transaction,
                 );
               },
-              separatorBuilder: (context, index) => const SizedBox(height: 6),
+              separatorBuilder: (context, index) => const SizedBox(height: AppConstants.spacing6),
             ),
           ),
         ],
@@ -176,16 +177,16 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.errorColor, fontSize: 16),
+              style: const TextStyle(color: AppTheme.errorColor, fontSize: AppConstants.fontSizeL),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppConstants.spacingXl),
             ElevatedButton(
               onPressed: onRetry,
               child: const Text("Tekrar Dene"),
@@ -207,15 +208,15 @@ class _EmptyView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Kredi hareketi bulunmamaktadır.',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: AppConstants.fontSizeL),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppConstants.spacingXl),
             ElevatedButton(
               onPressed: onRefresh,
               child: const Text("Yenile"),
@@ -246,11 +247,11 @@ class _TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 6.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: AppConstants.elevationLow,
+      margin: const EdgeInsets.symmetric(vertical: AppConstants.spacing6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.spacing10)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -258,7 +259,7 @@ class _TransactionCard extends StatelessWidget {
               transaction: transaction,
               currencyFormatter: _currencyFormatter,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppConstants.spacingS),
             _TransactionDetails(
               transaction: transaction,
               dateFormatter: _dateFormatter,
@@ -332,12 +333,12 @@ class _TransactionDetails extends StatelessWidget {
                 color: AppTheme.textGray,
               ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppConstants.spacingXs),
         Text(
           'Bakiye: ${currencyFormatter.format(transaction.totalTransactionAmount)}',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppConstants.spacingXs),
         Text(
           _getTransactionTypeDescription(transaction.transactionType),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -346,7 +347,7 @@ class _TransactionDetails extends StatelessWidget {
         ),
         if (transaction.description != null &&
             transaction.description!.isNotEmpty) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: AppConstants.spacing6),
           Text(
             'Açıklama: ${transaction.description}',
             style: Theme.of(context).textTheme.bodySmall,
@@ -366,7 +367,7 @@ class _LoadingMoreIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.symmetric(vertical: AppConstants.spacingM),
       child: Center(child: AppLoadingIndicator()),
     );
   }

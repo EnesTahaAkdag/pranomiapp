@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 
 class BottomNavItem extends StatelessWidget {
   final IconData icon;
@@ -22,26 +23,26 @@ class BottomNavItem extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingXs),
           decoration: BoxDecoration(
             color: isSelected ? AppTheme.selectedItemColor : AppTheme.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 icon,
-                size: 26,
+                size: AppConstants.iconSizeMedium,
                 color: isSelected ? AppTheme.white : AppTheme.unselectedColor,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppConstants.spacingXs),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: AppConstants.fontSizeXxs,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? AppTheme.white : AppTheme.unselectedColor,
                 ),

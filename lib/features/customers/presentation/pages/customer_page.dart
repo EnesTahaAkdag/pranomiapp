@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_constants.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
@@ -49,7 +50,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
       if (_hasMore && !_isLoading) {
         _fetchCustomers();
       }
@@ -68,7 +69,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
     final response = await _customerService.fetchCustomers(
       page: _currentPage,
-      size: 20,
+      size: AppConstants.defaultPageSize,
       customerType: widget.customerType,
       search: _searchText.isNotEmpty ? _searchText : null,
     );
@@ -99,11 +100,11 @@ class _CustomerPageState extends State<CustomerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.scaffoldBackgroundLight,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFB00034),
+        backgroundColor: AppTheme.accentColor,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: 30, color: Colors.white),
+        child: const Icon(Icons.add, size: AppConstants.spacing30, color: AppTheme.white),
         onPressed: () async { // Made onPressed async
           final result = await context.push(
             '/${widget.customerType.name}AddPage',
@@ -120,7 +121,7 @@ class _CustomerPageState extends State<CustomerPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(AppConstants.spacingM),
               child:
               CustomSearchBar(
                 controller: _searchController,
@@ -200,7 +201,7 @@ class AccountListView extends StatelessWidget {
             );
           }
           return const Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(AppConstants.spacingM),
             child: Center(child: AppLoadingIndicator()),
           );
         },
@@ -227,18 +228,18 @@ class CustomerListItem extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
+          horizontal: AppConstants.spacingM,
+          vertical: AppConstants.spacingS,
         ),
         child: Card(
-          elevation: 4,
+          elevation: AppConstants.elevationMedium,
           shadowColor: Colors.black12,
-          color: const Color(0xFFFFFFFF),
+          color: AppTheme.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppConstants.spacingM),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -248,38 +249,38 @@ class CustomerListItem extends StatelessWidget {
                       child: Text(
                         customer.customerName,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: AppConstants.fontSizeL,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF212121),
+                          color: AppTheme.textDark,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const Icon(
                       Icons.edit,
-                      color: Color(0xFFA89494),
+                      color: AppTheme.iconGray,
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppConstants.spacingXs),
                 if (customer.customerCode.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
+                    padding: const EdgeInsets.only(bottom: AppConstants.spacingXs),
                     child: RichText(
                       text: TextSpan(
                         children: [
                           const TextSpan(
                             text: 'Müşteri Kodu: ',
                             style: TextStyle(
-                              color: Color(0xFF424141),
-                              fontSize: 14,
+                              color: AppTheme.textMedium,
+                              fontSize: AppConstants.fontSizeM,
                             ),
                           ),
                           TextSpan(
                             text: customer.customerCode,
                             style: const TextStyle(
-                              color: Color(0xFF424242),
-                              fontSize: 14,
+                              color: AppTheme.textMedium2,
+                              fontSize: AppConstants.fontSizeM,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -287,26 +288,26 @@ class CustomerListItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppConstants.spacingS),
                 RichText(
                   text: TextSpan(
                     children: [
                       const TextSpan(
                         text: 'Ödenen Tutar: ',
                         style: TextStyle(
-                          color: Color(0xFF424141),
-                          fontSize: 14,
+                          color: AppTheme.textMedium,
+                          fontSize: AppConstants.fontSizeM,
                         ),
                       ),
                       TextSpan(
                         text: '${AppFormatters.formatCurrency(customer.balance)} ₺',
                         style: TextStyle(
                           color: customer.balance > 0
-                              ? const Color(0xFF4CAF50) // Green for positive
+                              ? AppTheme.positiveAmountColor // Green for positive
                               : customer.balance < 0
-                              ? const Color(0xFFE53935) // Red for negative
-                              : const Color(0xFF2A2A2A), // Gray for zero
-                          fontSize: 14,
+                              ? AppTheme.negativeAmountColor // Red for negative
+                              : AppTheme.neutralAmountColor, // Gray for zero
+                          fontSize: AppConstants.fontSizeM,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

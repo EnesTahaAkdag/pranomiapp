@@ -7,6 +7,7 @@ import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_constants.dart';
 import '../../data/models/employees_model.dart';
 import '../../data/services/employees_service.dart';
 
@@ -49,7 +50,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
       if (_hasMore && !_isLoading) {
         _fetchEmployees();
       }
@@ -68,7 +69,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
 
     final response = await _employeeService.fetchEmployees(
       page: _currentPage,
-      size: 20,
+      size: AppConstants.defaultPageSize,
       customerType: widget.customerType,
       search: _searchText.isNotEmpty ? _searchText : null,
     );
@@ -107,11 +108,11 @@ class _EmployeesPageState extends State<EmployeesPage> {
     );
 
     return Scaffold(
-      backgroundColor: Color(0xFFF5F7FA),
+      backgroundColor: AppTheme.scaffoldBackgroundLight,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFB00034),
+        backgroundColor: AppTheme.accentColor,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: 30, color: Colors.white),
+        child: const Icon(Icons.add, size: AppConstants.spacing30, color: AppTheme.white),
         onPressed: () async {
           /// Made onPressed async and that's help us to refresh the page with navigation result
           final result = await context.push(
@@ -126,7 +127,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(AppConstants.spacingM),
               child: CustomSearchBar(
                 controller: _searchController,
                 onClear: _clearSearch,
@@ -172,18 +173,18 @@ class _EmployeesPageState extends State<EmployeesPage> {
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                            horizontal: AppConstants.spacingM,
+                            vertical: AppConstants.spacingS,
                           ),
                           child: Card(
-                            elevation: 4,
+                            elevation: AppConstants.elevationMedium,
                             shadowColor: Colors.black12,
-                            color: const Color(0xFFFFFFFF),
+                            color: AppTheme.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(AppConstants.spacingM),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -193,25 +194,25 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                         child: Text(
                                           employee.employeeName,
                                           style: const TextStyle(
-                                            fontSize: 16,
+                                            fontSize: AppConstants.fontSizeL,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF212121)
+                                            color: AppTheme.textDark
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       const Icon(
                                         Icons.edit,
-                                        color: Color(0xFFA89494),
+                                        color: AppTheme.iconGray,
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: AppConstants.spacingXs),
                                   // Display Customer Code if it's available and not empty
                                   if (employee.employeeCode != null)
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        bottom: 4.0,
+                                        bottom: AppConstants.spacingXs,
                                       ),
                                       child: RichText(
                                         text: TextSpan(
@@ -219,15 +220,15 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                             const TextSpan(
                                               text: 'Müşteri Kodu: ',
                                               style: TextStyle(
-                                                color: Color(0xFF424141),
-                                                fontSize: 14,
+                                                color: AppTheme.textMedium,
+                                                fontSize: AppConstants.fontSizeM,
                                               ),
                                             ),
                                             TextSpan(
                                               text: employee.employeeCode,
                                               style: const TextStyle(
-                                                color: Color(0xFF424242),
-                                                fontSize: 14,
+                                                color: AppTheme.textMedium2,
+                                                fontSize: AppConstants.fontSizeM,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -235,26 +236,26 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                         ),
                                       ),
                                     ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: AppConstants.spacingS),
                                   RichText(
                                     text: TextSpan(
                                       children: [
                                         const TextSpan(
                                           text: 'Ödenen Tutar: ',
                                           style: TextStyle(
-                                            color: Color(0xFF424141),
-                                            fontSize: 14,
+                                            color: AppTheme.textMedium,
+                                            fontSize: AppConstants.fontSizeM,
                                           ),
                                         ),
                                         TextSpan(
                                           text: '${currencyFormatter.format(employee.balance)} ₺',
                                           style: TextStyle(
                                             color: employee.balance > 0
-                                                ? const Color(0xFF4CAF50) // Green for positive
+                                                ? AppTheme.positiveAmountColor // Green for positive
                                                 : employee.balance < 0
-                                                ? const Color(0xFFE53935) // Red for negative
-                                                : const Color(0xFF2A2A2A), // Gray for zero
-                                            fontSize: 14,
+                                                ? AppTheme.negativeAmountColor // Red for negative
+                                                : AppTheme.neutralAmountColor, // Gray for zero
+                                            fontSize: AppConstants.fontSizeM,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -269,7 +270,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                       );
                     }
                     return const Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(AppConstants.spacingM),
                       child: Center(child: AppLoadingIndicator()),
                     );
                   },
