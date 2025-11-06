@@ -106,6 +106,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   // MODIFIED: This function is now more robust.
   static Widget? getIconForNotificationType(String? eCommerceCode) {
     // If no code is provided, return null to show nothing.
+
     if (eCommerceCode == null || eCommerceCode.trim().isEmpty) {
       return null;
     }
@@ -177,7 +178,7 @@ class _NotificationsPageBody extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: onRefresh,
-      child: ListView.separated(
+      child: ListView.builder(
         controller: scrollController,
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         itemCount: notifications.length + (isLoadingMore ? 1 : 0),
@@ -193,11 +194,7 @@ class _NotificationsPageBody extends StatelessWidget {
             getIconForNotificationType: getIconForNotificationType,
           );
         },
-        separatorBuilder:
-            (context, index) =>
-                const Divider(height: 1, indent: 16, endIndent: 16),
-      ),
-    );
+    ));
   }
 }
 
@@ -285,76 +282,264 @@ class _NotificationListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // This now returns a full widget with error handling, or null.
     final iconWidget = getIconForNotificationType(notification.eCommerceCode);
 
+    // Bildirim türüne göre renk seçimi
+    final notificationType = getNotificationTypeFromValue(notification.notificationType);
+    final accentColor = _getColorForNotificationType(notificationType);
+
     return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 6.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              accentColor.withValues(alpha: 0.05),
+            ],
+          ),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (iconWidget != null)
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: iconWidget,
-                  ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    getNotificationNameFromType(
-                      getNotificationTypeFromValue(
-                        notification.notificationType,
-                      ),
-                    ),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+            // Üst kısım - Renkli header
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    accentColor.withValues(alpha: 0.8),
+                    accentColor,
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tarih: ${dateFormatter.format(notification.notificationDate)}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[700],
-                fontSize: 14,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+              ),
+              child: Row(
+                children: [
+                  if (iconWidget != null)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: iconWidget,
+                    ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      getNotificationNameFromType(notificationType),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            const SizedBox(height: 4),
-            Text(
-              "Ref No: ${notification.referenceNumber}",
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 6),
-            Html(
-              data: "Açıklama: ${notification.description}",
-              style: {
-                "body": Style(
-                  margin: Margins.zero,
-                  padding: HtmlPaddings.zero,
-                  fontSize: FontSize(15),
-                  maxLines: 2,
-                  textOverflow: TextOverflow.ellipsis,
-                ),
-                "i": Style(color: Theme.of(context).primaryColor),
-              },
+
+            // Alt kısım - Bilgiler
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // Tarih ve Ref No yan yana
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoChip(
+                          icon: Icons.calendar_today_rounded,
+                          label: 'Tarih',
+                          value: dateFormatter.format(notification.notificationDate),
+                          color: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildInfoChip(
+                          icon: Icons.tag_rounded,
+                          label: 'Ref No',
+                          value: notification.referenceNumber,
+                          color: const Color(0xFF164129),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Açıklama kısmı
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: accentColor.withValues(alpha: 0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.description_rounded,
+                              size: 16,
+                              color: accentColor,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Açıklama',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                                color: accentColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Html(
+                          data: notification.description,
+                          style: {
+                            "body": Style(
+                              margin: Margins.zero,
+                              padding: HtmlPaddings.zero,
+                              fontSize: FontSize(14),
+                              maxLines: 3,
+                              textOverflow: TextOverflow.ellipsis,
+                              color: Colors.grey[800],
+                            ),
+                            "i": Style(
+                              color: accentColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: color),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800],
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getColorForNotificationType(NotificationListTypeEnum notificationType) {
+    switch (notificationType) {
+    // Yeşil tonları - Olumlu durumlar
+      case NotificationListTypeEnum.OrderNew:
+        return const Color(0xFF4CAF50); // Yeşil - Yeni sipariş
+      case NotificationListTypeEnum.OrderInvoiceOrWaybillAdd:
+        return const Color(0xFF66BB6A); // Açık yeşil - Fatura/İrsaliye eklendi
+
+    // Mavi tonları - Bilgilendirme ve güncellemeler
+      case NotificationListTypeEnum.StockChange:
+        return const Color(0xFF2196F3); // Mavi - Stok değişimi
+      case NotificationListTypeEnum.OrderInvoiceOrWaybillUpdate:
+        return const Color(0xFF42A5F5); // Açık mavi - Fatura/İrsaliye güncellendi
+
+    // Turuncu tonları - Uyarı ve dikkat
+      case NotificationListTypeEnum.ProductOutOfStock:
+        return const Color(0xFFFF9800); // Turuncu - Stok tükendi
+      case NotificationListTypeEnum.ClaimNew:
+        return const Color(0xFFFFB74D); // Açık turuncu - Yeni talep
+      case NotificationListTypeEnum.OrderInvoiceOrWaybillCancelled:
+        return const Color(0xFFFF9800); // Turuncu - Fatura/İrsaliye iptal
+      case NotificationListTypeEnum.EArchiceInvoiceCancel:
+        return const Color(0xFFFF8A65); // Mercan turuncu - E-Arşiv iptal
+
+    // Kırmızı tonları - Hata ve iptal durumları
+      case NotificationListTypeEnum.OrderCancelled:
+        return const Color(0xFFF44336); // Kırmızı - Sipariş iptal
+      case NotificationListTypeEnum.OrderInvoiceOrWaybillDelete:
+        return const Color(0xFFE53935); // Koyu kırmızı - Fatura/İrsaliye silindi
+      case NotificationListTypeEnum.OrderInvoiceOrWaybillError:
+        return const Color(0xFFD32F2F); // Daha koyu kırmızı - Fatura/İrsaliye hata
+      case NotificationListTypeEnum.EDocumentError:
+        return const Color(0xFFC62828); // Çok koyu kırmızı - E-Belge hatası
+
+    // Gri tonları - Silme ve nötr durumlar
+      case NotificationListTypeEnum.TransactionDelete:
+        return const Color(0xFF757575); // Gri - İşlem silme
+
+      default:
+        return const Color(0xFF607D8B); // Gri-Mavi - Diğer durumlar
+    }
   }
 }
 
