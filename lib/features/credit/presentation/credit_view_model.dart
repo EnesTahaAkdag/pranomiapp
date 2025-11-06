@@ -9,7 +9,7 @@ class CreditViewModel extends ChangeNotifier {
   final CreditService _creditService;
 
   // Private state, exposed through getter
-  CreditState _state = const CreditInitial();
+  CreditState _state = const CreditState.initial();
 
   /// Current state of credit transactions
   CreditState get state => _state;
@@ -27,7 +27,7 @@ class CreditViewModel extends ChangeNotifier {
   /// Fetches credit transactions (initial load)
   Future<void> fetchTransactions() async {
     // Set loading state
-    _updateState(const CreditLoading());
+    _updateState(const CreditState.loading());
 
     try {
       // Fetch first page
@@ -38,71 +38,73 @@ class CreditViewModel extends ChangeNotifier {
 
       // Update state based on result
       if (creditItem != null) {
-        _updateState(CreditLoaded(
+        _updateState(CreditState.loaded(
           transactions: creditItem.creditTransactions,
           currentPage: creditItem.currentPage + 1, // +1 for next page
           totalPages: creditItem.totalPages,
         ));
       } else {
-        _updateState(const CreditError('Kredi hareketleri yüklenemedi.'));
+        _updateState(const CreditState.error('Kredi hareketleri yüklenemedi.'));
       }
     } catch (e) {
       // Handle errors gracefully
       final errorMessage = 'Bir hata oluştu: ${e.toString()}';
-      _updateState(CreditError(errorMessage));
+      _updateState(CreditState.error(errorMessage));
       debugPrint('Error fetching credit transactions: $e');
     }
   }
 
   /// Loads more transactions (pagination)
   Future<void> loadMoreTransactions() async {
-    final currentState = _state;
+    // Use freezed's mapOrNull to handle only the loaded state
+    await _state.mapOrNull(
+      loaded: (loadedState) async {
+        // Check if we have more pages
+        final hasMorePages = loadedState.currentPage < loadedState.totalPages;
 
-    // Only load more if we're in loaded state and have more pages
-    if (currentState is! CreditLoaded || !currentState.hasMorePages) {
-      return;
-    }
+        // Only load more if we have more pages and not already loading
+        if (!hasMorePages || loadedState.isLoadingMore) {
+          return;
+        }
 
-    // Prevent duplicate requests
-    if (currentState.isLoadingMore) {
-      return;
-    }
+        // Set loading more flag - using copyWith for cleaner code
+        _updateState(loadedState.copyWith(isLoadingMore: true));
 
-    // Set loading more flag
-    _updateState(currentState.copyWith(isLoadingMore: true));
+        try {
+          // Fetch next page
+          final creditItem = await _creditService.fetchCredits(
+            page: loadedState.currentPage,
+            size: _pageSize,
+          );
 
-    try {
-      // Fetch next page
-      final creditItem = await _creditService.fetchCredits(
-        page: currentState.currentPage,
-        size: _pageSize,
-      );
+          if (creditItem != null) {
+            // Append new transactions to existing list
+            final updatedTransactions = [
+              ...loadedState.transactions,
+              ...creditItem.creditTransactions,
+            ];
 
-      if (creditItem != null) {
-        // Append new transactions to existing list
-        final updatedTransactions = [
-          ...currentState.transactions,
-          ...creditItem.creditTransactions,
-        ];
-
-        _updateState(CreditLoaded(
-          transactions: updatedTransactions,
-          currentPage: creditItem.currentPage + 1,
-          totalPages: creditItem.totalPages,
-          isLoadingMore: false,
-        ));
-      } else {
-        // Failed to load more, keep existing data
-        _updateState(currentState.copyWith(isLoadingMore: false));
-      }
-    } catch (e) {
-      // On error, keep existing data but show error with existing transactions
-      _updateState(CreditError(
-        'Daha fazla yüklenemedi: ${e.toString()}',
-        existingTransactions: currentState.transactions,
-      ));
-      debugPrint('Error loading more transactions: $e');
-    }
+            // Update with new data - using copyWith for clarity
+            _updateState(loadedState.copyWith(
+              transactions: updatedTransactions,
+              currentPage: creditItem.currentPage + 1,
+              totalPages: creditItem.totalPages,
+              isLoadingMore: false,
+            ));
+          } else {
+            // Failed to load more, keep existing data - only update the loading flag
+            _updateState(loadedState.copyWith(isLoadingMore: false));
+          }
+        } catch (e) {
+          // On error, keep existing data but show error with existing transactions
+          _updateState(CreditState.error(
+            'Daha fazla yüklenemedi: ${e.toString()}',
+            existingTransactions: loadedState.transactions,
+          ));
+          debugPrint('Error loading more transactions: $e');
+        }
+      },
+    );
   }
 
   /// Refresh transactions (pull-to-refresh)

@@ -71,44 +71,41 @@ class _CreditViewState extends State<_CreditView> {
   Widget _buildBody(BuildContext context, CreditViewModel viewModel) {
     final state = viewModel.state;
 
-    // Pattern matching on state type
-    if (state is CreditLoading) {
-      return const Center(child: AppLoadingIndicator());
-    }
+    // Use freezed's map method for exhaustive pattern matching
+    return state.map(
+      initial: (_) => const SizedBox.shrink(), // Show nothing in initial state
+      loading: (_) => const Center(child: AppLoadingIndicator()),
+      loaded: (loadedState) {
+        // Check if list is empty
+        if (loadedState.transactions.isEmpty) {
+          return _EmptyView(onRefresh: viewModel.refresh);
+        }
 
-    if (state is CreditError) {
-      // Show error with existing data if available
-      if (state.hasExistingData) {
         return _buildTransactionsList(
           context,
           viewModel,
-          state.existingTransactions,
-          isLoadingMore: false,
-          hasError: true,
-          errorMessage: state.message,
+          loadedState.transactions,
+          isLoadingMore: loadedState.isLoadingMore,
         );
-      }
-      return _ErrorView(
-        error: state.message,
-        onRetry: viewModel.fetchTransactions,
-      );
-    }
-
-    if (state is CreditLoaded) {
-      if (state.isEmpty) {
-        return _EmptyView(onRefresh: viewModel.refresh);
-      }
-
-      return _buildTransactionsList(
-        context,
-        viewModel,
-        state.transactions,
-        isLoadingMore: state.isLoadingMore,
-      );
-    }
-
-    // Initial state or unknown state
-    return const SizedBox.shrink();
+      },
+      error: (errorState) {
+        // Show error with existing data if available
+        if (errorState.existingTransactions.isNotEmpty) {
+          return _buildTransactionsList(
+            context,
+            viewModel,
+            errorState.existingTransactions,
+            isLoadingMore: false,
+            hasError: true,
+            errorMessage: errorState.message,
+          );
+        }
+        return _ErrorView(
+          error: errorState.message,
+          onRetry: viewModel.fetchTransactions,
+        );
+      },
+    );
   }
 
   /// Builds the transactions list with pagination
