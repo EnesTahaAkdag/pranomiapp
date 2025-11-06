@@ -115,6 +115,7 @@ class _AccountDepositAndBanksPageState
               padding: const EdgeInsets.all(16.0),
               child: CustomSearchBar(
                 controller: _searchController,
+                hintText: 'Hesap adı ara...',
                 onClear: _clearSearch,
                 onSubmitted: _submitSearch,
               ),

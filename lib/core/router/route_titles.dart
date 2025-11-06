@@ -12,7 +12,7 @@ class RouteTitles {
     '/ExpenseWayBill': 'Giden İrsaliyeler',
     '/ApprovedE-Dispatch': 'Gelen E-İrsaliyeler',
     '/ApprovedE-Invoice': 'Gelen E-Faturalar',
-    '/OutGoingE-Dispatch': 'Gide E-İrsaliyeler',
+    '/OutGoingE-Dispatch': 'Giden E-İrsaliyeler',
     '/OutGoingE-Archive': 'Giden E-Arşiv Faturalar',
     '/OutGoingE-Invoice': 'Giden E-Faturalar',
     '/CustomerAccounts': 'Cari Hesaplar',

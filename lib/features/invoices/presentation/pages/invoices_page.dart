@@ -128,6 +128,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
               padding: const EdgeInsets.all(AppConstants.spacingM),
               child: CustomSearchBar(
                 controller: _searchController,
+                hintText: 'Fatura numarası ara...',
                 onClear: _clearSearch,
                 onChanged: (val) => setState(() => _searchText = val),
                 onSubmitted: (_) => _fetchInvoices(reset: true),

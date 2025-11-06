@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/utils/formatters.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
+import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../domain/product_model.dart';
@@ -129,26 +130,12 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
   Widget _buildSearchBar(ProductsAndServicesViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: TextField(
+      child: CustomSearchBar(
         controller: viewModel.searchController,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppTheme.white,
-          prefixIcon: const Icon(Icons.search),
-          hintText: 'Ürün adı ya da stok kodu...',
-          suffixIcon: viewModel.searchController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => viewModel.clearSearchAndFetch(),
-                )
-              : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-        ),
+        hintText: 'Ürün adı ya da stok kodu ara...',
+        onClear: () => viewModel.clearSearchAndFetch(),
         onSubmitted: (text) => viewModel.onSearchSubmitted(text),
+        borderRadius: BorderRadius.circular(24),
       ),
     );
   }

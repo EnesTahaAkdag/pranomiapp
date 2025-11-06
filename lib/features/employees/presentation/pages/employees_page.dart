@@ -130,6 +130,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
               padding: const EdgeInsets.all(AppConstants.spacingM),
               child: CustomSearchBar(
                 controller: _searchController,
+                hintText: 'Çalışan adı ara...',
                 onClear: _clearSearch,
                 onSubmitted: _submitSearch,
               ),

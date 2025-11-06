@@ -125,6 +125,7 @@ class _CustomerPageState extends State<CustomerPage> {
               child:
               CustomSearchBar(
                 controller: _searchController,
+                hintText: 'Müşteri adı ara...',
                 onClear: _clearSearch,
                 onSubmitted: _submitSearch,
               ),

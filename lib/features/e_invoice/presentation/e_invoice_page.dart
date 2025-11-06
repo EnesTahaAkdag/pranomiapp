@@ -9,9 +9,9 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_loading_indicator.dart';
+import '../../../core/widgets/custom_search_bar.dart';
 import '../data/e_invoice_model.dart';
 import 'e_invoice_view_model.dart';
 
@@ -173,27 +173,12 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
+            child: CustomSearchBar(
               controller: viewModel.searchController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Belge numarası ara...',
-                suffixIcon:
-                    viewModel.searchController.text.isNotEmpty
-                        ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => viewModel.clearSearchAndFetch(),
-                        )
-                        : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
+              hintText: 'Belge numarası ara...',
+              onClear: () => viewModel.clearSearchAndFetch(),
               onSubmitted: (text) => viewModel.onSearchSubmitted(text),
+              borderRadius: BorderRadius.circular(24),
             ),
           ),
           const SizedBox(width: 12),

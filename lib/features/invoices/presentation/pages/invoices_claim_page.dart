@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/di/injection.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/invoice_claim_model.dart';
 import '../../data/services/invoice_claim_service.dart';
 
@@ -105,32 +105,17 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: TextField(
+              child: CustomSearchBar(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: 'Belge numarası veya Barkod ara...',
-                  suffixIcon:
-                      _searchQuery.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _searchQuery = '');
-                              _fetchInvoices(reset: true);
-                            },
-                          )
-                          : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
+                hintText: 'Belge numarası veya Barkod ara...',
+                onClear: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                  _fetchInvoices(reset: true);
+                },
                 onChanged: (val) => setState(() => _searchQuery = val),
                 onSubmitted: (_) => _fetchInvoices(reset: true),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
             Expanded(
