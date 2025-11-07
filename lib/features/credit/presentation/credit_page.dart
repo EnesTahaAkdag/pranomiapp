@@ -176,7 +176,7 @@ class _CreditViewState extends State<_CreditView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -392,7 +392,7 @@ class _TransactionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -404,7 +404,7 @@ class _TransactionCard extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               left: BorderSide(
-                color: transactionColor.withOpacity(0.6),
+                color: transactionColor.withValues(alpha: 0.6),
                 width: 4,
               ),
             ),
@@ -419,7 +419,7 @@ class _TransactionCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: transactionColor.withOpacity(0.1),
+                        color: transactionColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -520,10 +520,10 @@ class _TransactionCard extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.05),
+                      color: Colors.blue.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
