@@ -17,6 +17,9 @@ class AppConstants {
   /// Large loading indicator size (for full-screen loading)
   static const double loadingIndicatorSizeLarge = 70.0;
 
+  static const int loadingAnimationDuration = 1;
+
+
   // ============================================================================
   // SPACING CONSTANTS
   // ============================================================================

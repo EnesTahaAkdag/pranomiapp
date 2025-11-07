@@ -166,13 +166,8 @@ class _CreditViewState extends State<_CreditView> {
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            NumberFormat.currency(locale: 'tr_TR', symbol: '₺').format(currentBalance),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
+          _AnimatedBalanceCounter(
+            balance: currentBalance,
           ),
           const SizedBox(height: 8),
           Container(
@@ -577,6 +572,87 @@ class _LoadingMoreIndicator extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Animated counter widget for balance display
+/// Animates from 0 to the target balance value with smooth easing
+class _AnimatedBalanceCounter extends StatefulWidget {
+  final double balance;
+
+  const _AnimatedBalanceCounter({
+    required this.balance,
+  });
+
+  @override
+  State<_AnimatedBalanceCounter> createState() => _AnimatedBalanceCounterState();
+}
+
+class _AnimatedBalanceCounterState extends State<_AnimatedBalanceCounter>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  static final NumberFormat _currencyFormatter = NumberFormat.currency(
+    locale: 'tr_TR',
+    symbol: '₺',
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: AppConstants.loadingAnimationDuration),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: widget.balance,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(_AnimatedBalanceCounter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.balance != widget.balance) {
+      _animation = Tween<double>(
+        begin: oldWidget.balance,
+        end: widget.balance,
+      ).animate(CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ));
+      _controller.reset();
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Text(
+          _currencyFormatter.format(_animation.value),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      },
     );
   }
 }
