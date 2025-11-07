@@ -49,7 +49,8 @@ class _CreditViewState extends State<_CreditView> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
+        _scrollController.position.maxScrollExtent -
+            AppConstants.paginationScrollThreshold) {
       context.read<CreditViewModel>().loadMoreTransactions();
     }
   }
@@ -118,10 +119,14 @@ class _CreditViewState extends State<_CreditView> {
   }
 
   /// Builds balance summary card at the top
-  Widget _buildBalanceSummary(BuildContext context, List<CreditTransaction> transactions) {
-    final currentBalance = transactions.isNotEmpty
-        ? transactions.first.totalTransactionAmount
-        : 0.0;
+  Widget _buildBalanceSummary(
+    BuildContext context,
+    List<CreditTransaction> transactions,
+  ) {
+    final currentBalance =
+        transactions.isNotEmpty
+            ? transactions.first.totalTransactionAmount
+            : 0.0;
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -166,9 +171,7 @@ class _CreditViewState extends State<_CreditView> {
             ],
           ),
           const SizedBox(height: 16),
-          _AnimatedBalanceCounter(
-            balance: currentBalance,
-          ),
+          _AnimatedBalanceCounter(balance: currentBalance),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -178,10 +181,7 @@ class _CreditViewState extends State<_CreditView> {
             ),
             child: Text(
               '${transactions.length} işlem',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: Colors.white, fontSize: 13),
             ),
           ),
         ],
@@ -190,13 +190,13 @@ class _CreditViewState extends State<_CreditView> {
   }
 
   Widget _buildTransactionsList(
-      BuildContext context,
-      CreditViewModel viewModel,
-      List<CreditTransaction> transactions, {
-        required bool isLoadingMore,
-        bool hasError = false,
-        String? errorMessage,
-      }) {
+    BuildContext context,
+    CreditViewModel viewModel,
+    List<CreditTransaction> transactions, {
+    required bool isLoadingMore,
+    bool hasError = false,
+    String? errorMessage,
+  }) {
     return RefreshIndicator(
       onRefresh: viewModel.refresh,
       color: Theme.of(context).colorScheme.primary,
@@ -209,7 +209,11 @@ class _CreditViewState extends State<_CreditView> {
               padding: const EdgeInsets.all(AppConstants.spacingS),
               child: Row(
                 children: [
-                  const Icon(Icons.error_outline, color: AppTheme.errorDarkText, size: 20),
+                  const Icon(
+                    Icons.error_outline,
+                    color: AppTheme.errorDarkText,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -252,10 +256,7 @@ class _ErrorView extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
 
-  const _ErrorView({
-    required this.error,
-    required this.onRetry,
-  });
+  const _ErrorView({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -281,10 +282,7 @@ class _ErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
@@ -292,7 +290,10 @@ class _ErrorView extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded),
               label: const Text("Tekrar Dene"),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -342,10 +343,7 @@ class _EmptyView extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Kredi hareketi bulunmamaktadır',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
             OutlinedButton.icon(
@@ -353,7 +351,10 @@ class _EmptyView extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded),
               label: const Text("Yenile"),
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -369,16 +370,16 @@ class _EmptyView extends StatelessWidget {
 class _TransactionCard extends StatelessWidget {
   final CreditTransaction transaction;
 
-  static final DateFormat _dateFormatter = DateFormat('dd MMM yyyy, HH:mm', 'tr_TR');
+  static final DateFormat _dateFormatter = DateFormat(
+    'dd MMM yyyy, HH:mm',
+    'tr_TR',
+  );
   static final NumberFormat _currencyFormatter = NumberFormat.currency(
     locale: 'tr_TR',
     symbol: '₺',
   );
 
-  const _TransactionCard({
-    super.key,
-    required this.transaction,
-  });
+  const _TransactionCard({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +434,9 @@ class _TransactionCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _getTransactionTypeDescription(transaction.transactionType),
+                            _getTransactionTypeDescription(
+                              transaction.transactionType,
+                            ),
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -465,13 +468,18 @@ class _TransactionCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.grey[100],
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            _currencyFormatter.format(transaction.totalTransactionAmount),
+                            _currencyFormatter.format(
+                              transaction.totalTransactionAmount,
+                            ),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[700],
@@ -492,19 +500,21 @@ class _TransactionCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.access_time_rounded, size: 16, color: Colors.grey[600]),
+                      Icon(
+                        Icons.access_time_rounded,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         _dateFormatter.format(transaction.transactionDate),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
-                        ),
+                        style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                       ),
                     ],
                   ),
                 ),
-                if (transaction.description != null && transaction.description!.isNotEmpty) ...[
+                if (transaction.description != null &&
+                    transaction.description!.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Container(
                     width: double.infinity,
@@ -564,10 +574,7 @@ class _LoadingMoreIndicator extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Yükleniyor...',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -581,12 +588,11 @@ class _LoadingMoreIndicator extends StatelessWidget {
 class _AnimatedBalanceCounter extends StatefulWidget {
   final double balance;
 
-  const _AnimatedBalanceCounter({
-    required this.balance,
-  });
+  const _AnimatedBalanceCounter({required this.balance});
 
   @override
-  State<_AnimatedBalanceCounter> createState() => _AnimatedBalanceCounterState();
+  State<_AnimatedBalanceCounter> createState() =>
+      _AnimatedBalanceCounterState();
 }
 
 class _AnimatedBalanceCounterState extends State<_AnimatedBalanceCounter>
@@ -609,10 +615,7 @@ class _AnimatedBalanceCounterState extends State<_AnimatedBalanceCounter>
     _animation = Tween<double>(
       begin: 0.0,
       end: widget.balance,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward();
   }
@@ -624,10 +627,9 @@ class _AnimatedBalanceCounterState extends State<_AnimatedBalanceCounter>
       _animation = Tween<double>(
         begin: oldWidget.balance,
         end: widget.balance,
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ));
+      ).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+      );
       _controller.reset();
       _controller.forward();
     }
