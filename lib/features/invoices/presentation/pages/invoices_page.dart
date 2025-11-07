@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -64,7 +65,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
+        _scrollController.position.maxScrollExtent -
+            AppConstants.paginationScrollThreshold) {
       if (!_isLoading && _hasMore) _fetchInvoices();
     }
   }
@@ -147,7 +149,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   itemBuilder: (ctx, idx) {
                     if (_invoices.isEmpty && !_isLoading) {
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * AppConstants.screenHeightMultiplierHalf,
+                        height:
+                            MediaQuery.of(context).size.height *
+                            AppConstants.screenHeightMultiplierHalf,
                         child: Center(
                           child: Text(
                             'Hiç fatura bulunamadı.',
@@ -179,15 +183,22 @@ class _InvoicesPageState extends State<InvoicesPage> {
     final dateFormatted = AppFormatters.dateShort.format(invoice.date);
     final isCancelled = invoice.invoiceStatus == "Cancelled";
     final baseColor = isCancelled ? AppTheme.gray500 : AppTheme.textPrimary;
-    final eCommerceImageUrl = ApiConstants.eCommerceLogoUrl(invoice.eCommerceCode);
+    final eCommerceImageUrl = ApiConstants.eCommerceLogoUrl(
+      invoice.eCommerceCode,
+    );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spacingM,
+        vertical: AppConstants.spacingS,
+      ),
       child: Card(
         elevation: AppConstants.elevationMedium,
         shadowColor: AppTheme.shadowColor,
         color: AppTheme.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(AppConstants.spacingM),
           child: Column(
@@ -243,13 +254,16 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   Row(
                     children: [
                       if (invoice.isEInvoiced)
-                        Image.asset("lib/assets/icons/pdficon.png", height: AppConstants.iconSizeXl),
-                      if (eCommerceImageUrl != null)
-                        Image.network(
-                          eCommerceImageUrl,
+                        Image.asset(
+                          "lib/assets/icons/pdficon.png",
                           height: AppConstants.iconSizeXl,
-                          errorBuilder: (_, __, ___) => const SizedBox(),
                         ),
+
+                      Image.network(
+                        eCommerceImageUrl,
+                        height: AppConstants.iconSizeXl,
+                        errorBuilder: (_, __, ___) => const SizedBox(),
+                      ),
                     ],
                   ),
                 ],
@@ -265,7 +279,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.borderRadiusBottomSheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppConstants.borderRadiusBottomSheet),
+        ),
       ),
       builder:
           (_) => SafeArea(
@@ -373,7 +389,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.successColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.borderRadiusS),
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadiusS,
+                    ),
                   ),
                 ),
                 onPressed: () => Navigator.pop(c, true),

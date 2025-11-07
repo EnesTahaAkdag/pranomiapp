@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/utils/formatters.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
@@ -27,7 +29,8 @@ class _ProductsAndServicesView extends StatefulWidget {
   const _ProductsAndServicesView();
 
   @override
-  State<_ProductsAndServicesView> createState() => _ProductsAndServicesViewState();
+  State<_ProductsAndServicesView> createState() =>
+      _ProductsAndServicesViewState();
 }
 
 class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
@@ -56,7 +59,11 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
 
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: color, behavior: SnackBarBehavior.floating),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
@@ -83,33 +90,44 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () => viewModel.fetchProducts(reset: true),
-                        child: viewModel.products.isEmpty && !viewModel.isLoading
-                            ? const Center(
-                                child: Text(
-                                  'Hiç ürün bulunamadı.',
-                                  style: TextStyle(color: AppTheme.gray600),
+                        child:
+                            viewModel.products.isEmpty && !viewModel.isLoading
+                                ? const Center(
+                                  child: Text(
+                                    'Hiç ürün bulunamadı.',
+                                    style: TextStyle(color: AppTheme.gray600),
+                                  ),
+                                )
+                                : ListView.builder(
+                                  controller: _scrollController,
+                                  itemCount:
+                                      viewModel.products.length +
+                                      (viewModel.hasMore ? 1 : 0),
+                                  itemBuilder: (ctx, idx) {
+                                    if (idx < viewModel.products.length) {
+                                      return ProductListItem(
+                                        key: ValueKey(
+                                          viewModel.products[idx].productId,
+                                        ),
+                                        product: viewModel.products[idx],
+                                        onMorePressed:
+                                            () => _showProductActions(
+                                              viewModel.products[idx],
+                                              viewModel,
+                                            ),
+                                      );
+                                    }
+                                    if (viewModel.hasMore) {
+                                      return const Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Center(
+                                          child: AppLoadingIndicator(),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
                                 ),
-                              )
-                            : ListView.builder(
-                                controller: _scrollController,
-                                itemCount: viewModel.products.length + (viewModel.hasMore ? 1 : 0),
-                                itemBuilder: (ctx, idx) {
-                                  if (idx < viewModel.products.length) {
-                                    return ProductListItem(
-                                      key: ValueKey(viewModel.products[idx].productId),
-                                      product: viewModel.products[idx],
-                                      onMorePressed: () => _showProductActions(viewModel.products[idx], viewModel),
-                                    );
-                                  }
-                                  if (viewModel.hasMore) {
-                                     return const Padding(
-                                       padding: EdgeInsets.all(16),
-                                       child: Center(child: AppLoadingIndicator()),
-                                     );
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              ),
                       ),
                     ),
                   ],
@@ -140,27 +158,30 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
     );
   }
 
-
-  void _showProductActions(ProductResponseModel product, ProductsAndServicesViewModel viewModel) {
+  void _showProductActions(
+    ProductResponseModel product,
+    ProductsAndServicesViewModel viewModel,
+  ) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (modalContext) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Stok Güncelle'),
-              onTap: () {
-                Navigator.pop(modalContext);
-                _showStockUpdateDialog(context, product, viewModel);
-              },
+      builder:
+          (modalContext) => SafeArea(
+            child: Wrap(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: const Text('Stok Güncelle'),
+                  onTap: () {
+                    Navigator.pop(modalContext);
+                    _showStockUpdateDialog(context, product, viewModel);
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
@@ -169,48 +190,64 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
     ProductResponseModel product,
     ProductsAndServicesViewModel viewModel,
   ) {
-    final stockController = TextEditingController(text: product.stockAmount.toString());
+    final stockController = TextEditingController(
+      text: product.stockAmount.toString(),
+    );
     final commentController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('${product.productName} - Stok Güncelle'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: stockController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Yeni Stok Miktarı'),
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('${product.productName} - Stok Güncelle'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: stockController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'Yeni Stok Miktarı',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: commentController,
+                  decoration: const InputDecoration(
+                    labelText: 'Açıklama (Opsiyonel)',
+                  ),
+                  maxLines: 3,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: commentController,
-              decoration: const InputDecoration(labelText: 'Açıklama (Opsiyonel)'),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('İptal'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('İptal'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final newStock = double.tryParse(stockController.text);
+                  if (newStock == null) {
+                    _showSnackBar(
+                      'Geçerli bir stok miktarı girin.',
+                      AppTheme.errorColor,
+                    );
+                    return;
+                  }
+                  Navigator.pop(dialogContext);
+                  await viewModel.updateStock(
+                    product,
+                    newStock,
+                    commentController.text.trim(),
+                  );
+                },
+                child: const Text('Güncelle'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              final newStock = double.tryParse(stockController.text);
-              if (newStock == null) {
-                _showSnackBar('Geçerli bir stok miktarı girin.', AppTheme.errorColor);
-                return;
-              }
-              Navigator.pop(dialogContext);
-              await viewModel.updateStock(product, newStock, commentController.text.trim());
-            },
-            child: const Text('Güncelle'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -247,26 +284,55 @@ class ProductListItem extends StatelessWidget {
                 height: 80,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
-                      ? Image.network(
-                          product.imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(
-                              child: AppLoadingIndicator(),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                color: AppTheme.gray200,
-                                child: const Icon(Icons.broken_image_outlined, size: 40, color: AppTheme.gray600),
+                  child:
+                      (product.imageUrl != null && product.imageUrl.isNotEmpty)
+                          ? CachedNetworkImage(
+                        imageUrl: product.imageUrl,
+                        fit: BoxFit.cover,
+
+                        placeholder: (context, url) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(
+                                Colors.amberAccent,
                               ),
-                        )
-                      : Container(
-                          color: AppTheme.gray200,
-                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: AppTheme.gray600),
-                        ),
+                            ),
+                          );
+                        },
+
+                        errorWidget: (context, imageUrl, error) {
+                          // URL .svg ile bitiyorsa SVG olarak göster
+                          if (imageUrl.toLowerCase().endsWith('.svg')) {
+                            return SvgPicture.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              placeholderBuilder: (context) => const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(Colors.amberAccent),
+                                ),
+                              ),
+                            );
+                          }
+
+                          // SVG değilse broken image icon göster
+                          return Container(
+                            color: AppTheme.gray200,
+                            child: const Icon(
+                              Icons.broken_image_outlined,
+                              size: 40,
+                              color: AppTheme.gray600,
+                            ),
+                          );
+                        },
+                      )
+                          : Container(
+                            color: AppTheme.gray200,
+                            child: const Icon(
+                              Icons.inventory_2_outlined,
+                              size: 40,
+                              color: AppTheme.gray600,
+                            ),
+                          ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -295,11 +361,29 @@ class ProductListItem extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text('Stok Kodu: ${product.stockCode}', style: const TextStyle(color: AppTheme.textBlack54)),
-                    Text('Stok: ${product.stockAmount}', style: const TextStyle(color: AppTheme.textBlack87)),
+                    Text(
+                      'Stok Kodu: ${product.stockCode}',
+                      style: const TextStyle(color: AppTheme.textBlack54),
+                    ),
+                    Text(
+                      'Stok: ${product.stockAmount}',
+                      style: const TextStyle(color: AppTheme.textBlack87),
+                    ),
                     const SizedBox(height: 4),
-                    Text('Birim Fiyat: ${AppFormatters.formatCurrency(product.price)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
-                    Text('Satış Fiyatı: ${AppFormatters.formatCurrency(salePrice)}₺', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.textBlack87)),
+                    Text(
+                      'Birim Fiyat: ${AppFormatters.formatCurrency(product.price)}₺',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textBlack87,
+                      ),
+                    ),
+                    Text(
+                      'Satış Fiyatı: ${AppFormatters.formatCurrency(salePrice)}₺',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.textBlack87,
+                      ),
+                    ),
                   ],
                 ),
               ),

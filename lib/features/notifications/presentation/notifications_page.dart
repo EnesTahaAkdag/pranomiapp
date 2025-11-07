@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
@@ -111,9 +112,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
       return null;
     }
     // Return an Image.network widget with a crucial errorBuilder.
-    return Image.network(
-      "https://panel.pranomi.com/images/eCommerceLogo/${eCommerceCode.toLowerCase()}.png",
-      errorBuilder: (context, error, stackTrace) {
+    return CachedNetworkImage(
+      imageUrl: "https://panel.pranomi.com/images/eCommerceLogo/${eCommerceCode.toLowerCase()}.png",
+      errorWidget: (context, error, stackTrace) {
         // If the image fails to load (e.g., 404 Not Found),
         // return an empty widget instead of an error icon.
         return const SizedBox.shrink();
