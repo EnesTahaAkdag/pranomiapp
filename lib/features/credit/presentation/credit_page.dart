@@ -164,7 +164,7 @@ class _CreditViewState extends State<_CreditView> {
                 'Mevcut Bakiye',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 24,
                   fontWeight: FontWeight.w500,
                 ),
               ),
