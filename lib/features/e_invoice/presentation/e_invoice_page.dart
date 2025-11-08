@@ -9,6 +9,8 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/app_constants.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_loading_indicator.dart';
 import '../../../core/widgets/custom_search_bar.dart';
@@ -96,7 +98,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
         }
 
         return Scaffold(
-          backgroundColor: Colors.grey[100],
+          backgroundColor: AppTheme.gray100,
           body: SafeArea(
             child: Stack(
               children: [
@@ -123,7 +125,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                                 child: Center(
                                   child: Text(
                                     'Hiç fatura bulunamadı.',
-                                    style: TextStyle(color: Colors.grey[600]),
+                                    style: TextStyle(color: AppTheme.gray600),
                                   ),
                                 ),
                               );
@@ -154,7 +156,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                 if (viewModel
                     .isActionLoading) // Loading indicator for PDF/Cancel actions
                   Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: AppTheme.blackOverlay50,
                     child: const Center(
                       child: AppLoadingIndicator(),
                     ),
@@ -169,7 +171,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
 
   Widget _buildSearchBar(EInvoiceViewModel viewModel) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppConstants.spacingM),
       child: Row(
         children: [
           Expanded(
@@ -178,10 +180,10 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
               hintText: 'Belge numarası ara...',
               onClear: () => viewModel.clearSearchAndFetch(),
               onSubmitted: (text) => viewModel.onSearchSubmitted(text),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusXl),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppConstants.spacing12),
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () => _showFilterModal(viewModel),
@@ -196,22 +198,22 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.borderRadiusL)),
       ),
       builder: (modalContext) {
         // Use a StatefulBuilder to manage the local state of the date picker inside the modal
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter modalSetState) {
             return Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppConstants.spacingM),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
                     "Filtreleme",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppConstants.fontSizeXl),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppConstants.spacingM),
                   Row(
                     children: [
                       Expanded(
@@ -266,7 +268,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
             ? AppFormatters.dateShort.format(invoice.date!)
             : "Tarih Yok";
     final isCancelled = invoice.status.toLowerCase() == "canceled";
-    final baseColor = isCancelled ? Colors.grey[500] : Colors.black87;
+    final baseColor = isCancelled ? AppTheme.gray500 : AppTheme.textBlack87;
     final textDecoration =
         isCancelled ? TextDecoration.lineThrough : TextDecoration.none;
     final baseTextStyle = TextStyle(
@@ -274,21 +276,21 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
       decoration: textDecoration,
     );
     final boldTitleStyle = baseTextStyle.copyWith(
-      fontSize: 16,
+      fontSize: AppConstants.fontSizeL,
       fontWeight: FontWeight.bold,
     );
     final String eInvoiceLinkCopy =
         "https://panel.pranomi.com/e_invoice/geteinvoices?uuids=${invoice.uuId}";
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
       child: Card(
-        elevation: 4,
-        shadowColor: Colors.black12,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: AppConstants.elevationMedium,
+        shadowColor: AppTheme.shadowColor,
+        color: AppTheme.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppConstants.spacingM),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -307,27 +309,27 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppConstants.spacingXs),
               Text('Müşteri: ${invoice.customerName}', style: baseTextStyle),
               Text('Tarih: $dateFormatted', style: baseTextStyle),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppConstants.spacingS),
               Row(
                 children: [
                   const Spacer(),
                   GestureDetector(
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: eInvoiceLinkCopy));
-                      _showSnackBar('Fatura Linki kopyalandı', Colors.green);
+                      _showSnackBar('Fatura Linki kopyalandı', AppTheme.buttonSuccessColor);
                     },
                     child: Row(
                       children: [
-                        const Icon(Icons.copy, size: 16, color: Colors.blue),
-                        const SizedBox(width: 4),
+                        const Icon(Icons.copy, size: AppConstants.iconSizeS, color: AppTheme.blueAccent),
+                        const SizedBox(width: AppConstants.spacingXs),
                         Text(
                           "Fatura Linki",
                           style: baseTextStyle.copyWith(
-                            fontSize: 12,
-                            color: Colors.blue[700],
+                            fontSize: AppConstants.fontSizeS,
+                            color: AppTheme.blue700,
                             decoration: TextDecoration.underline,
                           ),
                         ),
@@ -364,7 +366,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
       await OpenFile.open(file.path);
     } catch (e) {
       if (!mounted) return;
-      _showSnackBar('PDF gösterilemedi: $e', Colors.red);
+      _showSnackBar('PDF gösterilemedi: $e', AppTheme.buttonErrorColor);
     }
   }
 
@@ -375,7 +377,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.borderRadiusBottomSheet)),
       ),
       builder:
           (modalContext) => SafeArea(
@@ -461,7 +463,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
       builder:
           (c) => AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
             ),
             title: Text(title),
             content: Text(content),
@@ -472,10 +474,10 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppTheme.buttonErrorColor,
+                  foregroundColor: AppTheme.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppConstants.borderRadiusS),
                   ),
                 ),
                 onPressed: () => Navigator.pop(c, true),

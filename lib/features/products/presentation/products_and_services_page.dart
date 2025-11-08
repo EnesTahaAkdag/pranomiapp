@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
+import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'package:pranomiapp/core/utils/formatters.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 import 'package:pranomiapp/core/widgets/custom_search_bar.dart';
@@ -147,13 +148,13 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
 
   Widget _buildSearchBar(ProductsAndServicesViewModel viewModel) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppConstants.spacingM),
       child: CustomSearchBar(
         controller: viewModel.searchController,
         hintText: 'Ürün adı ya da stok kodu ara...',
         onClear: () => viewModel.clearSearchAndFetch(),
         onSubmitted: (text) => viewModel.onSearchSubmitted(text),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusXl),
       ),
     );
   }
@@ -165,7 +166,7 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.borderRadiusBottomSheet)),
       ),
       builder:
           (modalContext) => SafeArea(
@@ -269,13 +270,13 @@ class ProductListItem extends StatelessWidget {
     final salePrice = product.price * (1 + product.vatRate / 100);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
       child: Card(
-        elevation: 4,
+        elevation: AppConstants.elevationMedium,
         color: AppTheme.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppConstants.spacingM),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -294,7 +295,7 @@ class ProductListItem extends StatelessWidget {
                           return const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(
-                                Colors.amberAccent,
+                                AppTheme.loadingAccentColor,
                               ),
                             ),
                           );
@@ -308,7 +309,7 @@ class ProductListItem extends StatelessWidget {
                               fit: BoxFit.cover,
                               placeholderBuilder: (context) => const Center(
                                 child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(Colors.amberAccent),
+                                  valueColor: AlwaysStoppedAnimation(AppTheme.loadingAccentColor),
                                 ),
                               ),
                             );
@@ -346,7 +347,7 @@ class ProductListItem extends StatelessWidget {
                           child: Text(
                             product.productName,
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: AppConstants.fontSizeL,
                               fontWeight: FontWeight.bold,
                               color: AppTheme.textBlack87,
                             ),
@@ -360,7 +361,7 @@ class ProductListItem extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppConstants.spacingXs),
                     Text(
                       'Stok Kodu: ${product.stockCode}',
                       style: const TextStyle(color: AppTheme.textBlack54),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/account_models.dart';
 import '../../data/services/account_service.dart';
@@ -107,7 +108,7 @@ class _AccountDepositAndBanksPageState
     );
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.gray100,
       body: SafeArea(
         child: Column(
           children: [

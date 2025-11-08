@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/features/e_invoice/data/services/e_invoice_cancel_service.dart';
 import 'package:pranomiapp/features/e_invoice/data/services/e_invoice_open_as_pdf_service.dart';
 import 'package:pranomiapp/features/e_invoice/data/services/e_invoice_service.dart';
@@ -38,7 +39,7 @@ class EInvoiceViewModel extends ChangeNotifier {
 
   String? _snackBarMessage;
   String? get snackBarMessage => _snackBarMessage;
-  Color _snackBarColor = Colors.green;
+  Color _snackBarColor = AppTheme.successColor;
   Color get snackBarColor => _snackBarColor;
 
   EInvoiceViewModel({required String invoiceType, required String recordType})
@@ -107,7 +108,7 @@ class EInvoiceViewModel extends ChangeNotifier {
       }
     } catch (e) {
       _hasMore = false; // Stop pagination on error
-      _showSnackBar('Veri çekme hatası: \$e', Colors.red);
+      _showSnackBar('Veri çekme hatası: \$e', AppTheme.errorColor);
     } finally {
       _setLoading(false);
     }
@@ -151,11 +152,11 @@ class EInvoiceViewModel extends ChangeNotifier {
       if (response != null && response.success && response.item.isNotEmpty) {
         return response.item; // Return base64 string
       } else {
-        _showSnackBar("PDF alınamadı.", Colors.red);
+        _showSnackBar("PDF alınamadı.", AppTheme.errorColor);
         return null;
       }
     } catch (e) {
-      _showSnackBar('PDF açılırken hata: \$e', Colors.red);
+      _showSnackBar('PDF açılırken hata: \$e', AppTheme.errorColor);
       return null;
     } finally {
       _setActionLoading(false);
@@ -175,15 +176,15 @@ class EInvoiceViewModel extends ChangeNotifier {
       );
 
       if (result != null) { // Assuming result indicates success
-        _showSnackBar('Fatura başarıyla iptal edildi.', Colors.green);
+        _showSnackBar('Fatura başarıyla iptal edildi.', AppTheme.successColor);
         fetchEInvoices(reset: true); // Refresh list
         return true;
       } else {
-        _showSnackBar('Fatura iptal edilemedi.', Colors.red);
+        _showSnackBar('Fatura iptal edilemedi.', AppTheme.errorColor);
         return false;
       }
     } catch (e) {
-      _showSnackBar('Fatura iptal edilirken hata: \$e', Colors.red);
+      _showSnackBar('Fatura iptal edilirken hata: \$e', AppTheme.errorColor);
       return false;
     } finally {
       _setActionLoading(false);

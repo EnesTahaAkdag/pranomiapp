@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_constants.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../data/models/account_models.dart';
 
@@ -27,11 +28,11 @@ class AccountListView extends StatelessWidget {
 
     if (accounts.isEmpty && !isLoading) {
       return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.5,
+        height: MediaQuery.of(context).size.height * AppConstants.screenHeightMultiplierHalf,
         child: Center(
           child: Text(
             'Hiç hesap bulunamadı.',
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(color: AppTheme.gray600),
           ),
         ),
       );
@@ -61,10 +62,10 @@ class AccountListView extends StatelessWidget {
           );
 
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            elevation: 2,
+            margin: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
+            elevation: AppConstants.elevationLow,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
             ),
             child: ListTile(
               title: Text(
@@ -81,26 +82,26 @@ class AccountListView extends StatelessWidget {
                         itemCurrencyFormatter.format(account.balance.abs()),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: AppConstants.fontSizeL,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppConstants.spacingXs),
                       if (account.balance < 0)
                         const Text(
                           "(B)",
                           style: TextStyle(
-                            color: Colors.green,
+                            color: AppTheme.buttonSuccessColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: AppConstants.fontSizeL,
                           ),
                         )
                       else if (account.balance > 0)
                         const Text(
                           "(A)",
                           style: TextStyle(
-                            color: Colors.red,
+                            color: AppTheme.buttonErrorColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: AppConstants.fontSizeL,
                           ),
                         ),
                     ],
@@ -117,7 +118,7 @@ class AccountListView extends StatelessWidget {
         if (isLoading && accounts.isNotEmpty) {
           // Loading indicator at the bottom for pagination
           return const Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(AppConstants.spacingM),
             child: Center(child: AppLoadingIndicator()),
           );
         }

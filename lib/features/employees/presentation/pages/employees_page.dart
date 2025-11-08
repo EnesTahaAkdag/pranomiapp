@@ -152,7 +152,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                         child: Center(
                           child: Text(
                             'Hiç çalışan bulunamadı.',
-                            style: TextStyle(color: Colors.grey[600]),
+                            style: TextStyle(color: AppTheme.gray600),
                           ),
                         ),
                       );
@@ -179,7 +179,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                           ),
                           child: Card(
                             elevation: AppConstants.elevationMedium,
-                            shadowColor: Colors.black12,
+                            shadowColor: AppTheme.shadowColorLight,
                             color: AppTheme.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),

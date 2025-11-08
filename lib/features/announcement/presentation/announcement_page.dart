@@ -100,7 +100,7 @@ class _ErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
+              style: const TextStyle(color: AppTheme.errorColor),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -189,7 +189,7 @@ class _AnnouncementHeader extends StatelessWidget {
           _getIconForType(
             parseAnnouncementType(announcement.announcementType),
           ),
-          color: const Color(0xFFB00034),
+          color: AppTheme.accentColor,
           size: 36,
         ),
       ],

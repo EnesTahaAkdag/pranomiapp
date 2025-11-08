@@ -141,7 +141,7 @@ class _PranomiAppState extends State<PranomiApp> {
               backgroundColor: AppTheme.accentColor,
               action: SnackBarAction(
                 label: 'Tamam',
-                textColor: Colors.white,
+                textColor: AppTheme.white,
                 onPressed: () {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 },

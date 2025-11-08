@@ -152,17 +152,161 @@ class AppTheme {
   /// Gray shade 700
   static const Color gray700 = Color(0xFF616161);
 
+  /// Gray shade 800
+  static const Color gray800 = Color(0xFF424242);
+
   /// Unselected icon/text color - Light gray (#D1D5DB)
   static const Color unselectedColor = Color(0xFFD1D5DB);
 
   /// Deep orange (used for SVG icon tints)
   static const Color deepOrange = Colors.deepOrange;
 
+  /// Orange color for warnings and highlights
+  static const Color orange = Colors.orange;
+
   /// Shadow color for cards and elevated elements
   static const Color shadowColor = Color(0x1F000000);  // Colors.black12
 
+  /// Light shadow color (black12)
+  static const Color shadowColorLight = Color(0x1F000000);  // Colors.black12
+
   /// Primary text color (black87)
   static const Color textPrimary = Color(0xDD000000);  // Colors.black87
+
+  // ============================================================================
+  // CREDIT/BALANCE SPECIFIC COLORS
+  // ============================================================================
+
+  /// Credit balance card background - Blue accent
+  static const Color creditBalanceCardBackground = Color(0xFF448AFF); // Colors.blueAccent
+
+  /// Credit page light background
+  static const Color creditPageBackground = Color(0xFFFAFAFA); // Colors.grey[50]
+
+  /// Transaction positive/income color - Green
+  static const Color transactionIncomeColor = Color(0xFF4CAF50); // Colors.green
+
+  /// Transaction negative/expense color - Red
+  static const Color transactionExpenseColor = Color(0xFFF44336); // Colors.red
+
+  /// Description container background - Light blue
+  static const Color descriptionBackgroundLight = Color(0xFFE3F2FD); // Colors.blue with alpha 0.05
+
+  /// Description border color - Blue
+  static const Color descriptionBorderColor = Color(0xFFBBDEFB); // Colors.blue with alpha 0.1
+
+  /// Description text/icon color - Dark blue
+  static const Color descriptionTextColor = Color(0xFF0D47A1); // Colors.blue[900]
+
+  /// Balance card overlay - Semi-transparent white
+  static Color balanceCardOverlay = Colors.white.withValues(alpha: 0.2);
+
+  /// Empty state icon background
+  static const Color emptyStateIconBackground = Color(0xFFFAFAFA); // Colors.grey[100]
+
+  /// Empty state icon color
+  static const Color emptyStateIconColor = Color(0xFFBDBDBD); // Colors.grey[400]
+
+  /// Empty state title color
+  static const Color emptyStateTitleColor = Color(0xFF424242); // Colors.grey[800]
+
+  /// Empty state subtitle color
+  static const Color emptyStateSubtitleColor = Color(0xFF757575); // Colors.grey[600]
+
+  /// Transaction card background
+  static const Color transactionCardBackground = Colors.white;
+
+  /// Transaction card shadow
+  static Color transactionCardShadow = Colors.black.withValues(alpha: 0.04);
+
+  /// Transaction badge background - Light gray
+  static const Color transactionBadgeBackground = Color(0xFFFAFAFA); // Colors.grey[100]
+
+  /// Transaction badge text color
+  static const Color transactionBadgeTextColor = Color(0xFF616161); // Colors.grey[700]
+
+  /// Transaction time container background
+  static const Color transactionTimeBackground = Color(0xFFFAFAFA); // Colors.grey[50]
+
+  /// Transaction time icon color
+  static const Color transactionTimeIconColor = Color(0xFF757575); // Colors.grey[600]
+
+  /// Transaction time text color
+  static const Color transactionTimeTextColor = Color(0xFF616161); // Colors.grey[700]
+
+  // ============================================================================
+  // BUTTON AND UI ELEMENT COLORS
+  // ============================================================================
+
+  /// Button success/green color (for confirmations, success actions)
+  static const Color buttonSuccessColor = Color(0xFF4CAF50); // Colors.green
+
+  /// Button error/red color (for cancel, delete actions)
+  static const Color buttonErrorColor = Color(0xFFF44336); // Colors.red
+
+  /// Button warning/orange color (for warnings)
+  static const Color buttonWarningColor = Color(0xFFFF9800); // Colors.orange
+
+  /// Accent color for loading indicators
+  static const Color loadingAccentColor = Color(0xFFFFD740); // Colors.amberAccent
+
+  /// Blue color for icons and links
+  static const Color blueAccent = Color(0xFF2196F3); // Colors.blue
+
+  /// Blue shade 700 (darker blue)
+  static const Color blue700 = Color(0xFF1976D2); // Colors.blue[700]
+
+  // ============================================================================
+  // NOTIFICATION TYPE COLORS
+  // ============================================================================
+
+  /// Notification type - Order new (green)
+  static const Color notificationOrderNew = Color(0xFF4CAF50);
+
+  /// Notification type - Invoice/Waybill add (light green)
+  static const Color notificationInvoiceAdd = Color(0xFF66BB6A);
+
+  /// Notification type - Stock change (blue)
+  static const Color notificationStockChange = Color(0xFF2196F3);
+
+  /// Notification type - Invoice/Waybill update (light blue)
+  static const Color notificationInvoiceUpdate = Color(0xFF42A5F5);
+
+  /// Notification type - Product out of stock (orange)
+  static const Color notificationOutOfStock = Color(0xFFFF9800);
+
+  /// Notification type - Claim new (light orange)
+  static const Color notificationClaimNew = Color(0xFFFFB74D);
+
+  /// Notification type - Invoice/Waybill cancelled (orange)
+  static const Color notificationInvoiceCancelled = Color(0xFFFF9800);
+
+  /// Notification type - E-Archive invoice cancel (coral orange)
+  static const Color notificationEArchiveCancel = Color(0xFFFF8A65);
+
+  /// Notification type - Order cancelled (red)
+  static const Color notificationOrderCancelled = Color(0xFFF44336);
+
+  /// Notification type - Invoice/Waybill delete (dark red)
+  static const Color notificationInvoiceDelete = Color(0xFFE53935);
+
+  /// Notification type - Invoice/Waybill error (darker red)
+  static const Color notificationInvoiceError = Color(0xFFD32F2F);
+
+  /// Notification type - E-Document error (darkest red)
+  static const Color notificationEDocumentError = Color(0xFFC62828);
+
+  /// Notification type - Transaction delete (grey)
+  static const Color notificationTransactionDelete = Color(0xFF757575);
+
+  /// Notification type - Default/Other (grey-blue)
+  static const Color notificationDefault = Color(0xFF607D8B);
+
+  /// Notification info chip - Date color (blue)
+  static const Color notificationDateColor = Colors.blue;
+
+  /// Notification info chip - Reference color (dark green)
+  static const Color notificationReferenceColor = Color(0xFF164129);
 
   // ============================================================================
   // OPACITY HELPERS

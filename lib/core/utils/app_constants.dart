@@ -158,6 +158,33 @@ class AppConstants {
   /// Extra extra large font size (headlines)
   static const double fontSizeXxl = 20.0;
 
+  /// Balance title font size (24px) - For "Mevcut Bakiye" and similar headers
+  static const double fontSizeBalanceTitle = 24.0;
+
+  /// Balance amount font size (32px) - For large monetary values
+  static const double fontSizeBalanceAmount = 32.0;
+
+  /// Transaction count font size (13px) - For small labels like "X işlem"
+  static const double fontSizeTransactionCount = 13.0;
+
+  /// Transaction type font size (15px) - For transaction type descriptions
+  static const double fontSizeTransactionType = 15.0;
+
+  /// Transaction amount font size (18px) - For transaction monetary values
+  static const double fontSizeTransactionAmount = 18.0;
+
+  /// Transaction badge font size (12px) - For small badges and labels
+  static const double fontSizeTransactionBadge = 12.0;
+
+  /// Font size 17px - For button labels and medium headings
+  static const double fontSize17 = 17.0;
+
+  /// Font size 19px - For medium large headings
+  static const double fontSize19 = 19.0;
+
+  /// Font size 22px - For large headings
+  static const double fontSize22 = 22.0;
+
   // ============================================================================
   // PAGINATION CONSTANTS
   // ============================================================================

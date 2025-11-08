@@ -3,6 +3,7 @@ import 'package:pranomiapp/features/products/data/product_service.dart';
 import 'package:pranomiapp/features/products/data/product_stock_update_service.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/theme/app_theme.dart';
 import '../domain/product_model.dart';
 import '../domain/product_stock_update_model.dart';
 
@@ -37,7 +38,7 @@ class ProductsAndServicesViewModel extends ChangeNotifier {
   String? _snackBarMessage;
 
   String? get snackBarMessage => _snackBarMessage;
-  Color _snackBarColor = Colors.green;
+  Color _snackBarColor = AppTheme.successColor;
 
   Color get snackBarColor => _snackBarColor;
 
@@ -92,7 +93,7 @@ class ProductsAndServicesViewModel extends ChangeNotifier {
       }
     } catch (e) {
       _hasMore = false;
-      _showSnackBar('Veri çekme hatası: $e', Colors.red);
+      _showSnackBar('Veri çekme hatası: $e', AppTheme.errorColor);
     } finally {
       _setLoading(false);
     }
@@ -134,13 +135,13 @@ class ProductsAndServicesViewModel extends ChangeNotifier {
       );
 
       if (result != null) {
-        _showSnackBar('Stok güncellendi.', Colors.green);
+        _showSnackBar('Stok güncellendi.', AppTheme.successColor);
         fetchProducts(reset: true);
       } else {
-        _showSnackBar('Stok güncelleme başarısız.', Colors.red);
+        _showSnackBar('Stok güncelleme başarısız.', AppTheme.errorColor);
       }
     } catch (e) {
-      _showSnackBar('Stok güncellenirken hata oluştu: $e', Colors.red);
+      _showSnackBar('Stok güncellenirken hata oluştu: $e', AppTheme.errorColor);
     } finally {
       _setUpdating(false);
     }

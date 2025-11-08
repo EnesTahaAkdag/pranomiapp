@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/invoice_claim_model.dart';
@@ -84,7 +85,7 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
         }
       });
     } catch (e) {
-      _showSnackBar('Veri çekme hatası: $e', Colors.red);
+      _showSnackBar('Veri çekme hatası: $e', AppTheme.errorColor);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -99,7 +100,7 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.gray100,
       body: SafeArea(
         child: Column(
           children: [
@@ -135,7 +136,7 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
                         child: Center(
                           child: Text(
                             'Hiç fatura bulunamadı.',
-                            style: TextStyle(color: Colors.grey[600]),
+                            style: TextStyle(color: AppTheme.gray600),
                           ),
                         ),
                       );
@@ -171,7 +172,7 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         elevation: 4,
-        color: Colors.white,
+        color: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(16),

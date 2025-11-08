@@ -187,7 +187,7 @@ class AccountListView extends StatelessWidget {
               child: Center(
                 child: Text(
                   'Hiç müşteri bulunamadı.',
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: AppTheme.gray600),
                 ),
               ),
             );
@@ -234,7 +234,7 @@ class CustomerListItem extends StatelessWidget {
         ),
         child: Card(
           elevation: AppConstants.elevationMedium,
-          shadowColor: Colors.black12,
+          shadowColor: AppTheme.shadowColor,
           color: AppTheme.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),

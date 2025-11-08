@@ -321,7 +321,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           counterText: '',
         ),
         keyboardType: inputType,
@@ -344,7 +344,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
       value: value,
       onChanged: onChanged,
-      activeColor: const Color(0xFFB00034),
+      activeColor: AppTheme.accentColor,
     );
   }
 
@@ -355,7 +355,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         labelText: 'Ülke *',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _countries,
@@ -381,7 +381,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         labelText: 'Şehir',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _cities,
@@ -404,7 +404,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         labelText: 'İlçe',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -427,7 +427,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           hintText: 'Şehir giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -449,7 +449,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           hintText: 'İlçe giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -475,7 +475,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
               : const Icon(Icons.save),
       label: Text(_submitSuccess ? 'Kaydedildi' : 'Kaydet'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFB00034),
+        backgroundColor: AppTheme.accentColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
         textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),

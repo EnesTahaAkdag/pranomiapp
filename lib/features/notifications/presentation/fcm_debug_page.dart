@@ -180,8 +180,8 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
                               ? '✅ Yes'
                               : '❌ No',
                           _notificationsEnabled == true
-                              ? Colors.green
-                              : Colors.red,
+                              ? AppTheme.successColor
+                              : AppTheme.errorColor,
                         ),
                         if (_notificationSettings != null) ...[
                           _buildInfoRow(
@@ -189,8 +189,8 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
                             _notificationSettings!.authorizationStatus.name,
                             _notificationSettings!.authorizationStatus ==
                                     AuthorizationStatus.authorized
-                                ? Colors.green
-                                : Colors.orange,
+                                ? AppTheme.successColor
+                                : AppTheme.orange,
                           ),
                           _buildInfoRow(
                             'Alert',
@@ -218,7 +218,7 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
                       _lastMessage.isEmpty ? 'No messages yet' : _lastMessage,
                       style: TextStyle(
                         color: _lastMessage.isEmpty
-                            ? Colors.grey
+                            ? AppTheme.gray500
                             : AppTheme.primaryColor,
                       ),
                     ),
@@ -235,7 +235,7 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
                           label: const Text('Send Test Local Notification'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.accentColor,
-                            foregroundColor: Colors.white,
+                            foregroundColor: AppTheme.white,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -245,7 +245,7 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
                           label: const Text('Request Permissions Again'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.primaryColor,
-                            foregroundColor: Colors.white,
+                            foregroundColor: AppTheme.white,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -339,7 +339,7 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb_outline, size: 20, color: Colors.orange),
+          const Icon(Icons.lightbulb_outline, size: 20, color: AppTheme.orange),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -351,7 +351,7 @@ class _FcmDebugPageState extends State<FcmDebugPage> {
                 ),
                 Text(
                   description,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 12, color: AppTheme.gray500),
                 ),
               ],
             ),

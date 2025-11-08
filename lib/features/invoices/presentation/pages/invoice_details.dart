@@ -35,7 +35,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(Icons.label_outline, size: 18, color: Colors.grey.shade600),
+          Icon(Icons.label_outline, size: 18, color: AppTheme.gray600),
           const SizedBox(width: 8),
           Expanded(
             child: Text.rich(
@@ -73,7 +73,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     );
 
     return Card(
-      color: Colors.white,
+      color: AppTheme.white,
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -104,7 +104,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.green,
+                color: AppTheme.successColor,
               ),
             ),
           ],
@@ -122,7 +122,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
 
     return ExpansionPanelRadio(
       value: index,
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.white,
       canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
         return Padding(
@@ -146,7 +146,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: Colors.green,
+                      color: AppTheme.successColor,
                     ),
                   ),
                   Text(
@@ -204,7 +204,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
               padding: const EdgeInsets.all(32),
               child: Text(
                 'Yükleme hatası: ${snapshot.error}',
-                style: const TextStyle(color: Colors.red),
+                style: const TextStyle(color: AppTheme.errorColor),
               ),
             );
           }

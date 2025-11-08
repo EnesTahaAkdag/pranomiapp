@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 
 import '../di/injection.dart';
+import '../theme/app_theme.dart';
+import '../utils/app_constants.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -29,9 +31,9 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.logout),
             label: const Text("Çıkış Yap"),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              backgroundColor: AppTheme.buttonErrorColor,
+              foregroundColor: AppTheme.white,
+              padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingL, vertical: AppConstants.spacingM),
             ),
           ),
         ],

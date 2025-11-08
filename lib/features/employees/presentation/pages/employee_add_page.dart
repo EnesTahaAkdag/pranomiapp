@@ -99,7 +99,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cari Hesap Eklenemedi.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     }
@@ -109,17 +109,17 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         body: Center(child: AppLoadingIndicator()),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.gray100,
       appBar: AppBar(
         title: const Text('Yeni Çalışan Ekle'),
         centerTitle: true,
-        backgroundColor: const Color(0xFF2C2C2C),
+        backgroundColor: AppTheme.mediumGrayBackground,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -210,7 +210,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -237,7 +237,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
               : const Icon(Icons.save),
       label: const Text('Kaydet'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFB00034),
+        backgroundColor: AppTheme.accentColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
         textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
@@ -252,7 +252,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
         labelText: 'Ülke *',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _countries,
@@ -278,7 +278,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
         labelText: 'Şehir',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _cities,
@@ -301,7 +301,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
         labelText: 'İlçe',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppTheme.white,
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -324,7 +324,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
           hintText: 'Şehir giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -346,7 +346,7 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
           hintText: 'İlçe giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,

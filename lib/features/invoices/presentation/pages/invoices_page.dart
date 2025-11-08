@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -107,7 +106,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
         }
       });
     } catch (e) {
-      _showSnackBar('Veri çekme hatası: $e', Colors.red);
+      _showSnackBar('Veri çekme hatası: $e', AppTheme.buttonErrorColor);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -152,7 +151,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                         height:
                             MediaQuery.of(context).size.height *
                             AppConstants.screenHeightMultiplierHalf,
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             'Hiç fatura bulunamadı.',
                             style: TextStyle(color: AppTheme.gray600),
@@ -333,11 +332,11 @@ class _InvoicesPageState extends State<InvoicesPage> {
         result != null
             ? 'Fatura başarıyla iptal edildi.'
             : 'Fatura iptal edilemedi.',
-        result != null ? Colors.green : Colors.red,
+        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
       if (result != null) _fetchInvoices(reset: true);
     } catch (e) {
-      _showSnackBar('Hata oluştu: $e', Colors.red);
+      _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
     }
   }
 
@@ -359,11 +358,11 @@ class _InvoicesPageState extends State<InvoicesPage> {
         result != null
             ? 'Fatura iptali geri alındı.'
             : 'Fatura iptali geri alınamadı.',
-        result != null ? Colors.green : Colors.red,
+        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
       if (result != null) _fetchInvoices(reset: true);
     } catch (e) {
-      _showSnackBar('Hata oluştu: $e', Colors.red);
+      _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
     }
   }
 
@@ -442,7 +441,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 onPressed: () async {
                   final email = emailController.text.trim();
                   if (email.isEmpty) {
-                    _showSnackBar('Lütfen e-posta girin.', Colors.red);
+                    _showSnackBar('Lütfen e-posta girin.', AppTheme.buttonErrorColor);
                     return;
                   }
                   Navigator.pop(c);
@@ -461,19 +460,19 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
                     if (response != null) {
                       for (final msg in response.successMessages) {
-                        _showSnackBar(msg, Colors.green);
+                        _showSnackBar(msg, AppTheme.buttonSuccessColor);
                       }
                       for (final msg in response.warningMessages) {
-                        _showSnackBar(msg, Colors.orange);
+                        _showSnackBar(msg, AppTheme.buttonWarningColor);
                       }
                       for (final msg in response.errorMessages) {
-                        _showSnackBar(msg, Colors.red);
+                        _showSnackBar(msg, AppTheme.buttonErrorColor);
                       }
                     } else {
-                      _showSnackBar('E-Fatura gönderilemedi.', Colors.red);
+                      _showSnackBar('E-Fatura gönderilemedi.', AppTheme.buttonErrorColor);
                     }
                   } catch (e) {
-                    _showSnackBar('Gönderim hatası: $e', Colors.red);
+                    _showSnackBar('Gönderim hatası: $e', AppTheme.buttonErrorColor);
                   }
                 },
                 child: const Text('Gönder'),

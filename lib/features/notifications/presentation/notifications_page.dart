@@ -227,7 +227,7 @@ class _ErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
+              style: const TextStyle(color: AppTheme.errorColor, fontSize: 16),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -300,7 +300,7 @@ class _NotificationListItem extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.white,
+              AppTheme.white,
               accentColor.withValues(alpha: 0.30),
             ],
           ),
@@ -328,11 +328,11 @@ class _NotificationListItem extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppTheme.white,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: AppTheme.blackOverlay10,
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -345,7 +345,7 @@ class _NotificationListItem extends StatelessWidget {
                     child: Text(
                       getNotificationNameFromType(notificationType),
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppTheme.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
@@ -370,7 +370,7 @@ class _NotificationListItem extends StatelessWidget {
                           icon: Icons.calendar_today_rounded,
                           label: 'Tarih',
                           value: dateFormatter.format(notification.notificationDate),
-                          color: Colors.blue,
+                          color: AppTheme.notificationDateColor,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -379,7 +379,7 @@ class _NotificationListItem extends StatelessWidget {
                           icon: Icons.tag_rounded,
                           label: 'Ref No',
                           value: notification.referenceNumber,
-                          color: const Color(0xFF164129),
+                          color: AppTheme.notificationReferenceColor,
                         ),
                       ),
                     ],
@@ -430,7 +430,7 @@ class _NotificationListItem extends StatelessWidget {
                               fontSize: FontSize(14),
                               maxLines: 3,
                               textOverflow: TextOverflow.ellipsis,
-                              color: Colors.grey[800],
+                              color: AppTheme.gray800,
                             ),
                             "i": Style(
                               color: accentColor,
@@ -490,7 +490,7 @@ class _NotificationListItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              color: AppTheme.gray800,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -504,42 +504,42 @@ class _NotificationListItem extends StatelessWidget {
     switch (notificationType) {
     // Yeşil tonları - Olumlu durumlar
       case NotificationListTypeEnum.OrderNew:
-        return const Color(0xFF4CAF50); // Yeşil - Yeni sipariş
+        return AppTheme.notificationOrderNew;
       case NotificationListTypeEnum.OrderInvoiceOrWaybillAdd:
-        return const Color(0xFF66BB6A); // Açık yeşil - Fatura/İrsaliye eklendi
+        return AppTheme.notificationInvoiceAdd;
 
     // Mavi tonları - Bilgilendirme ve güncellemeler
       case NotificationListTypeEnum.StockChange:
-        return const Color(0xFF2196F3); // Mavi - Stok değişimi
+        return AppTheme.notificationStockChange;
       case NotificationListTypeEnum.OrderInvoiceOrWaybillUpdate:
-        return const Color(0xFF42A5F5); // Açık mavi - Fatura/İrsaliye güncellendi
+        return AppTheme.notificationInvoiceUpdate;
 
     // Turuncu tonları - Uyarı ve dikkat
       case NotificationListTypeEnum.ProductOutOfStock:
-        return const Color(0xFFFF9800); // Turuncu - Stok tükendi
+        return AppTheme.notificationOutOfStock;
       case NotificationListTypeEnum.ClaimNew:
-        return const Color(0xFFFFB74D); // Açık turuncu - Yeni talep
+        return AppTheme.notificationClaimNew;
       case NotificationListTypeEnum.OrderInvoiceOrWaybillCancelled:
-        return const Color(0xFFFF9800); // Turuncu - Fatura/İrsaliye iptal
+        return AppTheme.notificationInvoiceCancelled;
       case NotificationListTypeEnum.EArchiceInvoiceCancel:
-        return const Color(0xFFFF8A65); // Mercan turuncu - E-Arşiv iptal
+        return AppTheme.notificationEArchiveCancel;
 
     // Kırmızı tonları - Hata ve iptal durumları
       case NotificationListTypeEnum.OrderCancelled:
-        return const Color(0xFFF44336); // Kırmızı - Sipariş iptal
+        return AppTheme.notificationOrderCancelled;
       case NotificationListTypeEnum.OrderInvoiceOrWaybillDelete:
-        return const Color(0xFFE53935); // Koyu kırmızı - Fatura/İrsaliye silindi
+        return AppTheme.notificationInvoiceDelete;
       case NotificationListTypeEnum.OrderInvoiceOrWaybillError:
-        return const Color(0xFFD32F2F); // Daha koyu kırmızı - Fatura/İrsaliye hata
+        return AppTheme.notificationInvoiceError;
       case NotificationListTypeEnum.EDocumentError:
-        return const Color(0xFFC62828); // Çok koyu kırmızı - E-Belge hatası
+        return AppTheme.notificationEDocumentError;
 
     // Gri tonları - Silme ve nötr durumlar
       case NotificationListTypeEnum.TransactionDelete:
-        return const Color(0xFF757575); // Gri - İşlem silme
+        return AppTheme.notificationTransactionDelete;
 
       default:
-        return const Color(0xFF607D8B); // Gri-Mavi - Diğer durumlar
+        return AppTheme.notificationDefault;
     }
   }
 }

@@ -99,7 +99,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cari Hesap Eklenemedi.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     }

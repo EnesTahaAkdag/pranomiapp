@@ -58,7 +58,7 @@ class _CreditViewState extends State<_CreditView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.creditPageBackground,
       body: Consumer<CreditViewModel>(
         builder: (context, viewModel, child) {
           return _buildBody(context, viewModel);
@@ -129,16 +129,16 @@ class _CreditViewState extends State<_CreditView> {
             : 0.0;
 
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(AppConstants.spacingM),
+      padding: const EdgeInsets.all(AppConstants.spacingL),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.blueAccent,
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
+        color: AppTheme.creditBalanceCardBackground,
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            blurRadius: AppConstants.spacing20,
+            offset: const Offset(0, AppConstants.spacing10),
           ),
         ],
       ),
@@ -148,40 +148,46 @@ class _CreditViewState extends State<_CreditView> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(AppConstants.spacing10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppTheme.balanceCardOverlay,
+                  borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
                 ),
                 child: const Icon(
                   Icons.account_balance_wallet_rounded,
-                  color: Colors.white,
-                  size: 24,
+                  color: AppTheme.white,
+                  size: AppConstants.iconSizeM,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppConstants.spacing12),
               const Text(
                 'Mevcut Bakiye',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+                  color: AppTheme.white,
+                  fontSize: AppConstants.fontSizeBalanceTitle,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppConstants.spacingM),
           _AnimatedBalanceCounter(balance: currentBalance),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppConstants.spacingS),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.spacing12,
+              vertical: AppConstants.spacing6,
+            ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
+              color: AppTheme.balanceCardOverlay,
+              borderRadius: BorderRadius.circular(AppConstants.spacing20),
             ),
             child: Text(
               '${transactions.length} işlem',
-              style: const TextStyle(color: Colors.white, fontSize: 13),
+              style: const TextStyle(
+                color: AppTheme.white,
+                fontSize: AppConstants.fontSizeTransactionCount,
+              ),
             ),
           ),
         ],
@@ -262,40 +268,43 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppConstants.spacingXl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(AppConstants.spacingL),
+              decoration: const BoxDecoration(
                 color: AppTheme.errorLightBackground,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.error_outline_rounded,
                 color: AppTheme.errorColor,
-                size: 48,
+                size: AppConstants.iconSizeXxl,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppConstants.spacingL),
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style: const TextStyle(
+                fontSize: AppConstants.fontSizeL,
+                color: AppTheme.textBlack87,
+              ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppConstants.spacingXl),
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
               label: const Text("Tekrar Dene"),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
+                  horizontal: AppConstants.spacingXl,
+                  vertical: AppConstants.spacingM,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
                 ),
               ),
             ),
@@ -315,48 +324,51 @@ class _EmptyView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppConstants.spacingXl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
+              padding: const EdgeInsets.all(AppConstants.spacingL),
+              decoration: const BoxDecoration(
+                color: AppTheme.emptyStateIconBackground,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.receipt_long_rounded,
-                color: Colors.grey[400],
-                size: 64,
+                color: AppTheme.emptyStateIconColor,
+                size: AppConstants.iconSize80 - AppConstants.spacingM,
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
+            const SizedBox(height: AppConstants.spacingL),
+            const Text(
               'Henüz işlem yok',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: AppConstants.fontSizeXxl,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+                color: AppTheme.emptyStateTitleColor,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
+            const SizedBox(height: AppConstants.spacingS),
+            const Text(
               'Kredi hareketi bulunmamaktadır',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: AppConstants.fontSizeM,
+                color: AppTheme.emptyStateSubtitleColor,
+              ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppConstants.spacingXl),
             OutlinedButton.icon(
               onPressed: onRefresh,
               icon: const Icon(Icons.refresh_rounded),
               label: const Text("Yenile"),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
+                  horizontal: AppConstants.spacingXl,
+                  vertical: AppConstants.spacingM,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
                 ),
               ),
             ),
@@ -384,51 +396,53 @@ class _TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPositive = transaction.transactionAmount >= 0;
-    final transactionColor = isPositive ? Colors.green : Colors.red;
+    final transactionColor = isPositive
+        ? AppTheme.transactionIncomeColor
+        : AppTheme.transactionExpenseColor;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: AppTheme.transactionCardBackground,
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: AppTheme.transactionCardShadow,
+            blurRadius: AppConstants.spacing10,
+            offset: const Offset(0, AppConstants.elevationLow),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
         child: Container(
           decoration: BoxDecoration(
             border: Border(
               left: BorderSide(
                 color: transactionColor.withValues(alpha: 0.6),
-                width: 4,
+                width: AppConstants.spacingXs,
               ),
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppConstants.spacingM),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(AppConstants.spacing10),
                       decoration: BoxDecoration(
                         color: transactionColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
                       ),
                       child: Icon(
                         _getTransactionIcon(transaction.transactionType),
                         color: transactionColor,
-                        size: 24,
+                        size: AppConstants.iconSizeM,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppConstants.spacing12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,17 +452,17 @@ class _TransactionCard extends StatelessWidget {
                               transaction.transactionType,
                             ),
                             style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: AppConstants.fontSizeTransactionType,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: AppTheme.textBlack87,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppConstants.spacingXs),
                           Text(
                             transaction.referenceNumber,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[600],
+                            style: const TextStyle(
+                              fontSize: AppConstants.fontSizeTransactionCount,
+                              color: AppTheme.gray600,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -461,28 +475,28 @@ class _TransactionCard extends StatelessWidget {
                         Text(
                           '${isPositive ? '+' : ''}${_currencyFormatter.format(transaction.transactionAmount)}',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: AppConstants.fontSizeTransactionAmount,
                             fontWeight: FontWeight.bold,
                             color: transactionColor,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppConstants.spacingXs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                            horizontal: AppConstants.spacingS,
+                            vertical: AppConstants.spacingXs,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(6),
+                            color: AppTheme.transactionBadgeBackground,
+                            borderRadius: BorderRadius.circular(AppConstants.spacing6),
                           ),
                           child: Text(
                             _currencyFormatter.format(
                               transaction.totalTransactionAmount,
                             ),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[700],
+                            style: const TextStyle(
+                              fontSize: AppConstants.fontSizeTransactionBadge,
+                              color: AppTheme.transactionBadgeTextColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -491,57 +505,60 @@ class _TransactionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppConstants.spacing12),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(AppConstants.spacing12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppTheme.transactionTimeBackground,
+                    borderRadius: BorderRadius.circular(AppConstants.spacing10),
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.access_time_rounded,
-                        size: 16,
-                        color: Colors.grey[600],
+                        size: AppConstants.iconSizeS,
+                        color: AppTheme.transactionTimeIconColor,
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: AppConstants.spacing6),
                       Text(
                         _dateFormatter.format(transaction.transactionDate),
-                        style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                        style: const TextStyle(
+                          fontSize: AppConstants.fontSizeTransactionCount,
+                          color: AppTheme.transactionTimeTextColor,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 if (transaction.description != null &&
                     transaction.description!.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppConstants.spacing12),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AppConstants.spacing12),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppTheme.descriptionBackgroundLight,
+                      borderRadius: BorderRadius.circular(AppConstants.spacing10),
                       border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.1),
+                        color: AppTheme.descriptionBorderColor,
                         width: 1,
                       ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.info_outline_rounded,
-                          size: 16,
-                          color: Colors.blue[700],
+                          size: AppConstants.iconSizeS,
+                          color: AppTheme.descriptionTextColor,
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppConstants.spacingS),
                         Expanded(
                           child: Text(
                             transaction.description!,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.blue[900],
+                            style: const TextStyle(
+                              fontSize: AppConstants.fontSizeTransactionCount,
+                              color: AppTheme.descriptionTextColor,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -565,16 +582,19 @@ class _LoadingMoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: AppConstants.spacing20),
       child: Center(
         child: Column(
           children: [
-            const AppLoadingIndicator(),
-            const SizedBox(height: 8),
+            AppLoadingIndicator(),
+            SizedBox(height: AppConstants.spacingS),
             Text(
               'Yükleniyor...',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: AppConstants.fontSizeS,
+                color: AppTheme.gray600,
+              ),
             ),
           ],
         ),
@@ -649,8 +669,8 @@ class _AnimatedBalanceCounterState extends State<_AnimatedBalanceCounter>
         return Text(
           _currencyFormatter.format(_animation.value),
           style: const TextStyle(
-            color: Colors.white,
-            fontSize: 32,
+            color: AppTheme.white,
+            fontSize: AppConstants.fontSizeBalanceAmount,
             fontWeight: FontWeight.bold,
           ),
         );

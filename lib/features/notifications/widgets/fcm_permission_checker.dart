@@ -71,8 +71,8 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
           SnackBar(
             content: Text('Permission: ${settings.authorizationStatus.name}'),
             backgroundColor: settings.authorizationStatus == AuthorizationStatus.authorized
-                ? Colors.green
-                : Colors.orange,
+                ? AppTheme.successColor
+                : AppTheme.orange,
           ),
         );
 
@@ -81,7 +81,7 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
         );
         setState(() => _isLoading = false);
       }
@@ -141,7 +141,7 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black12,
+                      color: AppTheme.shadowColorLight,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -161,7 +161,7 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
                       label: const Text('Request Permission'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.accentColor,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppTheme.white,
                       ),
                     ),
                   ),

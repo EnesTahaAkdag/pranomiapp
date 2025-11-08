@@ -271,7 +271,7 @@ class _LoginViewState extends State<_LoginView> {
           isPassword ? controller : ValueNotifier(controller.value),
       builder: (context, value, child) {
         return TextField(
-          cursorColor: Colors.orange,
+          cursorColor: AppTheme.orange,
           controller: controller,
           obscureText: isPassword ? !_isPasswordVisible : false,
           style: const TextStyle(color: AppTheme.white),
