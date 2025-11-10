@@ -108,7 +108,7 @@ class _AccountDepositAndBanksPageState
     );
 
     return Scaffold(
-      backgroundColor: AppTheme.gray100,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [

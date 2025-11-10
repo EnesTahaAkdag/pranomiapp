@@ -30,11 +30,12 @@ class TwoFactorAuthPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Wrap with ChangeNotifierProvider to provide ViewModel
     return ChangeNotifierProvider(
-      create: (_) => TwoFactorAuthViewModel(
-        phoneNumber: phoneNumber,
-        userId: userId,
-        gsmNumber: gsmNumber,
-      ),
+      create:
+          (_) => TwoFactorAuthViewModel(
+            phoneNumber: phoneNumber,
+            userId: userId,
+            gsmNumber: gsmNumber,
+          ),
       child: const _TwoFactorAuthContent(),
     );
   }
@@ -121,6 +122,7 @@ class _TwoFactorAuthContentState extends State<_TwoFactorAuthContent> {
       backgroundColor: AppTheme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
+        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
         title: const Text(
           'İki Faktörlü Doğrulama',
           style: TextStyle(color: AppTheme.textWhite),
@@ -170,10 +172,7 @@ class _TwoFactorAuthContentState extends State<_TwoFactorAuthContent> {
                 // Description
                 const Text(
                   'Authenticator uygulamasından gelen kodunuzu giriniz',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppTheme.black,
-                  ),
+                  style: TextStyle(fontSize: 16, color: AppTheme.black),
                   textAlign: TextAlign.center,
                 ),
 
@@ -394,20 +393,21 @@ class _TwoFactorAuthContentState extends State<_TwoFactorAuthContent> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 2,
         ),
-        child: viewModel.isVerifying
-            ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: AppLoadingIndicator(size: 24),
-              )
-            : Text(
-                'Onayla',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isEnabled ? AppTheme.textWhite : AppTheme.textGray,
+        child:
+            viewModel.isVerifying
+                ? const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: AppLoadingIndicator(size: 24),
+                )
+                : Text(
+                  'Onayla',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isEnabled ? AppTheme.textWhite : AppTheme.textGray,
+                  ),
                 ),
-              ),
       ),
     );
   }

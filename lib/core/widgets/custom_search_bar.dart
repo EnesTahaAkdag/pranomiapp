@@ -8,7 +8,6 @@ class CustomSearchBar extends StatelessWidget {
   final VoidCallback? onClear;
   final ValueChanged<String>? onSubmitted;
   final ValueChanged<String>? onChanged;
-  final Color backgroundColor;
   final IconData prefixIcon;
   final BorderRadius borderRadius;
 
@@ -19,7 +18,6 @@ class CustomSearchBar extends StatelessWidget {
     this.onClear,
     this.onSubmitted,
     this.onChanged,
-    this.backgroundColor = AppTheme.white,
     this.prefixIcon = Icons.search,
     this.borderRadius = const BorderRadius.all(Radius.circular(AppConstants.borderRadiusBottomSheet)),
   }) : super(key: key);
@@ -31,7 +29,6 @@ class CustomSearchBar extends StatelessWidget {
       style: const TextStyle(color: AppTheme.textMedium2),
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppTheme.white,
         prefixIcon: Icon(prefixIcon, color: AppTheme.searchIconColor),
         hintText: hintText,
         hintStyle: const TextStyle(color: AppTheme.textGrayLight),

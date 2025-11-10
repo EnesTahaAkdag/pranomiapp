@@ -118,6 +118,8 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
       backgroundColor: AppTheme.gray100,
       appBar: AppBar(
         title: const Text('Yeni Çalışan Ekle'),
+        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
+
         centerTitle: true,
         backgroundColor: AppTheme.mediumGrayBackground,
         elevation: 0,

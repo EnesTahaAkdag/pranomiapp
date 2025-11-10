@@ -103,6 +103,7 @@ class _AppLayoutState extends State<AppLayout> {
       appBar: widget.showAppBar
           ? AppBar(
         title: Text(widget.title),
+        scrolledUnderElevation: 0.0,
         backgroundColor: const Color(0XFF2A2A2A),
         leading: Builder(
           builder: (ctx) => IconButton(

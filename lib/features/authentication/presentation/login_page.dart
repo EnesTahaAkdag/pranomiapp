@@ -154,7 +154,7 @@ class _LoginViewState extends State<_LoginView> {
                         ),
                       ],
                     ),
-                    child: const Column(
+                    child:  const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(

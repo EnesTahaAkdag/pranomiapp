@@ -81,7 +81,7 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
         }
 
         return Scaffold(
-          backgroundColor: AppTheme.gray100,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SafeArea(
             child: Stack(
               children: [
@@ -93,10 +93,12 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
                         onRefresh: () => viewModel.fetchProducts(reset: true),
                         child:
                             viewModel.products.isEmpty && !viewModel.isLoading
-                                ? const Center(
+                                ? Center(
                                   child: Text(
                                     'Hiç ürün bulunamadı.',
-                                    style: TextStyle(color: AppTheme.gray600),
+                                    style: TextStyle(
+                                      color: AppTheme.getTextSecondary(context),
+                                    ),
                                   ),
                                 )
                                 : ListView.builder(
@@ -166,7 +168,9 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.borderRadiusBottomSheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppConstants.borderRadiusBottomSheet),
+        ),
       ),
       builder:
           (modalContext) => SafeArea(
@@ -213,7 +217,7 @@ class _ProductsAndServicesViewState extends State<_ProductsAndServicesView> {
                     labelText: 'Yeni Stok Miktarı',
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 TextField(
                   controller: commentController,
                   decoration: const InputDecoration(
@@ -270,11 +274,16 @@ class ProductListItem extends StatelessWidget {
     final salePrice = product.price * (1 + product.vatRate / 100);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.spacingM,
+        vertical: AppConstants.spacingS,
+      ),
       child: Card(
         elevation: AppConstants.elevationMedium,
-        color: AppTheme.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+        color: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(AppConstants.spacingM),
           child: Row(
@@ -288,44 +297,46 @@ class ProductListItem extends StatelessWidget {
                   child:
                       (product.imageUrl != null && product.imageUrl.isNotEmpty)
                           ? CachedNetworkImage(
-                        imageUrl: product.imageUrl,
-                        fit: BoxFit.cover,
-
-                        placeholder: (context, url) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation(
-                                AppTheme.loadingAccentColor,
-                              ),
-                            ),
-                          );
-                        },
-
-                        errorWidget: (context, imageUrl, error) {
-                          // URL .svg ile bitiyorsa SVG olarak göster
-                          if (imageUrl.toLowerCase().endsWith('.svg')) {
-                            return SvgPicture.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              placeholderBuilder: (context) => const Center(
+                            imageUrl: product.imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) {
+                              return const Center(
                                 child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(AppTheme.loadingAccentColor),
+                                  valueColor: AlwaysStoppedAnimation(
+                                    AppTheme.loadingAccentColor,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }
+                              );
+                            },
 
-                          // SVG değilse broken image icon göster
-                          return Container(
-                            color: AppTheme.gray200,
-                            child: const Icon(
-                              Icons.broken_image_outlined,
-                              size: 40,
-                              color: AppTheme.gray600,
-                            ),
-                          );
-                        },
-                      )
+                            errorWidget: (context, imageUrl, error) {
+                              // URL .svg ile bitiyorsa SVG olarak göster
+                              if (imageUrl.toLowerCase().endsWith('.svg')) {
+                                return SvgPicture.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  placeholderBuilder:
+                                      (context) => const Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation(
+                                            AppTheme.loadingAccentColor,
+                                          ),
+                                        ),
+                                      ),
+                                );
+                              }
+
+                              // SVG değilse broken image icon göster
+                              return Container(
+                                color: AppTheme.gray200,
+                                child: const Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 40,
+                                  color: AppTheme.gray600,
+                                ),
+                              );
+                            },
+                          )
                           : Container(
                             color: AppTheme.gray200,
                             child: const Icon(
@@ -349,7 +360,6 @@ class ProductListItem extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: AppConstants.fontSizeL,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textBlack87,
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
@@ -362,28 +372,15 @@ class ProductListItem extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: AppConstants.spacingXs),
-                    Text(
-                      'Stok Kodu: ${product.stockCode}',
-                      style: const TextStyle(color: AppTheme.textBlack54),
-                    ),
-                    Text(
-                      'Stok: ${product.stockAmount}',
-                      style: const TextStyle(color: AppTheme.textBlack87),
-                    ),
+                    Text('Stok Kodu: ${product.stockCode}'),
+                    Text('Stok: ${product.stockAmount}'),
                     const SizedBox(height: 4),
                     Text(
                       'Birim Fiyat: ${AppFormatters.formatCurrency(product.price)}₺',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textBlack87,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     Text(
                       'Satış Fiyatı: ${AppFormatters.formatCurrency(salePrice)}₺',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.textBlack87,
-                      ),
                     ),
                   ],
                 ),

@@ -192,7 +192,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fatura Detayları')),
+      appBar: AppBar(title: const Text('Fatura Detayları'),  scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
+      ),
       body: FutureBuilder<InvoiceDetailsResponseModel>(
         future: _futureDetails,
         builder: (context, snapshot) {

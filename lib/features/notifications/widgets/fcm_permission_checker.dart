@@ -4,6 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/widgets/app_loading_indicator.dart';
 
+
 /// Widget to check and request FCM permissions
 /// Add this temporarily to your dashboard or main screen to debug
 class FcmPermissionChecker extends StatefulWidget {
@@ -28,12 +29,14 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
     setState(() => _isLoading = true);
 
     try {
-      final settings = await FirebaseMessaging.instance.getNotificationSettings();
+      final settings =
+          await FirebaseMessaging.instance.getNotificationSettings();
       final token = await FirebaseMessaging.instance.getToken();
 
       if (mounted) {
         setState(() {
-          _status = 'Authorization: ${settings.authorizationStatus.name}\n'
+          _status =
+              'Authorization: ${settings.authorizationStatus.name}\n'
               'Alert: ${settings.alert.name}\n'
               'Sound: ${settings.sound.name}';
           _token = token;
@@ -70,9 +73,10 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Permission: ${settings.authorizationStatus.name}'),
-            backgroundColor: settings.authorizationStatus == AuthorizationStatus.authorized
-                ? AppTheme.successColor
-                : AppTheme.orange,
+            backgroundColor:
+                settings.authorizationStatus == AuthorizationStatus.authorized
+                    ? AppTheme.successColor
+                    : AppTheme.orange,
           ),
         );
 
@@ -81,7 +85,10 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.errorColor),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppTheme.errorColor,
+          ),
         );
         setState(() => _isLoading = false);
       }
@@ -104,16 +111,13 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
                 SizedBox(width: 8),
                 Text(
                   'FCM Notifications',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 12),
             if (_isLoading)
-               const Center(child:  AppLoadingIndicator())
+              const Center(child: AppLoadingIndicator())
             else ...[
               if (_status != null) ...[
                 Text(
@@ -133,7 +137,9 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
                     if (_token != null) {
                       // Copy to clipboard
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Token copied! (check console)')),
+                        const SnackBar(
+                          content: Text('Token copied! (check console)'),
+                        ),
                       );
                       debugPrint('FCM TOKEN: $_token');
                     }
@@ -146,7 +152,10 @@ class _FcmPermissionCheckerState extends State<FcmPermissionChecker> {
                     ),
                     child: Text(
                       '${_token!.substring(0, 40)}...',
-                      style: const TextStyle(fontSize: 10, fontFamily: 'monospace'),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontFamily: 'monospace',
+                      ),
                     ),
                   ),
                 ),

@@ -98,7 +98,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
         }
 
         return Scaffold(
-          backgroundColor: AppTheme.gray100,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SafeArea(
             child: Stack(
               children: [
@@ -125,7 +125,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                                 child: Center(
                                   child: Text(
                                     'Hiç fatura bulunamadı.',
-                                    style: TextStyle(color: AppTheme.gray600),
+                                    style: TextStyle(color: AppTheme.getTextSecondary(context)),
                                   ),
                                 ),
                               );
@@ -213,7 +213,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                     "Filtreleme",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppConstants.fontSizeXl),
                   ),
-                  const SizedBox(height: AppConstants.spacingM),
+                   SizedBox(height: AppConstants.spacingM),
                   Row(
                     children: [
                       Expanded(
@@ -272,7 +272,6 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     final textDecoration =
         isCancelled ? TextDecoration.lineThrough : TextDecoration.none;
     final baseTextStyle = TextStyle(
-      color: baseColor,
       decoration: textDecoration,
     );
     final boldTitleStyle = baseTextStyle.copyWith(
@@ -286,8 +285,6 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
       padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingS),
       child: Card(
         elevation: AppConstants.elevationMedium,
-        shadowColor: AppTheme.shadowColor,
-        color: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
         child: Padding(
           padding: const EdgeInsets.all(AppConstants.spacingM),
@@ -309,10 +306,10 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                   ),
                 ],
               ),
-              const SizedBox(height: AppConstants.spacingXs),
+               SizedBox(height: AppConstants.spacingXs),
               Text('Müşteri: ${invoice.customerName}', style: baseTextStyle),
               Text('Tarih: $dateFormatted', style: baseTextStyle),
-              const SizedBox(height: AppConstants.spacingS),
+              SizedBox(height: AppConstants.spacingS),
               Row(
                 children: [
                   const Spacer(),
@@ -329,7 +326,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                           "Fatura Linki",
                           style: baseTextStyle.copyWith(
                             fontSize: AppConstants.fontSizeS,
-                            color: AppTheme.blue700,
+                            color: AppTheme.blueAccent,
                             decoration: TextDecoration.underline,
                           ),
                         ),

@@ -108,7 +108,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
     );
 
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppTheme.accentColor,
         shape: const CircleBorder(),
@@ -152,7 +152,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                         child: Center(
                           child: Text(
                             'Hiç çalışan bulunamadı.',
-                            style: TextStyle(color: AppTheme.gray600),
+                            style: TextStyle(color: AppTheme.getTextSecondary(context)),
                           ),
                         ),
                       );
@@ -179,8 +179,8 @@ class _EmployeesPageState extends State<EmployeesPage> {
                           ),
                           child: Card(
                             elevation: AppConstants.elevationMedium,
-                            shadowColor: AppTheme.shadowColorLight,
-                            color: AppTheme.white,
+                            shadowColor: AppTheme.getShadowColor(context),
+                            color: Theme.of(context).cardColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
                             ),
@@ -194,10 +194,10 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                       Expanded(
                                         child: Text(
                                           employee.employeeName,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: AppConstants.fontSizeL,
                                             fontWeight: FontWeight.bold,
-                                            color: AppTheme.textDark
+                                              color: AppTheme.getTextPrimary(context),
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -218,17 +218,17 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                       child: RichText(
                                         text: TextSpan(
                                           children: [
-                                            const TextSpan(
+                                             TextSpan(
                                               text: 'Müşteri Kodu: ',
                                               style: TextStyle(
-                                                color: AppTheme.textMedium,
+                                                color: AppTheme.getTextSecondary(context),
                                                 fontSize: AppConstants.fontSizeM,
                                               ),
                                             ),
                                             TextSpan(
                                               text: employee.employeeCode,
-                                              style: const TextStyle(
-                                                color: AppTheme.textMedium2,
+                                              style:  TextStyle(
+                                                color: AppTheme.getTextPrimary(context),
                                                 fontSize: AppConstants.fontSizeM,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -241,10 +241,10 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                   RichText(
                                     text: TextSpan(
                                       children: [
-                                        const TextSpan(
+                                         TextSpan(
                                           text: 'Ödenen Tutar: ',
                                           style: TextStyle(
-                                            color: AppTheme.textMedium,
+                                            color: AppTheme.getTextSecondary(context),
                                             fontSize: AppConstants.fontSizeM,
                                           ),
                                         ),
@@ -255,7 +255,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                                 ? AppTheme.positiveAmountColor // Green for positive
                                                 : employee.balance < 0
                                                 ? AppTheme.negativeAmountColor // Red for negative
-                                                : AppTheme.neutralAmountColor, // Gray for zero
+                                                : AppTheme.getTextPrimary(context), // Gray for zero
                                             fontSize: AppConstants.fontSizeM,
                                             fontWeight: FontWeight.w600,
                                           ),

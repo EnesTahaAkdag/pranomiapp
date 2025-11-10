@@ -121,7 +121,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.gray100,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -151,10 +151,10 @@ class _InvoicesPageState extends State<InvoicesPage> {
                         height:
                             MediaQuery.of(context).size.height *
                             AppConstants.screenHeightMultiplierHalf,
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             'Hiç fatura bulunamadı.',
-                            style: TextStyle(color: AppTheme.gray600),
+                            style: TextStyle(color: AppTheme.getTextSecondary(context)),
                           ),
                         ),
                       );
@@ -181,93 +181,92 @@ class _InvoicesPageState extends State<InvoicesPage> {
   Widget _buildInvoiceItem(InvoicesModel invoice) {
     final dateFormatted = AppFormatters.dateShort.format(invoice.date);
     final isCancelled = invoice.invoiceStatus == "Cancelled";
-    final baseColor = isCancelled ? AppTheme.gray500 : AppTheme.textPrimary;
     final eCommerceImageUrl = ApiConstants.eCommerceLogoUrl(
       invoice.eCommerceCode,
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.spacingM,
-        vertical: AppConstants.spacingS,
-      ),
-      child: Card(
-        elevation: AppConstants.elevationMedium,
-        shadowColor: AppTheme.shadowColor,
-        color: AppTheme.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+    return Opacity(
+      opacity: isCancelled ? 0.5 : 1.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.spacingM,
+          vertical: AppConstants.spacingS,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppConstants.spacingM),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      invoice.documentNumber,
-                      style: TextStyle(
-                        fontSize: AppConstants.fontSizeL,
-                        fontWeight: FontWeight.bold,
-                        decoration:
-                            isCancelled ? TextDecoration.lineThrough : null,
-                        color: baseColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () => _showSimpleBottomSheet(invoice),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppConstants.spacingXs),
-              Text(
-                'Müşteri: ${invoice.customerName}',
-                style: TextStyle(color: baseColor),
-              ),
-              Text('Tarih: $dateFormatted', style: TextStyle(color: baseColor)),
-              const SizedBox(height: AppConstants.spacingS),
-              Text(
-                'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: AppConstants.fontSizeM,
-                  color: baseColor,
-                ),
-              ),
-              const SizedBox(height: AppConstants.spacingXs),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: baseColor,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      if (invoice.isEInvoiced)
-                        Image.asset(
-                          "lib/assets/icons/pdficon.png",
-                          height: AppConstants.iconSizeXl,
+        child: Card(
+          elevation: AppConstants.elevationMedium,
+          shadowColor: AppTheme.getShadowColor(context),
+          color: Theme.of(context).cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppConstants.spacingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        invoice.documentNumber,
+                        style: TextStyle(
+                          fontSize: AppConstants.fontSizeL,
+                          fontWeight: FontWeight.bold,
+                          decoration:
+                              isCancelled ? TextDecoration.lineThrough : null,
                         ),
-
-                      Image.network(
-                        eCommerceImageUrl,
-                        height: AppConstants.iconSizeXl,
-                        errorBuilder: (_, __, ___) => const SizedBox(),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.more_vert),
+                      onPressed: () => _showSimpleBottomSheet(invoice),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppConstants.spacingXs),
+                Text(
+                  'Müşteri: ${invoice.customerName}',
+                ),
+                Text('Tarih: $dateFormatted'),
+                const SizedBox(height: AppConstants.spacingS),
+                Text(
+                  'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: AppConstants.fontSizeM,
                   ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: AppConstants.spacingXs),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        if (invoice.isEInvoiced)
+                          Image.asset(
+                            "lib/assets/icons/pdficon.png",
+                            height: AppConstants.iconSizeXl,
+                            color: Colors.red,
+                          ),
+
+                        Image.network(
+                          eCommerceImageUrl,
+                          height: AppConstants.iconSizeXl,
+                          errorBuilder: (_, __, ___) => const SizedBox(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

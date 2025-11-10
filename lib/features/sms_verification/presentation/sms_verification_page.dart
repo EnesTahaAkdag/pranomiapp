@@ -124,6 +124,8 @@ class _SmsVerificationContentState extends State<_SmsVerificationContent> {
       backgroundColor: AppTheme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
+        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
+
         title: const Text(
           'SMS Doğrulama',
           style: TextStyle(color: AppTheme.textWhite),

@@ -100,7 +100,7 @@ class _CustomerPageState extends State<CustomerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.scaffoldBackgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppTheme.accentColor,
         shape: const CircleBorder(),
@@ -187,7 +187,7 @@ class AccountListView extends StatelessWidget {
               child: Center(
                 child: Text(
                   'Hiç müşteri bulunamadı.',
-                  style: TextStyle(color: AppTheme.gray600),
+                  style: TextStyle(color: AppTheme.getTextSecondary(context)),
                 ),
               ),
             );
@@ -234,8 +234,8 @@ class CustomerListItem extends StatelessWidget {
         ),
         child: Card(
           elevation: AppConstants.elevationMedium,
-          shadowColor: AppTheme.shadowColor,
-          color: AppTheme.white,
+          shadowColor: AppTheme.getShadowColor(context),
+          color: Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
           ),
@@ -249,17 +249,17 @@ class CustomerListItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         customer.customerName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: AppConstants.fontSizeL,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
+                          color: AppTheme.getTextPrimary(context),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.edit,
-                      color: AppTheme.iconGray,
+                      color: AppTheme.getTextSecondary(context),
                     ),
                   ],
                 ),
@@ -270,17 +270,17 @@ class CustomerListItem extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(
                         children: [
-                          const TextSpan(
+                          TextSpan(
                             text: 'Müşteri Kodu: ',
                             style: TextStyle(
-                              color: AppTheme.textMedium,
+                              color: AppTheme.getTextSecondary(context),
                               fontSize: AppConstants.fontSizeM,
                             ),
                           ),
                           TextSpan(
                             text: customer.customerCode,
-                            style: const TextStyle(
-                              color: AppTheme.textMedium2,
+                            style: TextStyle(
+                              color: AppTheme.getTextPrimary(context),
                               fontSize: AppConstants.fontSizeM,
                               fontWeight: FontWeight.w500,
                             ),
@@ -293,10 +293,10 @@ class CustomerListItem extends StatelessWidget {
                 RichText(
                   text: TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: 'Ödenen Tutar: ',
                         style: TextStyle(
-                          color: AppTheme.textMedium,
+                          color: AppTheme.getTextSecondary(context),
                           fontSize: AppConstants.fontSizeM,
                         ),
                       ),
@@ -307,7 +307,7 @@ class CustomerListItem extends StatelessWidget {
                               ? AppTheme.positiveAmountColor // Green for positive
                               : customer.balance < 0
                               ? AppTheme.negativeAmountColor // Red for negative
-                              : AppTheme.neutralAmountColor, // Gray for zero
+                              : AppTheme.getTextPrimary(context), // Theme color for zero
                           fontSize: AppConstants.fontSizeM,
                           fontWeight: FontWeight.w600,
                         ),

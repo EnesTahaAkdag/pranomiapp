@@ -196,7 +196,9 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       return const Scaffold(body: Center(child: AppLoadingIndicator()));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Müşteri Düzenle')),
+      appBar: AppBar(title: const Text('Müşteri Düzenle'),
+        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -321,7 +323,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
-          fillColor: AppTheme.white,
           counterText: '',
         ),
         keyboardType: inputType,
@@ -354,8 +355,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _countries,
@@ -380,8 +379,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _cities,
@@ -403,8 +400,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -426,8 +421,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           labelText: 'Şehir',
           hintText: 'Şehir giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -448,8 +441,6 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           labelText: 'İlçe',
           hintText: 'İlçe giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,

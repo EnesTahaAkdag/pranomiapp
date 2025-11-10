@@ -118,6 +118,7 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       backgroundColor: AppTheme.gray100,
       appBar: AppBar(
         title: const Text('Yeni Cari Hesap Ekle'),
+        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
         centerTitle: true,
         backgroundColor: AppTheme.mediumGrayBackground,
         elevation: AppConstants.elevationNone,

@@ -301,7 +301,7 @@ class _NotificationListItem extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               AppTheme.white,
-              accentColor.withValues(alpha: 0.30),
+              accentColor.withValues(alpha: 0.6),
             ],
           ),
         ),

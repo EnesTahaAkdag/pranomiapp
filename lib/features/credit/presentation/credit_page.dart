@@ -58,7 +58,7 @@ class _CreditViewState extends State<_CreditView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.creditPageBackground,
+      backgroundColor: AppTheme.getCreditPageBackground(context),
       body: Consumer<CreditViewModel>(
         builder: (context, viewModel, child) {
           return _buildBody(context, viewModel);
@@ -288,9 +288,9 @@ class _ErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppConstants.fontSizeL,
-                color: AppTheme.textBlack87,
+                color: AppTheme.getTextPrimary(context),
               ),
             ),
             const SizedBox(height: AppConstants.spacingXl),
@@ -330,31 +330,35 @@ class _EmptyView extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(AppConstants.spacingL),
-              decoration: const BoxDecoration(
-                color: AppTheme.emptyStateIconBackground,
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.darkEmptyStateIconBackground
+                    : AppTheme.emptyStateIconBackground,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.receipt_long_rounded,
-                color: AppTheme.emptyStateIconColor,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.darkEmptyStateIconColor
+                    : AppTheme.emptyStateIconColor,
                 size: AppConstants.iconSize80 - AppConstants.spacingM,
               ),
             ),
             const SizedBox(height: AppConstants.spacingL),
-            const Text(
+            Text(
               'Henüz işlem yok',
               style: TextStyle(
                 fontSize: AppConstants.fontSizeXxl,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.emptyStateTitleColor,
+                color: AppTheme.getTextPrimary(context),
               ),
             ),
             const SizedBox(height: AppConstants.spacingS),
-            const Text(
+            Text(
               'Kredi hareketi bulunmamaktadır',
               style: TextStyle(
                 fontSize: AppConstants.fontSizeM,
-                color: AppTheme.emptyStateSubtitleColor,
+                color: AppTheme.getTextSecondary(context),
               ),
             ),
             const SizedBox(height: AppConstants.spacingXl),
@@ -402,11 +406,11 @@ class _TransactionCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.transactionCardBackground,
+        color: AppTheme.getTransactionCardBackground(context),
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.transactionCardShadow,
+            color: AppTheme.getShadowColor(context),
             blurRadius: AppConstants.spacing10,
             offset: const Offset(0, AppConstants.elevationLow),
           ),
@@ -451,18 +455,18 @@ class _TransactionCard extends StatelessWidget {
                             _getTransactionTypeDescription(
                               transaction.transactionType,
                             ),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: AppConstants.fontSizeTransactionType,
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.textBlack87,
+                              color: AppTheme.getTextPrimary(context),
                             ),
                           ),
                           const SizedBox(height: AppConstants.spacingXs),
                           Text(
                             transaction.referenceNumber,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: AppConstants.fontSizeTransactionCount,
-                              color: AppTheme.gray600,
+                              color: AppTheme.getTextSecondary(context),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -487,16 +491,18 @@ class _TransactionCard extends StatelessWidget {
                             vertical: AppConstants.spacingXs,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.transactionBadgeBackground,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppTheme.darkTransactionBadgeBackground
+                                : AppTheme.transactionBadgeBackground,
                             borderRadius: BorderRadius.circular(AppConstants.spacing6),
                           ),
                           child: Text(
                             _currencyFormatter.format(
                               transaction.totalTransactionAmount,
                             ),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: AppConstants.fontSizeTransactionBadge,
-                              color: AppTheme.transactionBadgeTextColor,
+                              color: AppTheme.getTextSecondary(context),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -509,22 +515,24 @@ class _TransactionCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(AppConstants.spacing12),
                   decoration: BoxDecoration(
-                    color: AppTheme.transactionTimeBackground,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppTheme.darkTransactionTimeBackground
+                        : AppTheme.transactionTimeBackground,
                     borderRadius: BorderRadius.circular(AppConstants.spacing10),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time_rounded,
                         size: AppConstants.iconSizeS,
-                        color: AppTheme.transactionTimeIconColor,
+                        color: AppTheme.getTextSecondary(context),
                       ),
                       const SizedBox(width: AppConstants.spacing6),
                       Text(
                         _dateFormatter.format(transaction.transactionDate),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: AppConstants.fontSizeTransactionCount,
-                          color: AppTheme.transactionTimeTextColor,
+                          color: AppTheme.getTextSecondary(context),
                         ),
                       ),
                     ],
@@ -537,28 +545,36 @@ class _TransactionCard extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(AppConstants.spacing12),
                     decoration: BoxDecoration(
-                      color: AppTheme.descriptionBackgroundLight,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.darkDescriptionBackground
+                          : AppTheme.descriptionBackgroundLight,
                       borderRadius: BorderRadius.circular(AppConstants.spacing10),
                       border: Border.all(
-                        color: AppTheme.descriptionBorderColor,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppTheme.darkDescriptionBorder
+                            : AppTheme.descriptionBorderColor,
                         width: 1,
                       ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.info_outline_rounded,
                           size: AppConstants.iconSizeS,
-                          color: AppTheme.descriptionTextColor,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppTheme.darkInfoColor
+                              : AppTheme.descriptionTextColor,
                         ),
                         const SizedBox(width: AppConstants.spacingS),
                         Expanded(
                           child: Text(
                             transaction.description!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: AppConstants.fontSizeTransactionCount,
-                              color: AppTheme.descriptionTextColor,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? AppTheme.darkInfoColor
+                                  : AppTheme.descriptionTextColor,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -582,18 +598,18 @@ class _LoadingMoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: AppConstants.spacing20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing20),
       child: Center(
         child: Column(
           children: [
-            AppLoadingIndicator(),
-            SizedBox(height: AppConstants.spacingS),
+            const AppLoadingIndicator(),
+            const SizedBox(height: AppConstants.spacingS),
             Text(
               'Yükleniyor...',
               style: TextStyle(
                 fontSize: AppConstants.fontSizeS,
-                color: AppTheme.gray600,
+                color: AppTheme.getTextSecondary(context),
               ),
             ),
           ],

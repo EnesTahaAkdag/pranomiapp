@@ -100,7 +100,6 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.gray100,
       body: SafeArea(
         child: Column(
           children: [
@@ -172,7 +171,6 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         elevation: 4,
-        color: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(16),

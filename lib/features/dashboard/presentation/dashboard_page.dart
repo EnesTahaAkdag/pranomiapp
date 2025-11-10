@@ -28,7 +28,7 @@ class _DashboardView extends StatelessWidget {
     final viewModel = context.watch<DashboardViewModel>();
 
     return Scaffold(
-      backgroundColor: AppTheme.gray200,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _buildBody(context, viewModel),
     );
   }
@@ -115,7 +115,7 @@ class DashboardNextCard extends StatelessWidget {
     return Card(
       elevation: AppConstants.elevationMedium,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
-      color: AppTheme.cardBackgroundLight,
+      color: Theme.of(context).cardColor,
       child: Padding(
         padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
@@ -226,7 +226,7 @@ class DashboardCard extends StatelessWidget {
     return Card(
       elevation: AppConstants.elevationMedium,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
-      color: AppTheme.cardBackgroundLight,
+      color: Theme.of(context).cardColor,
       child: Padding(
         padding: const EdgeInsets.all(AppConstants.spacingM),
         child: Column(
@@ -349,6 +349,10 @@ class _BankBalanceList extends StatelessWidget {
           width: AppConstants.iconSizeL,
           height: AppConstants.iconSizeL,
           alignment: Alignment.center,
+          colorFilter: ColorFilter.mode(
+            AppTheme.orange,
+            BlendMode.srcIn, // Tüm SVG'yi tek renge boyar
+          ),
         ),
         const SizedBox(width: AppConstants.spacingM),
         Expanded(
@@ -460,6 +464,11 @@ class DashboardListItem extends StatelessWidget {
           width: AppConstants.iconSizeL,
           height: AppConstants.iconSizeL,
           alignment: Alignment.center,
+          colorFilter: const ColorFilter.mode(
+            AppTheme.orange,
+            BlendMode.srcIn, // Tüm SVG'yi tek renge boyar
+          ),
+
         ),
         const SizedBox(width: AppConstants.spacingM),
         Expanded(

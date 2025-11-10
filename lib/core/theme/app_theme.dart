@@ -338,6 +338,156 @@ class AppTheme {
   static const Color statusBarColor = Color(0xFF292929);  // Color.fromARGB(255, 41, 41, 41)
 
   // ============================================================================
+  // DARK THEME SPECIFIC COLORS
+  // ============================================================================
+
+  /// Dark theme - Card background (elevated surface)
+  static const Color darkCardBackground = Color(0xFF2C2C2C);
+
+  /// Dark theme - Elevated card background (slightly lighter)
+  static const Color darkCardBackgroundElevated = Color(0xFF353535);
+
+  /// Dark theme - Input field background
+  static const Color darkInputBackground = Color(0xFF3A3A3A);
+
+  /// Dark theme - Divider color
+  static const Color darkDividerColor = Color(0xFF404040);
+
+  /// Dark theme - Primary text color (high emphasis)
+  static const Color darkTextPrimary = Color(0xFFE0E0E0);
+
+  /// Dark theme - Secondary text color (medium emphasis)
+  static const Color darkTextSecondary = Color(0xFFB0B0B0);
+
+  /// Dark theme - Tertiary text color (low emphasis/disabled)
+  static const Color darkTextTertiary = Color(0xFF808080);
+
+  /// Dark theme - Icon color
+  static const Color darkIconColor = Color(0xFFB0B0B0);
+
+  /// Dark theme - Success color (brighter for dark background)
+  static const Color darkSuccessColor = Color(0xFF66BB6A);
+
+  /// Dark theme - Error color (brighter for dark background)
+  static const Color darkErrorColor = Color(0xFFEF5350);
+
+  /// Dark theme - Warning color (brighter for dark background)
+  static const Color darkWarningColor = Color(0xFFFFB74D);
+
+  /// Dark theme - Info color (brighter for dark background)
+  static const Color darkInfoColor = Color(0xFF42A5F5);
+
+  /// Dark theme - Credit page background
+  static const Color darkCreditPageBackground = Color(0xFF1E1E1E);
+
+  /// Dark theme - Credit balance card background
+  static const Color darkCreditBalanceCardBackground = Color(0xFF1976D2);
+
+  /// Dark theme - Transaction card background
+  static const Color darkTransactionCardBackground = Color(0xFF2C2C2C);
+
+  /// Dark theme - Transaction badge background
+  static const Color darkTransactionBadgeBackground = Color(0xFF3A3A3A);
+
+  /// Dark theme - Transaction time background
+  static const Color darkTransactionTimeBackground = Color(0xFF353535);
+
+  /// Dark theme - Description background
+  static const Color darkDescriptionBackground = Color(0xFF1A237E);
+
+  /// Dark theme - Description border
+  static const Color darkDescriptionBorder = Color(0xFF283593);
+
+  /// Dark theme - Empty state icon background
+  static const Color darkEmptyStateIconBackground = Color(0xFF2C2C2C);
+
+  /// Dark theme - Empty state icon color
+  static const Color darkEmptyStateIconColor = Color(0xFF757575);
+
+  /// Dark theme - Shadow color (lighter for visibility on dark backgrounds)
+  static Color darkShadowColor = Colors.black.withValues(alpha: 0.3);
+
+  /// Dark theme - Card shadow (more prominent)
+  static Color darkCardShadow = Colors.black.withValues(alpha: 0.5);
+
+  /// Dark theme - Balance card overlay
+  static Color darkBalanceCardOverlay = Colors.black.withValues(alpha: 0.2);
+
+  // ============================================================================
+  // CONTEXT-AWARE COLOR GETTERS
+  // ============================================================================
+
+  /// Get appropriate background color based on theme brightness
+  static Color getBackgroundColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? scaffoldBackgroundColorDark
+        : scaffoldBackgroundColor;
+  }
+
+  /// Get appropriate card background color based on theme brightness
+  static Color getCardBackground(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkCardBackground
+        : white;
+  }
+
+  /// Get appropriate text primary color based on theme brightness
+  static Color getTextPrimary(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkTextPrimary
+        : textPrimary;
+  }
+
+  /// Get appropriate text secondary color based on theme brightness
+  static Color getTextSecondary(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkTextSecondary
+        : textGray;
+  }
+
+  /// Get appropriate success color based on theme brightness
+  static Color getSuccessColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkSuccessColor
+        : successColor;
+  }
+
+  /// Get appropriate error color based on theme brightness
+  static Color getErrorColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkErrorColor
+        : errorColor;
+  }
+
+  /// Get appropriate warning color based on theme brightness
+  static Color getWarningColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkWarningColor
+        : warningColor;
+  }
+
+  /// Get appropriate shadow color based on theme brightness
+  static Color getShadowColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkShadowColor
+        : shadowColor;
+  }
+
+  /// Get appropriate credit page background based on theme brightness
+  static Color getCreditPageBackground(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkCreditPageBackground
+        : creditPageBackground;
+  }
+
+  /// Get appropriate transaction card background based on theme brightness
+  static Color getTransactionCardBackground(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? darkTransactionCardBackground
+        : transactionCardBackground;
+  }
+
+  // ============================================================================
   // THEME DATA
   // ============================================================================
 
@@ -346,6 +496,7 @@ class AppTheme {
     return ThemeData(
       primaryColor: primaryColor,
       scaffoldBackgroundColor: scaffoldBackgroundColor,
+      cardColor: cardBackgroundLight,
       appBarTheme: const AppBarTheme(
         backgroundColor: primaryColor,
         elevation: 0,
@@ -375,25 +526,239 @@ class AppTheme {
       brightness: Brightness.dark,
       primaryColor: primaryColor,
       scaffoldBackgroundColor: scaffoldBackgroundColorDark,
+      cardColor: darkCardBackground,
+      dividerColor: darkDividerColor,
+
+      // AppBar theme
       appBarTheme: const AppBarTheme(
         backgroundColor: appBarDarkerBackground,
         elevation: 0,
         foregroundColor: textWhite,
+        iconTheme: IconThemeData(color: textWhite),
+        titleTextStyle: TextStyle(
+          color: textWhite,
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+        ),
       ),
+
+      // Elevated button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: accentColor,
           foregroundColor: textWhite,
+          elevation: 2,
         ),
       ),
+
+      // Text button theme
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: darkInfoColor,
+        ),
+      ),
+
+      // Outlined button theme
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: darkTextPrimary,
+          side: const BorderSide(color: darkDividerColor),
+        ),
+      ),
+
+      // Card theme
+      cardTheme: CardThemeData(
+        color: darkCardBackground,
+        elevation: 2,
+        shadowColor: darkShadowColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+
+      // Input decoration theme
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkInputBackground,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: darkDividerColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: darkDividerColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: accentColor, width: 2),
+        ),
+        labelStyle: const TextStyle(color: darkTextSecondary),
+        hintStyle: const TextStyle(color: darkTextTertiary),
+      ),
+
+      // Icon theme
+      iconTheme: const IconThemeData(
+        color: darkIconColor,
+      ),
+
+      // Text theme
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(color: darkTextPrimary),
+        displayMedium: TextStyle(color: darkTextPrimary),
+        displaySmall: TextStyle(color: darkTextPrimary),
+        headlineLarge: TextStyle(color: darkTextPrimary),
+        headlineMedium: TextStyle(color: darkTextPrimary),
+        headlineSmall: TextStyle(color: darkTextPrimary),
+        titleLarge: TextStyle(color: darkTextPrimary),
+        titleMedium: TextStyle(color: darkTextPrimary),
+        titleSmall: TextStyle(color: darkTextSecondary),
+        bodyLarge: TextStyle(color: darkTextPrimary),
+        bodyMedium: TextStyle(color: darkTextPrimary),
+        bodySmall: TextStyle(color: darkTextSecondary),
+        labelLarge: TextStyle(color: darkTextPrimary),
+        labelMedium: TextStyle(color: darkTextSecondary),
+        labelSmall: TextStyle(color: darkTextTertiary),
+      ),
+
+      // Bottom navigation bar theme
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: darkCardBackground,
+        selectedItemColor: accentColor,
+        unselectedItemColor: darkTextTertiary,
+        type: BottomNavigationBarType.fixed,
+        elevation: 8,
+      ),
+
+      // Drawer theme
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: darkCardBackground,
+      ),
+
+      // Floating action button theme
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: accentColor,
+        foregroundColor: textWhite,
+        elevation: 4,
+      ),
+
+      // Snackbar theme
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: darkCardBackgroundElevated,
+        contentTextStyle: TextStyle(color: darkTextPrimary),
+        actionTextColor: accentColor,
+      ),
+
+      // Dialog theme
+      dialogTheme: DialogThemeData(
+        backgroundColor: darkCardBackground,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        titleTextStyle: const TextStyle(
+          color: darkTextPrimary,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+        contentTextStyle: const TextStyle(
+          color: darkTextSecondary,
+          fontSize: 16,
+        ),
+      ),
+
+      // Popup menu theme
+      popupMenuTheme: PopupMenuThemeData(
+        color: darkCardBackgroundElevated,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        textStyle: const TextStyle(color: darkTextPrimary),
+      ),
+
+      // Chip theme
+      chipTheme: ChipThemeData(
+        backgroundColor: darkCardBackgroundElevated,
+        deleteIconColor: darkTextSecondary,
+        disabledColor: darkInputBackground,
+        selectedColor: accentColor.withValues(alpha: 0.3),
+        secondarySelectedColor: accentColor.withValues(alpha: 0.3),
+        labelStyle: const TextStyle(color: darkTextPrimary),
+        secondaryLabelStyle: const TextStyle(color: darkTextSecondary),
+        brightness: Brightness.dark,
+      ),
+
+      // Switch theme
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return accentColor;
+          }
+          return darkTextTertiary;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return accentColor.withValues(alpha: 0.5);
+          }
+          return darkInputBackground;
+        }),
+      ),
+
+      // Checkbox theme
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return accentColor;
+          }
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(textWhite),
+      ),
+
+      // Radio theme
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return accentColor;
+          }
+          return darkTextSecondary;
+        }),
+      ),
+
+      // Progress indicator theme
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: accentColor,
+        linearTrackColor: darkInputBackground,
+        circularTrackColor: darkInputBackground,
+      ),
+
+      // Color scheme
       colorScheme: const ColorScheme.dark(
-        primary: primaryColor,
-        secondary: accentColor,
-        error: errorColor,
-        surface: mediumGrayBackground,
+        brightness: Brightness.dark,
+        primary: accentColor,
         onPrimary: textWhite,
+        primaryContainer: Color(0xFF8B0028),
+        onPrimaryContainer: textWhite,
+        secondary: primaryColor,
         onSecondary: textWhite,
+        secondaryContainer: Color(0xFF2C2C2C),
+        onSecondaryContainer: darkTextPrimary,
+        tertiary: darkInfoColor,
+        onTertiary: textWhite,
+        error: darkErrorColor,
         onError: textWhite,
+        errorContainer: Color(0xFF93000A),
+        onErrorContainer: Color(0xFFFFDAD6),
+        surface: scaffoldBackgroundColorDark,
+        onSurface: darkTextPrimary,
+        surfaceContainerHighest: darkCardBackground,
+        onSurfaceVariant: darkTextSecondary,
+        outline: darkDividerColor,
+        outlineVariant: Color(0xFF4A4A4A),
+        shadow: Color(0xFF000000),
+        scrim: Color(0xFF000000),
+        inverseSurface: Color(0xFFE6E1E5),
+        onInverseSurface: Color(0xFF313033),
+        inversePrimary: accentColor,
+        surfaceTint: accentColor,
       ),
     );
   }

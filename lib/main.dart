@@ -95,6 +95,8 @@ class _PranomiAppState extends State<PranomiApp> {
           debugShowCheckedModeBanner: false,
           title: 'Pranomi',
           theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
           localizationsDelegates: const [],
           supportedLocales: const [Locale('tr')],
           routerConfig: router,

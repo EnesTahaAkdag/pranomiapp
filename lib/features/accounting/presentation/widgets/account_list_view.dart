@@ -32,7 +32,7 @@ class AccountListView extends StatelessWidget {
         child: Center(
           child: Text(
             'Hiç hesap bulunamadı.',
-            style: TextStyle(color: AppTheme.gray600),
+            style: TextStyle(color: AppTheme.getTextSecondary(context)),
           ),
         ),
       );
