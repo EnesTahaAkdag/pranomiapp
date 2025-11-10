@@ -28,6 +28,7 @@ import '../../features/sms_verification/data/sms_verification_service.dart';
 import '../../features/two_factor_auth/data/two_factor_auth_service.dart';
 import '../services/fcm_service.dart';
 import '../services/local_notification_service.dart';
+import '../services/theme_service.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -127,5 +128,10 @@ Future<void> setupLocator() async {
 
   locator.registerLazySingleton<LocalNotificationService>(
     () => LocalNotificationService(),
+  );
+
+  // Register ThemeService
+  locator.registerLazySingleton<ThemeService>(
+    () => ThemeService(locator<SharedPreferences>()),
   );
 }

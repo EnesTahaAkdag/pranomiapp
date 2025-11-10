@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/core/services/theme_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/utils/app_constants.dart';
 import 'drawer_menu_item.dart';
@@ -24,6 +26,8 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeService = locator<ThemeService>();
+
     return Drawer(
       backgroundColor: AppTheme.darkGrayBackground,
       child: Column(
@@ -32,8 +36,11 @@ class AppDrawer extends StatelessWidget {
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
-              children: _buildMenuItems(),
+              children: [..._buildMenuItems(),_buildThemeSwitch(context, themeService),]
+
+
             ),
+
           ),
         ],
       ),
@@ -287,5 +294,59 @@ class AppDrawer extends StatelessWidget {
         onTap: onNavigate,
       ),
     ];
+  }
+
+  Widget _buildThemeSwitch(BuildContext context, ThemeService themeService) {
+    return ListenableBuilder(
+      listenable: themeService,
+      builder: (context, _) {
+        final isDark = themeService.isDarkMode(context);
+
+        return Container(
+          color: AppTheme.darkGrayBackground,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.spacingM,
+            vertical: AppConstants.spacingS,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.wb_sunny,
+                color: isDark ? AppTheme.gray500 : AppTheme.white,
+                size: AppConstants.iconSizeM,
+              ),
+              const SizedBox(width: AppConstants.spacingS),
+              Expanded(
+                child: Text(
+                  'Koyu Tema',
+                  style: TextStyle(
+                    color: AppTheme.white,
+                    fontSize: AppConstants.fontSizeM,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Switch(
+                value: isDark,
+                onChanged: (value) {
+                  themeService.toggleTheme();
+                },
+                activeTrackColor: AppTheme.accentColor.withValues(alpha: 0.5),
+                thumbColor: WidgetStateProperty.resolveWith((states) {
+                  return states.contains(WidgetState.selected)
+                      ? AppTheme.accentColor
+                      : AppTheme.gray500;
+                }),
+                trackColor: WidgetStateProperty.resolveWith((states) {
+                  return states.contains(WidgetState.selected)
+                      ? AppTheme.accentColor.withValues(alpha: 0.5)
+                      : AppTheme.gray600;
+                }),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

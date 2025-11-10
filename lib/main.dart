@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pranomiapp/core/di/injection.dart';
@@ -12,6 +13,7 @@ import 'package:pranomiapp/core/router/app_router.dart';
 import 'package:pranomiapp/core/services/auth_service.dart';
 import 'package:pranomiapp/core/services/fcm_service.dart';
 import 'package:pranomiapp/core/services/local_notification_service.dart';
+import 'package:pranomiapp/core/services/theme_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
 // SharedPreferences keys
@@ -71,6 +73,9 @@ class PranomiApp extends StatefulWidget {
 class _PranomiAppState extends State<PranomiApp> {
   @override
   Widget build(BuildContext context) {
+    // Get ThemeService instance
+    final themeService = locator<ThemeService>();
+
     return FutureBuilder<bool>(
       future: AuthService.isLoggedIn(),
       builder: (context, snapshot) {
@@ -90,20 +95,31 @@ class _PranomiAppState extends State<PranomiApp> {
           onLogout: (context) => AuthService.logout(),
         );
 
-        // Return MaterialApp with router configuration and builder to initialize FCM
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'Pranomi',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.system,
-          localizationsDelegates: const [],
-          supportedLocales: const [Locale('tr')],
-          routerConfig: router,
-          builder: (context, child) {
-            // Initialize FCM notification handlers with context
-            _initializeFcmHandlers(context);
-            return child ?? const SizedBox();
+        // Return MaterialApp with theme listener for dynamic theme switching
+        return ListenableBuilder(
+          listenable: themeService,
+          builder: (context, _) {
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              title: 'Pranomi',
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeService.themeMode,
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('tr', 'TR'),
+              ],
+              routerConfig: router,
+              builder: (context, child) {
+                // Initialize FCM notification handlers with context
+                _initializeFcmHandlers(context);
+                return child ?? const SizedBox();
+              },
+            );
           },
         );
       },
