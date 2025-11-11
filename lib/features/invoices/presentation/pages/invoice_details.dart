@@ -35,7 +35,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(Icons.label_outline, size: 18, color: AppTheme.gray600),
+          Icon(Icons.label_outline, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text.rich(
@@ -73,7 +73,6 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     );
 
     return Card(
-      color: AppTheme.white,
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -122,7 +121,6 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
 
     return ExpansionPanelRadio(
       value: index,
-      backgroundColor: AppTheme.white,
       canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
         return Padding(
