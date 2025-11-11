@@ -302,48 +302,144 @@ class AppDrawer extends StatelessWidget {
       builder: (context, _) {
         final isDark = themeService.isDarkMode(context);
 
-        return Container(
-          color: AppTheme.darkGrayBackground,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spacingM,
-            vertical: AppConstants.spacingS,
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.wb_sunny,
-                color: isDark ? AppTheme.gray500 : AppTheme.white,
-                size: AppConstants.iconSizeM,
-              ),
-              const SizedBox(width: AppConstants.spacingS),
-              Expanded(
-                child: Text(
-                  'Koyu Tema',
-                  style: TextStyle(
-                    color: AppTheme.white,
-                    fontSize: AppConstants.fontSizeM,
-                    fontWeight: FontWeight.w500,
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppConstants.spacingM,
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25),
+              onTap: () {
+                themeService.toggleTheme();
+              },
+              child: Container(
+                width: 84,
+                height: 42,
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  // Ana arka plan - mod durumuna göre
+                  color: isDark
+                      ? const Color(0xFF1e293b) // Slate gray - dark mode
+                      : const Color(0xFFfef3c7), // Amber light - light mode
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFfbbf24),
+                    width: 1.5,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.3)
+                          : const Color(0xFFfbbf24).withValues(alpha: 0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Arka plan ikonları
+                    Row(
+                      children: [
+                        // Sol - Güneş ikonu
+                        Expanded(
+                          child: Center(
+                            child: Icon(
+                              Icons.wb_sunny_rounded,
+                              color: isDark
+                                  ? const Color(0xFF475569) // Loş görünür
+                                  : const Color(0xFFf59e0b), // Parlak sarı
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        // Sağ - Ay ikonu
+                        Expanded(
+                          child: Center(
+                            child: Icon(
+                              Icons.nightlight_round,
+                              color: isDark
+                                  ? const Color(0xFF818cf8) // Parlak mor
+                                  : const Color(0xFF94a3b8), // Loş görünür
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Kaydırılan thumb button
+                    AnimatedAlign(
+                      duration: const Duration(milliseconds: 350),
+                      curve: Curves.easeInOutCubic,
+                      alignment: isDark
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        width: 38,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          // Thumb rengi - aktif moda göre
+                          gradient: LinearGradient(
+                            colors: isDark
+                                ? [
+                              const Color(0xFF6366f1), // Indigo
+                              const Color(0xFF4f46e5),
+                            ]
+                                : [
+                              const Color(0xFFfbbf24), // Amber
+                              const Color(0xFFf59e0b),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? const Color(0xFF4f46e5).withValues(alpha: 0.6)
+                                  : const Color(0xFFf59e0b).withValues(alpha: 0.6),
+                              blurRadius: 8,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 2),
+                            ),
+                            // İç gölge efekti
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            transitionBuilder: (child, animation) {
+                              return ScaleTransition(
+                                scale: animation,
+                                child: RotationTransition(
+                                  turns: animation,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Icon(
+                              isDark
+                                  ? Icons.nightlight_round
+                                  : Icons.wb_sunny_rounded,
+                              key: ValueKey(isDark),
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Switch(
-                value: isDark,
-                onChanged: (value) {
-                  themeService.toggleTheme();
-                },
-                activeTrackColor: AppTheme.accentColor.withValues(alpha: 0.5),
-                thumbColor: WidgetStateProperty.resolveWith((states) {
-                  return states.contains(WidgetState.selected)
-                      ? AppTheme.accentColor
-                      : AppTheme.gray500;
-                }),
-                trackColor: WidgetStateProperty.resolveWith((states) {
-                  return states.contains(WidgetState.selected)
-                      ? AppTheme.accentColor.withValues(alpha: 0.5)
-                      : AppTheme.gray600;
-                }),
-              ),
-            ],
+            ),
           ),
         );
       },

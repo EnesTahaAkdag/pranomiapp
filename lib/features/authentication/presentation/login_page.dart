@@ -33,7 +33,10 @@ class _LoginView extends StatefulWidget {
 class _LoginViewState extends State<_LoginView> {
   bool _isPasswordVisible = false;
 
-  void _handleAuthResult(BuildContext context, LoginPageViewModel viewModel) async {
+  void _handleAuthResult(
+    BuildContext context,
+    LoginPageViewModel viewModel,
+  ) async {
     final authResult = viewModel.authResult;
     if (authResult == null) return;
 
@@ -86,10 +89,7 @@ class _LoginViewState extends State<_LoginView> {
             context.go('/');
           }
         } else {
-          _showMessage(
-            'SMS doğrulama bilgileri eksik',
-            AppTheme.errorColor,
-          );
+          _showMessage('SMS doğrulama bilgileri eksik', AppTheme.errorColor);
         }
         break;
 
@@ -109,10 +109,7 @@ class _LoginViewState extends State<_LoginView> {
             context.go('/');
           }
         } else {
-          _showMessage(
-            '2FA doğrulama bilgileri eksik',
-            AppTheme.errorColor,
-          );
+          _showMessage('2FA doğrulama bilgileri eksik', AppTheme.errorColor);
         }
         break;
 
@@ -145,7 +142,9 @@ class _LoginViewState extends State<_LoginView> {
                     padding: const EdgeInsets.all(AppConstants.spacingL),
                     decoration: BoxDecoration(
                       color: AppTheme.blackOverlay70,
-                      borderRadius: BorderRadius.circular(AppConstants.borderRadiusXl),
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.borderRadiusXl,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.blackOverlay30,
@@ -154,7 +153,7 @@ class _LoginViewState extends State<_LoginView> {
                         ),
                       ],
                     ),
-                    child:  const Column(
+                    child: const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
@@ -195,10 +194,16 @@ class _LoginViewState extends State<_LoginView> {
       ),
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingL, vertical: AppConstants.spacing40),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.spacingL,
+            vertical: AppConstants.spacing40,
+          ),
           child: Column(
             children: [
-              Image.asset('lib/assets/images/PranomiLogo.png', height: AppConstants.logoHeightLarge),
+              Image.asset(
+                'lib/assets/images/PranomiLogo.png',
+                height: AppConstants.logoHeightLarge,
+              ),
               const SizedBox(height: AppConstants.spacing48),
               Container(
                 decoration: BoxDecoration(
@@ -207,7 +212,9 @@ class _LoginViewState extends State<_LoginView> {
                     end: Alignment.bottomRight,
                     colors: [AppTheme.primaryColor, AppTheme.accentColor],
                   ),
-                  borderRadius: BorderRadius.circular(AppConstants.borderRadiusXl),
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.borderRadiusXl,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: AppTheme.blackOverlay30,
@@ -253,10 +260,17 @@ class _LoginViewState extends State<_LoginView> {
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacing12),
       decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.white, width: AppConstants.elevationLow),
+        border: Border.all(
+          color: AppTheme.white,
+          width: AppConstants.elevationLow,
+        ),
         shape: BoxShape.circle,
       ),
-      child: const Icon(Icons.lock, color: AppTheme.white, size: AppConstants.spacing48),
+      child: const Icon(
+        Icons.lock,
+        color: AppTheme.white,
+        size: AppConstants.spacing48,
+      ),
     );
   }
 
@@ -339,7 +353,9 @@ class _LoginViewState extends State<_LoginView> {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppTheme.accentColor,
         foregroundColor: AppTheme.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+        ),
         padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingM),
       ),
       child: const SizedBox(
@@ -347,7 +363,10 @@ class _LoginViewState extends State<_LoginView> {
         child: Text(
           "Giriş Yap",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: AppConstants.fontSizeXl, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: AppConstants.fontSizeXl,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
