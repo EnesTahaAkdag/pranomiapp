@@ -27,6 +27,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeService = locator<ThemeService>();
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Drawer(
       backgroundColor: AppTheme.darkGrayBackground,
@@ -35,7 +36,7 @@ class AppDrawer extends StatelessWidget {
           _buildHeader(),
           Expanded(
             child: ListView(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(bottom: bottomPadding + AppConstants.spacingM),
               children: [..._buildMenuItems(),_buildThemeSwitch(context, themeService),]
 
 
