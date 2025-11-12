@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:pranomiapp/core/di/injection.dart';
+import 'package:pranomiapp/core/services/onesignal_service.dart';
 import 'package:pranomiapp/features/sms_verification/data/sms_verification_service.dart';
 import 'package:pranomiapp/features/sms_verification/presentation/sms_verification_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -150,6 +151,9 @@ class SmsVerificationViewModel extends ChangeNotifier {
         await prefs.setString('apiSecret', apiInfo.apiSecret);
         await prefs.setString('subscriptionType', apiInfo.subscriptionType.name);
         await prefs.setBool('isEInvoiceActive', apiInfo.isEInvoiceActive);
+
+        // Login to OneSignal with userId
+        await OneSignalService.login(userId!);
 
         // Show success message
         final successMsg = response.successMessages.isNotEmpty

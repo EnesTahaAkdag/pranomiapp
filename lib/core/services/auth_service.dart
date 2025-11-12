@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../di/injection.dart';
+import 'onesignal_service.dart';
 
 class AuthService {
   static const String _apiKeyKey = 'apiKey';
@@ -23,6 +24,9 @@ class AuthService {
     await prefs.remove(_apiSecretKey);
     await prefs.remove(_subscriptionTypeKey);
     await prefs.remove(_isEInvoiceActiveKey);
+
+    // Logout from OneSignal
+    await OneSignalService.logout();
   }
 
   /// Get API key

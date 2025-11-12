@@ -1,8 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,49 +8,25 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/core/router/app_router.dart';
 import 'package:pranomiapp/core/services/auth_service.dart';
-import 'package:pranomiapp/core/services/fcm_service.dart';
-import 'package:pranomiapp/core/services/local_notification_service.dart';
 import 'package:pranomiapp/core/services/theme_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
-
-// SharedPreferences keys
-const String _isSnackbarShowedKey = 'isSnackbarShowed';
-
-// Global variable to store notification permission status
-AuthorizationStatus? _notificationPermissionStatus;
 
 void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Enable verbose logging for debugging (remove in production)
-  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  // Initialize with your OneSignal App ID
-  OneSignal.initialize("e387ed1b-302a-4c3f-a2b2-f768d2b0ade4");
-  // Use this method to prompt for push notifications.
-  // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
-  OneSignal.Notifications.requestPermission(false);
-
   // Setup dependency injection (including SharedPreferences singleton)
   await setupLocator();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Initialize OneSignal
+  // Enable verbose logging for debugging (remove in production)
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
 
-  // Register background message handler
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  // Initialize with your OneSignal App ID
+  OneSignal.initialize("e387ed1b-302a-4c3f-a2b2-f768d2b0ade4");
 
-  // Initialize FCM service and get permission status
-  final fcmService = locator<FcmService>();
-  final permissionStatus = await fcmService.initialize();
-
-  // Initialize local notifications
-  final localNotificationService = locator<LocalNotificationService>();
-  await localNotificationService.initialize();
-  await localNotificationService.createNotificationChannel();
-
-  // Store permission status globally for snackbar display
-  _notificationPermissionStatus = permissionStatus;
+  // Request notification permission
+  OneSignal.Notifications.requestPermission(true);
 
   // Initialize Turkish locale for date formatting
   await initializeDateFormatting('tr_TR', null);
@@ -124,8 +96,8 @@ class _PranomiAppState extends State<PranomiApp> {
               ],
               routerConfig: router,
               builder: (context, child) {
-                // Initialize FCM notification handlers with context
-                _initializeFcmHandlers(context);
+                // Initialize OneSignal notification handlers with context
+                _initializeOneSignalHandlers(context);
                 return child ?? const SizedBox();
               },
             );
@@ -135,88 +107,53 @@ class _PranomiAppState extends State<PranomiApp> {
     );
   }
 
-  bool _fcmInitialized = false;
+  bool _oneSignalInitialized = false;
 
-  void _initializeFcmHandlers(BuildContext context) {
+  void _initializeOneSignalHandlers(BuildContext context) {
     // Initialize only once
-    if (_fcmInitialized) return;
-    _fcmInitialized = true;
+    if (_oneSignalInitialized) return;
+    _oneSignalInitialized = true;
 
-    // Initialize FCM notification handlers
+    // Initialize OneSignal notification handlers
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setupFcmHandlers(context);
+      _setupOneSignalHandlers(context);
     });
   }
 
-  void _setupFcmHandlers(BuildContext context) {
-    final fcmService = locator<FcmService>();
-    final localNotificationService = locator<LocalNotificationService>();
-    final prefs = locator<SharedPreferences>();
+  void _setupOneSignalHandlers(BuildContext context) {
+    // Set up notification click listener
+    OneSignal.Notifications.addClickListener((event) {
+      debugPrint('👆 OneSignal Notification CLICKED');
+      debugPrint('Notification data: ${event.notification.additionalData}');
 
-    // Show snackbar if notification permission was denied
-    if (_notificationPermissionStatus == AuthorizationStatus.denied) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        bool isSnackbarShowed = prefs.getBool(_isSnackbarShowedKey) ?? true;
+      // Handle navigation based on notification data
+      if (context.mounted) {
+        _handleNotificationNavigation(
+          context,
+          event.notification.additionalData ?? {},
+        );
+      }
+    });
 
-        if (context.mounted && isSnackbarShowed) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Bildirim izni verilmedi. İsterseniz daha sonra ayarlardan izin verebilirsiniz.',
-              ),
-              duration: const Duration(seconds: 5),
-              backgroundColor: AppTheme.accentColor,
-              action: SnackBarAction(
-                label: 'Tamam',
-                textColor: AppTheme.white,
-                onPressed: () {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                },
-              ),
-            ),
-          );
-        }
-        await prefs.setBool(_isSnackbarShowedKey, false);
-      });
-    }
+    // Set up foreground will display listener (optional)
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      debugPrint('📱 OneSignal FOREGROUND notification received');
+      debugPrint('Title: ${event.notification.title}');
+      debugPrint('Body: ${event.notification.body}');
 
-    // Handle foreground messages - show local notification
-    fcmService.onForegroundMessage = (message) {
-      debugPrint('📱 FOREGROUND notification received');
-      debugPrint('Title: ${message.notification?.title}');
-      debugPrint('Body: ${message.notification?.body}');
+      // Display the notification (you can customize this)
+      event.notification.display();
+    });
 
-      // Show local notification when app is in foreground
-      localNotificationService.showNotificationFromFirebase(message);
-    };
-
-    // Handle notification taps from background/terminated
-    fcmService.onNotificationTap = (message) {
-      debugPrint('👆 Notification TAPPED');
-      debugPrint('Data: ${message.data}');
-
-      // Handle navigation based on data
-      _handleNotificationNavigation(context, message);
-    };
-
-    // Handle local notification taps
-    localNotificationService.onNotificationTap = (payload) {
-      if (payload == null) return;
-      debugPrint('👆 Local notification TAPPED');
-      debugPrint('Payload: $payload');
-
-      // Parse payload and navigate
-      _handleLocalNotificationTap(context, payload);
-    };
-
-    debugPrint('✅ FCM handlers initialized');
+    debugPrint('✅ OneSignal handlers initialized');
   }
 
   void _handleNotificationNavigation(
     BuildContext context,
-    RemoteMessage message,
+    Map<String, dynamic>? data,
   ) {
-    final data = message.data;
+    if (data == null) return;
+
     final notificationType = data['notificationType'];
     final referenceNumber = data['referenceNumber'];
 
@@ -263,21 +200,5 @@ class _PranomiAppState extends State<PranomiApp> {
           context.push('/notifications');
       }
     }
-  }
-
-  void _handleLocalNotificationTap(BuildContext context, String payload) {
-    // Parse payload into data map
-    final data = <String, dynamic>{};
-    final pairs = payload.split('&');
-    for (final pair in pairs) {
-      if (pair.isEmpty) continue;
-      final keyValue = pair.split('=');
-      if (keyValue.length == 2) {
-        data[keyValue[0]] = keyValue[1];
-      }
-    }
-
-    // Use same navigation logic
-    _handleNotificationNavigation(context, RemoteMessage(data: data));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../../core/services/onesignal_service.dart';
 import '../login_model.dart';
 import 'auth_result.dart';
 import 'auth_strategy.dart';
@@ -30,6 +31,9 @@ class DirectLoginStrategy implements AuthenticationStrategy {
       await prefs.setString('apiSecret', apiInfo.apiSecret);
       await prefs.setString('subscriptionType', apiInfo.subscriptionType.name);
       await prefs.setBool('isEInvoiceActive', apiInfo.isEInvoiceActive);
+
+      // Login to OneSignal with userId
+      await OneSignalService.login(response.item!.userId);
 
       return AuthenticationResult(
         success: true,
