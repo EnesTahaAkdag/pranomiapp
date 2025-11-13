@@ -14,12 +14,13 @@ class EInvoiceService extends ApiServiceBase {
     String? search,
   }) async {
     try {
+      final path = "/EInvoice/EInvoices?size=$size&page=$page"
+          "&invoiceType=$eInvoiceType"
+          "${eInvoiceDate != null ? '&invoiceDate=$eInvoiceDate' : ''}"
+          "&recordType=$recordType";
       final headers = await getAuthHeaders();
       final response = await dio.get(
-        "/EInvoice/EInvoices?size=$size&page=$page"
-        "&invoiceType=$eInvoiceType"
-        "${eInvoiceDate != null ? '&invoiceDate=${eInvoiceDate.toIso8601String().split('T')[0]}' : ''}"
-        "&recordType=$recordType",
+        path,
         options: Options(headers: headers),
       );
       if (response.statusCode == 200) {
