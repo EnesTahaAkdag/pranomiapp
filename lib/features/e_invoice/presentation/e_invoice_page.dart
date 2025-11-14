@@ -275,6 +275,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
         isCancelled ? TextDecoration.lineThrough : TextDecoration.none;
     final linkTextDecoration = isCancelled ? TextDecoration.lineThrough : TextDecoration.underline;
     final baseTextStyle = TextStyle(decoration: textDecoration);
+    final linkTextStyle = TextStyle(decoration: linkTextDecoration,decorationThickness: 1.2);
     final boldTitleStyle = baseTextStyle.copyWith(
       fontSize: AppConstants.fontSizeL,
       fontWeight: FontWeight.bold,
@@ -337,10 +338,9 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                         const SizedBox(width: AppConstants.spacingXs),
                         Text(
                           "Fatura Linki",
-                          style: baseTextStyle.copyWith(
+                          style: linkTextStyle.copyWith(
                             fontSize: AppConstants.fontSizeS,
                             color: AppTheme.blueAccent,
-                            decoration: linkTextDecoration,
                           ),
                         ),
                       ],
