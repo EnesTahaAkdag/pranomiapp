@@ -107,7 +107,7 @@ class _InvoicesClaimPageState extends State<InvoicesClaimPage> {
               padding: const EdgeInsets.all(16),
               child: CustomSearchBar(
                 controller: _searchController,
-                hintText: 'Belge numarası veya Barkod ara...',
+                hintText: 'Belge numarası ara...',
                 onClear: () {
                   _searchController.clear();
                   setState(() => _searchQuery = '');

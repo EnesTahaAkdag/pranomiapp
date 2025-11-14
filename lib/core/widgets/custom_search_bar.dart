@@ -26,7 +26,6 @@ class CustomSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      style: const TextStyle(color: AppTheme.textMedium2),
       decoration: InputDecoration(
         filled: true,
         prefixIcon: Icon(prefixIcon, color: AppTheme.searchIconColor),

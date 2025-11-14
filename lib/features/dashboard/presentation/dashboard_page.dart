@@ -65,29 +65,29 @@ class _DashboardView extends StatelessWidget {
 
     final DashboardItem dashboard =
         viewModel.dashboardItem ??
-        // Provide a default empty item to prevent null issues in UI
-        DashboardItem(
-          totalCashAccountBalance: 0,
-          totalBankAccountBalances: [],
-          activeCustomerAccountReceiving: 0,
-          activeCustomerAccountPayment: 0,
-          nextCustomerAccountReceiving: 0,
-          nextCustomerAccountPayment: 0,
-          totalIncomeAmount: 0,
-          totalExpenseAmount: 0,
-          activeInvoiceReceiving: 0,
-          nextInvoiceReceiving: 0,
-          activeInvoicePayment: 0,
-          nextInvoicePayment: 0,
-          activeChequeReceiving: 0,
-          nextChequeReceiving: 0,
-          activeChequePayment: 0,
-          nextChequePayment: 0,
-          activeDeedReceiving: 0,
-          nextDeedReceiving: 0,
-          activeDeedPayment: 0,
-          nextDeedPayment: 0,
-        );
+            // Provide a default empty item to prevent null issues in UI
+            DashboardItem(
+              totalCashAccountBalance: 0,
+              totalBankAccountBalances: [],
+              activeCustomerAccountReceiving: 0,
+              activeCustomerAccountPayment: 0,
+              nextCustomerAccountReceiving: 0,
+              nextCustomerAccountPayment: 0,
+              totalIncomeAmount: 0,
+              totalExpenseAmount: 0,
+              activeInvoiceReceiving: 0,
+              nextInvoiceReceiving: 0,
+              activeInvoicePayment: 0,
+              nextInvoicePayment: 0,
+              activeChequeReceiving: 0,
+              nextChequeReceiving: 0,
+              activeChequePayment: 0,
+              nextChequePayment: 0,
+              activeDeedReceiving: 0,
+              nextDeedReceiving: 0,
+              activeDeedPayment: 0,
+              nextDeedPayment: 0,
+            );
 
     return RefreshIndicator(
       onRefresh: () => viewModel.fetchDashboard(),
@@ -350,7 +350,7 @@ class _BankBalanceList extends StatelessWidget {
           height: AppConstants.iconSizeL,
           alignment: Alignment.center,
           colorFilter: ColorFilter.mode(
-            AppTheme.orange,
+            Colors.deepOrange.shade800,
             BlendMode.srcIn, // Tüm SVG'yi tek renge boyar
           ),
         ),
@@ -464,8 +464,8 @@ class DashboardListItem extends StatelessWidget {
           width: AppConstants.iconSizeL,
           height: AppConstants.iconSizeL,
           alignment: Alignment.center,
-          colorFilter: const ColorFilter.mode(
-            AppTheme.orange,
+          colorFilter: ColorFilter.mode(
+            Colors.deepOrange.shade800,
             BlendMode.srcIn, // Tüm SVG'yi tek renge boyar
           ),
 
