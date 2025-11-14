@@ -273,6 +273,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     final isCancelled = invoice.status.toLowerCase() == "canceled";
     final textDecoration =
         isCancelled ? TextDecoration.lineThrough : TextDecoration.none;
+    final linkTextDecoration = isCancelled ? TextDecoration.lineThrough : TextDecoration.underline;
     final baseTextStyle = TextStyle(decoration: textDecoration);
     final boldTitleStyle = baseTextStyle.copyWith(
       fontSize: AppConstants.fontSizeL,
@@ -339,7 +340,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                           style: baseTextStyle.copyWith(
                             fontSize: AppConstants.fontSizeS,
                             color: AppTheme.blueAccent,
-                            decoration: TextDecoration.underline,
+                            decoration: linkTextDecoration,
                           ),
                         ),
                       ],
