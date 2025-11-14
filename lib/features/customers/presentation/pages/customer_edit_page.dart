@@ -196,7 +196,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       return const Scaffold(body: Center(child: AppLoadingIndicator()));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Müşteri Düzenle'),
+      appBar: AppBar(title: const Text('Cari Hesap Düzenle'),
         scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
       ),
       body: Padding(
