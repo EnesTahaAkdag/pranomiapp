@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pranomiapp/core/extensions/snackbar_extensions.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -17,6 +18,7 @@ import '../../domain/customer_type_enum.dart';
 
 class CustomerEditPage extends StatefulWidget {
   final int customerId;
+
   const CustomerEditPage({super.key, required this.customerId});
 
   @override
@@ -164,6 +166,11 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
         ),
       );
       return;
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(context.showSuccessSnackbar("Başarıyla güncellendi"));
+      Navigator.pop(context);
     }
 
     if (responseModel.errorMessages.isNotEmpty ||
@@ -196,8 +203,10 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
       return const Scaffold(body: Center(child: AppLoadingIndicator()));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Cari Hesap Düzenle'),
-        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
+      appBar: AppBar(
+        title: const Text('Cari Hesap Düzenle'),
+        scrolledUnderElevation:
+            0, // Kaydırma sırasında elevation değişimini engeller
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -206,7 +215,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
           child: ListView(
             children: [
               _buildSwitch(
-                'Şirket mi?',
+                'Tüzel Kişi',
                 _model!.isCompany,
                 (v) => setState(() => _model!.isCompany = v),
               ),

@@ -77,7 +77,7 @@ class CustomerEditModel {
     'IsCompany': isCompany,
     'TaxOffice': taxOffice,
     'TaxNumber': taxNumber,
-    'Email': email,
+    'Email': email.isEmpty ? null : email,
     'Iban': iban,
     'Address': address,
     'Phone': phone,
