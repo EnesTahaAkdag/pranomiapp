@@ -7,6 +7,21 @@ extension EnglishUpperCase on String {
   }
 }
 
+extension PhoneNumberExtension on String {
+  String formatPhoneNumber() {
+    String cleaned = replaceAll(RegExp(r'\D'), '');
+
+    if (cleaned.length != 10) return this;
+
+    return '(${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, 10)}';
+  }
+
+  String unformatPhoneNumber() {
+    return replaceAll(RegExp(r'\D'), '');
+  }
+}
+
+
 // extension UpperCase on String {
 //   String toUpper() {
 //     return toLowerCase().toUpperCase();

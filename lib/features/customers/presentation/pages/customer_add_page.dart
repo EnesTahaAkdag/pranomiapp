@@ -15,6 +15,7 @@ import '../../domain/customer_type_enum.dart';
 
 class CustomerAddPage extends StatefulWidget {
   final CustomerTypeEnum customerType;
+
   const CustomerAddPage({super.key, required this.customerType});
 
   @override
@@ -117,7 +118,8 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Yeni Cari Hesap Ekle'),
-        scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
+        scrolledUnderElevation: 0,
+        // Kaydırma sırasında elevation değişimini engeller
         centerTitle: true,
         backgroundColor: AppTheme.mediumGrayBackground,
         elevation: AppConstants.elevationNone,
@@ -170,10 +172,10 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
                 keyboardType: TextInputType.emailAddress,
                 onSaved: (v) => _model.email = v?.trim() ?? '',
               ),
-              _modernTextField(
-                'Telefon Numarası',
-                keyboardType: TextInputType.phone,
-                onSaved: (v) => _model.phone = v?.trim() ?? '',
+              PhoneTextField(
+                label: 'Telefon Numarası',
+                onSaved: (v) => _model.phone = v ?? '',
+                // validator: (v) => v == null || v.isEmpty ? 'Zorunlu alan' : null, // Opsiyonel custom validator
               ),
               _modernTextField(
                 'IBAN Numarası',
@@ -224,13 +226,16 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     int maxLines = 1,
+    List<TextInputFormatter>? inputFormatters, // Yeni parametre ekleyin
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spacingM,
             vertical: AppConstants.fontSizeM,
@@ -252,7 +257,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingS),
       child: SwitchListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
+        ),
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         value: value,
         onChanged: onChanged,
@@ -274,8 +281,13 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       label: const Text('Kaydet'),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppTheme.accentColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
-        padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacing40, vertical: AppConstants.fontSizeXl),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.spacing40,
+          vertical: AppConstants.fontSizeXl,
+        ),
         textStyle: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
       ),
     );
@@ -286,7 +298,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
+        ),
       ),
     ),
     items: _countries,
@@ -310,7 +324,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
+        ),
       ),
     ),
     items: _cities,
@@ -331,7 +347,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusM),
+        ),
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -352,7 +370,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
         decoration: InputDecoration(
           labelText: 'Şehir',
           hintText: 'Şehir giriniz',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spacingM,
             vertical: AppConstants.fontSizeM,
@@ -372,7 +392,9 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
         decoration: InputDecoration(
           labelText: 'İlçe',
           hintText: 'İlçe giriniz',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spacingM,
             vertical: AppConstants.fontSizeM,
@@ -388,3 +410,110 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   String? _requiredValidator(String? v) =>
       (v == null || v.trim().isEmpty) ? 'Zorunlu alan' : null;
 }
+
+
+class PhoneTextField extends StatelessWidget {
+  final String label;
+  final void Function(String?) onSaved;
+  final String? Function(String?)? validator;
+  final String? initialValue;
+
+  const PhoneTextField({
+    super.key,
+    required this.label,
+    required this.onSaved,
+    this.validator,
+    this.initialValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
+      child: TextFormField(
+        initialValue: initialValue,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: '(5XX) XXX XX XX',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.spacingM,
+            vertical: AppConstants.fontSizeM,
+          ),
+        ),
+        keyboardType: TextInputType.phone,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          PhoneNumberFormatter(),
+        ],
+        validator: validator ?? _defaultValidator,
+        onSaved: (value) => onSaved(value?.unformatPhoneNumber()),
+      ),
+    );
+  }
+
+  String? _defaultValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Telefon numarası gerekli';
+    }
+    String cleaned = value.unformatPhoneNumber();
+    if (cleaned.length != 10) {
+      return 'Geçerli bir telefon numarası girin (10 hane)';
+    }
+    return null;
+  }
+}
+
+// Formatter
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    String text = newValue.text.replaceAll(RegExp(r'\D'), '');
+
+    if (text.length > 10) {
+      text = text.substring(0, 10);
+    }
+
+    String formatted = '';
+
+    if (text.isNotEmpty) {
+      formatted = '(${text.substring(0, text.length.clamp(0, 3))}';
+
+      if (text.length > 3) {
+        formatted += ') ${text.substring(3, text.length.clamp(3, 6))}';
+      }
+
+      if (text.length > 6) {
+        formatted += ' ${text.substring(6, text.length.clamp(6, 8))}';
+      }
+
+      if (text.length > 8) {
+        formatted += ' ${text.substring(8, text.length.clamp(8, 10))}';
+      }
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
+// Extension
+extension PhoneNumberExtension on String {
+  String formatPhoneNumber() {
+    String cleaned = replaceAll(RegExp(r'\D'), '');
+    if (cleaned.length != 10) return this;
+    return '(${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, 10)}';
+  }
+
+  String unformatPhoneNumber() {
+    return replaceAll(RegExp(r'\D'), '');
+  }
+}
+
