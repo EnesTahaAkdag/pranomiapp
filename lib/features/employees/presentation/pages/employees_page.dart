@@ -163,7 +163,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                       return GestureDetector(
                         onTap: () async {
                           final result = await context.push(
-                            '/CustomerEditPage',
+                            '/EmployeesEditPage',
                             extra: employee.employeeId,
                           );
                           if (result == true || result == 'refresh') {

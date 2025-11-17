@@ -4,6 +4,8 @@ import 'package:pranomiapp/features/authentication/data/login_services.dart';
 import 'package:pranomiapp/features/credit/data/credit_service.dart';
 import 'package:pranomiapp/features/dashboard/data/dashboard_service.dart';
 import 'package:pranomiapp/features/employees/data/services/employee_add_service.dart';
+import 'package:pranomiapp/features/employees/data/services/employee_detail_service.dart';
+import 'package:pranomiapp/features/employees/data/services/employee_edit_service.dart';
 import 'package:pranomiapp/features/employees/data/services/employees_service.dart';
 import 'package:pranomiapp/features/notifications/data/notifications_service.dart';
 import 'package:pranomiapp/features/accounting/data/services/account_service.dart';
@@ -50,6 +52,14 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<CustomerAddService>(() => CustomerAddService());
 
   locator.registerLazySingleton<EmployeeAddService>(() => EmployeeAddService());
+
+  locator.registerLazySingleton<EmployeeDetailService>(
+    () => EmployeeDetailService(),
+  );
+
+  locator.registerLazySingleton<EmployeeEditService>(
+    () => EmployeeEditService(),
+  );
 
   locator.registerLazySingleton<LoginServices>(() => LoginServices());
 

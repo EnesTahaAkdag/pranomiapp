@@ -16,6 +16,7 @@ import 'package:pranomiapp/features/credit/presentation/credit_page.dart';
 import 'package:pranomiapp/features/dashboard/presentation/dashboard_page.dart';
 import 'package:pranomiapp/features/e_invoice/presentation/e_invoice_page.dart';
 import 'package:pranomiapp/features/employees/presentation/pages/employee_add_page.dart';
+import 'package:pranomiapp/features/employees/presentation/pages/employees_edit_page.dart';
 import 'package:pranomiapp/features/employees/presentation/pages/employees_page.dart';
 import 'package:pranomiapp/features/notifications/presentation/notifications_page.dart';
 import 'package:pranomiapp/features/products/presentation/products_and_services_page.dart';
@@ -231,6 +232,18 @@ class AppRouter {
           path: '/EmployeeAddPage',
           builder: (context, state) {
             return const EmployeeAddPage(customerType: CustomerTypeEnum.Employee);
+          },
+        ),
+        GoRoute(
+          path: '/EmployeesEditPage',
+          builder: (context, state) {
+            final employeeId = state.extra as int?;
+            if (employeeId == null) {
+              return const Scaffold(
+                body: Center(child: Text('Geçersiz çalışan ID')),
+              );
+            }
+            return EmployeesEditPage(employeeId: employeeId);
           },
         ),
         GoRoute(
