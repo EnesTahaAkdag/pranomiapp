@@ -115,7 +115,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.gray100,
       appBar: AppBar(
         title: const Text('Yeni Cari Hesap Ekle'),
         scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
@@ -232,8 +231,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spacingM,
             vertical: AppConstants.fontSizeM,
@@ -255,12 +252,10 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingS),
       child: SwitchListTile(
-        tileColor: AppTheme.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         value: value,
         onChanged: onChanged,
-        activeThumbColor: AppTheme.accentColor,
       ),
     );
   }
@@ -292,8 +287,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _countries,
@@ -318,8 +311,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _cities,
@@ -341,8 +332,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusM)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -364,8 +353,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
           labelText: 'Şehir',
           hintText: 'Şehir giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spacingM,
             vertical: AppConstants.fontSizeM,
@@ -386,8 +373,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
           labelText: 'İlçe',
           hintText: 'İlçe giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.borderRadiusL)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.spacingM,
             vertical: AppConstants.fontSizeM,
