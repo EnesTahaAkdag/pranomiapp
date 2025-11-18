@@ -10,6 +10,7 @@ import 'package:pranomiapp/features/employees/data/models/employee_add_model.dar
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/phone_text_field.dart';
 import '../../data/services/employee_add_service.dart';
 
 class EmployeeAddPage extends StatefulWidget {
@@ -115,7 +116,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.gray100,
       appBar: AppBar(
         title: const Text('Yeni Çalışan Ekle'),
         scrolledUnderElevation: 0, // Kaydırma sırasında elevation değişimini engeller
@@ -171,10 +171,9 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
                 keyboardType: TextInputType.emailAddress,
                 onSaved: (v) => _model.email = v?.trim() ?? '',
               ),
-              _modernTextField(
-                'Telefon Numarası',
-                keyboardType: TextInputType.phone,
-                onSaved: (v) => _model.phone = v?.trim() ?? '',
+              PhoneTextField(
+                label: 'Telefon Numarası',
+                onSaved: (v) => _model.phone = v ?? '',
               ),
               _modernTextField(
                 'IBAN Numarası',
@@ -211,8 +210,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -253,8 +250,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _countries,
@@ -279,8 +274,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _cities,
@@ -302,8 +295,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: AppTheme.white,
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),
@@ -325,8 +316,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
           labelText: 'Şehir',
           hintText: 'Şehir giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
@@ -347,8 +336,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
           labelText: 'İlçe',
           hintText: 'İlçe giriniz',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          filled: true,
-          fillColor: AppTheme.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,

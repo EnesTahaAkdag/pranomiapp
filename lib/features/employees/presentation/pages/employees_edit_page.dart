@@ -9,6 +9,7 @@ import 'package:pranomiapp/core/extensions/snackbar_extensions.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/phone_text_field.dart';
 import '../../../customers/data/models/customer_address_model.dart';
 import '../../data/models/employee_edit_model.dart';
 import '../../data/services/employee_detail_service.dart';
@@ -241,10 +242,10 @@ class _EmployeesEditPageState extends State<EmployeesEditPage> {
                 (v) => _model!.email = v ?? '',
                 inputType: TextInputType.emailAddress,
               ),
-              _buildTextField(
-                'Telefon',
-                _model!.phone,
-                (v) => _model!.phone = v ?? '',
+              PhoneTextField(
+                label: 'Telefon',
+                initialValue: _model!.phone,
+                onSaved: (v) => _model!.phone = v ?? '',
               ),
               _buildTextField(
                 'IBAN',
@@ -304,10 +305,6 @@ class _EmployeesEditPageState extends State<EmployeesEditPage> {
         break;
       case 'E-Posta':
         maxLength = 100;
-        break;
-      case 'Telefon':
-        maxLength = 10;
-        inputFormatters = [FilteringTextInputFormatter.digitsOnly];
         break;
       case 'IBAN':
         maxLength = 26;

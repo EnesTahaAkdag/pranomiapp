@@ -8,6 +8,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_constants.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/phone_text_field.dart';
 import '../../data/models/customer_add_model.dart';
 import '../../data/models/customer_address_model.dart';
 import '../../data/services/customer_add_service.dart';
@@ -226,7 +227,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     int maxLines = 1,
-    List<TextInputFormatter>? inputFormatters, // Yeni parametre ekleyin
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
@@ -409,111 +409,5 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
 
   String? _requiredValidator(String? v) =>
       (v == null || v.trim().isEmpty) ? 'Zorunlu alan' : null;
-}
-
-
-class PhoneTextField extends StatelessWidget {
-  final String label;
-  final void Function(String?) onSaved;
-  final String? Function(String?)? validator;
-  final String? initialValue;
-
-  const PhoneTextField({
-    super.key,
-    required this.label,
-    required this.onSaved,
-    this.validator,
-    this.initialValue,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacing12),
-      child: TextFormField(
-        initialValue: initialValue,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: '(5XX) XXX XX XX',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spacingM,
-            vertical: AppConstants.fontSizeM,
-          ),
-        ),
-        keyboardType: TextInputType.phone,
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          PhoneNumberFormatter(),
-        ],
-        validator: validator ?? _defaultValidator,
-        onSaved: (value) => onSaved(value?.unformatPhoneNumber()),
-      ),
-    );
-  }
-
-  String? _defaultValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Telefon numarası gerekli';
-    }
-    String cleaned = value.unformatPhoneNumber();
-    if (cleaned.length != 10) {
-      return 'Geçerli bir telefon numarası girin (10 hane)';
-    }
-    return null;
-  }
-}
-
-// Formatter
-class PhoneNumberFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
-    String text = newValue.text.replaceAll(RegExp(r'\D'), '');
-
-    if (text.length > 10) {
-      text = text.substring(0, 10);
-    }
-
-    String formatted = '';
-
-    if (text.isNotEmpty) {
-      formatted = '(${text.substring(0, text.length.clamp(0, 3))}';
-
-      if (text.length > 3) {
-        formatted += ') ${text.substring(3, text.length.clamp(3, 6))}';
-      }
-
-      if (text.length > 6) {
-        formatted += ' ${text.substring(6, text.length.clamp(6, 8))}';
-      }
-
-      if (text.length > 8) {
-        formatted += ' ${text.substring(8, text.length.clamp(8, 10))}';
-      }
-    }
-
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
-}
-
-// Extension
-extension PhoneNumberExtension on String {
-  String formatPhoneNumber() {
-    String cleaned = replaceAll(RegExp(r'\D'), '');
-    if (cleaned.length != 10) return this;
-    return '(${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, 10)}';
-  }
-
-  String unformatPhoneNumber() {
-    return replaceAll(RegExp(r'\D'), '');
-  }
 }
 
