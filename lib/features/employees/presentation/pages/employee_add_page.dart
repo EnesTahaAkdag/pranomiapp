@@ -119,7 +119,6 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: AppTheme.white,
         body: Center(child: AppLoadingIndicator()),
       );
     }

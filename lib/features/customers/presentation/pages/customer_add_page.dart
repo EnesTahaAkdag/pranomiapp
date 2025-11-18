@@ -119,7 +119,6 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: AppTheme.white,
         body: Center(child: AppLoadingIndicator()),
       );
     }
