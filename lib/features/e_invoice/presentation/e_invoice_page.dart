@@ -406,7 +406,7 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                     }
                   },
                 ),
-                if (invoice.status.toLowerCase() != "canceled")
+                if (invoice.status.toLowerCase() != "canceled" && invoice.type.name != "eInvoice")
                   ListTile(
                     leading: const Icon(Icons.cancel),
                     title: const Text('Faturayı İptal Et'),
