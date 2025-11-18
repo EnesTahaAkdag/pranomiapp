@@ -17,6 +17,9 @@ import '../../data/services/invoice_cancelled_service.dart';
 import '../../data/services/invoice_service.dart';
 import '../../data/services/send_e_invoice_service.dart';
 
+const int typeIncomeOrder = 3;
+const int typeExpenseOrder = 4;
+
 class InvoicesPage extends StatefulWidget {
   final int invoiceType;
 
@@ -154,7 +157,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
                         child: Center(
                           child: Text(
                             'Hiç fatura bulunamadı.',
-                            style: TextStyle(color: AppTheme.getTextSecondary(context)),
+                            style: TextStyle(
+                              color: AppTheme.getTextSecondary(context),
+                            ),
                           ),
                         ),
                       );
@@ -225,9 +230,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   ],
                 ),
                 const SizedBox(height: AppConstants.spacingXs),
-                Text(
-                  'Müşteri: ${invoice.customerName}',
-                ),
+                Text('Müşteri: ${invoice.customerName}'),
                 Text('Tarih: $dateFormatted'),
                 const SizedBox(height: AppConstants.spacingS),
                 Text(
@@ -243,9 +246,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   children: [
                     Text(
                       'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     Row(
                       children: [
@@ -304,12 +305,13 @@ class _InvoicesPageState extends State<InvoicesPage> {
                       title: const Text('Faturayı İptal Et'),
                       onTap: () => _handleInvoiceCancel(invoice),
                     ),
-                if (widget.invoiceType != 3 && widget.invoiceType != 4)
-                ListTile(
-                  leading: const Icon(Icons.send),
-                  title: const Text('E-Fatura Gönder'),
-                  onTap: () => _showSendDialog(invoice),
-                ),
+                if (widget.invoiceType != typeIncomeOrder &&
+                    widget.invoiceType != typeExpenseOrder)
+                  ListTile(
+                    leading: const Icon(Icons.send),
+                    title: const Text('E-Fatura Gönder'),
+                    onTap: () => _showSendDialog(invoice),
+                  ),
               ],
             ),
           ),
@@ -332,7 +334,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
         result != null
             ? 'Fatura başarıyla iptal edildi.'
             : 'Fatura iptal edilemedi.',
-        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
+        result != null
+            ? AppTheme.buttonSuccessColor
+            : AppTheme.buttonErrorColor,
       );
       if (result != null) _fetchInvoices(reset: true);
     } catch (e) {
@@ -358,7 +362,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
         result != null
             ? 'Fatura iptali geri alındı.'
             : 'Fatura iptali geri alınamadı.',
-        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
+        result != null
+            ? AppTheme.buttonSuccessColor
+            : AppTheme.buttonErrorColor,
       );
       if (result != null) _fetchInvoices(reset: true);
     } catch (e) {
@@ -441,7 +447,10 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 onPressed: () async {
                   final email = emailController.text.trim();
                   if (email.isEmpty) {
-                    _showSnackBar('Lütfen e-posta girin.', AppTheme.buttonErrorColor);
+                    _showSnackBar(
+                      'Lütfen e-posta girin.',
+                      AppTheme.buttonErrorColor,
+                    );
                     return;
                   }
                   Navigator.pop(c);
@@ -469,10 +478,16 @@ class _InvoicesPageState extends State<InvoicesPage> {
                         _showSnackBar(msg, AppTheme.buttonErrorColor);
                       }
                     } else {
-                      _showSnackBar('E-Fatura gönderilemedi.', AppTheme.buttonErrorColor);
+                      _showSnackBar(
+                        'E-Fatura gönderilemedi.',
+                        AppTheme.buttonErrorColor,
+                      );
                     }
                   } catch (e) {
-                    _showSnackBar('Gönderim hatası: $e', AppTheme.buttonErrorColor);
+                    _showSnackBar(
+                      'Gönderim hatası: $e',
+                      AppTheme.buttonErrorColor,
+                    );
                   }
                 },
                 child: const Text('Gönder'),
