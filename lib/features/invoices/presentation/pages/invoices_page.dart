@@ -302,25 +302,29 @@ class _InvoicesPageState extends State<InvoicesPage> {
                     context.push('/invoice-detail/${invoice.id}');
                   },
                 ),
-                invoice.invoiceStatus == "Cancelled"
-                    ? ListTile(
-                      leading: const Icon(Icons.undo),
-                      title: const Text('Fatura iptalini geri al'),
-                      onTap: () => _handleReversal(invoice),
-                    )
-                    :  ListTile(
-                      leading: const Icon(Icons.cancel),
+                if (invoice.type.name != 'incomeWayBill' &&
+                    invoice.type.name != 'expenseWayBill')
+                  invoice.invoiceStatus == "Cancelled"
+                      ? ListTile(
+                        leading: const Icon(Icons.undo),
+                        title: const Text('Fatura iptalini geri al'),
+                        onTap: () => _handleReversal(invoice),
+                      )
+                      : ListTile(
+                        leading: const Icon(Icons.cancel),
 
-                      title: Text(
-                        invoice.type.name == 'expenseOrder' ||
-                                invoice.type.name == 'incomeOrder'
-                            ? 'Siparişi İptal Et'
-                            :  'Faturayı İptal Et',
+                        title: Text(
+                          invoice.type.name == 'expenseOrder' ||
+                                  invoice.type.name == 'incomeOrder'
+                              ? 'Siparişi İptal Et'
+                              : 'Faturayı İptal Et',
+                        ),
+                        onTap: () => _handleInvoiceCancel(invoice),
                       ),
-                      onTap: () => _handleInvoiceCancel(invoice),
-                    ),
                 if (widget.invoiceType != typeIncomeOrder &&
-                    widget.invoiceType != typeExpenseOrder)
+                    widget.invoiceType != typeExpenseOrder &&
+                    invoice.type.name != 'incomeWayBill' &&
+                    invoice.type.name != 'expenseWayBill')
                   ListTile(
                     leading: const Icon(Icons.send),
                     title: const Text('E-Fatura Gönder'),
