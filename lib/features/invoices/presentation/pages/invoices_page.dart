@@ -41,7 +41,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
   final _invoiceCancelService = locator<InvoiceCancelService>();
 
   final _invoiceCancellationReversalService =
-  locator<InvoiceCancellationReversalService>();
+      locator<InvoiceCancellationReversalService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -124,9 +124,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme
-          .of(context)
-          .scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -147,17 +145,14 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   controller: _scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemCount:
-                  _invoices.isEmpty && !_isLoading
-                      ? 1
-                      : _invoices.length + (_isLoading ? 1 : 0),
+                      _invoices.isEmpty && !_isLoading
+                          ? 1
+                          : _invoices.length + (_isLoading ? 1 : 0),
                   itemBuilder: (ctx, idx) {
                     if (_invoices.isEmpty && !_isLoading) {
                       return SizedBox(
                         height:
-                        MediaQuery
-                            .of(context)
-                            .size
-                            .height *
+                            MediaQuery.of(context).size.height *
                             AppConstants.screenHeightMultiplierHalf,
                         child: Center(
                           child: Text(
@@ -205,9 +200,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
         child: Card(
           elevation: AppConstants.elevationMedium,
           shadowColor: AppTheme.getShadowColor(context),
-          color: Theme
-              .of(context)
-              .cardColor,
+          color: Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
           ),
@@ -225,7 +218,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                           fontSize: AppConstants.fontSizeL,
                           fontWeight: FontWeight.bold,
                           decoration:
-                          isCancelled ? TextDecoration.lineThrough : null,
+                              isCancelled ? TextDecoration.lineThrough : null,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -241,8 +234,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 Text('Tarih: $dateFormatted'),
                 const SizedBox(height: AppConstants.spacingS),
                 Text(
-                  'Toplam Tutar: ${AppFormatters.currency.format(
-                      invoice.totalAmount)} ₺',
+                  'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: AppConstants.fontSizeM,
@@ -253,8 +245,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Ödenen Tutar: ${AppFormatters.currency.format(
-                          invoice.paidAmount)} ₺',
+                      'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     Row(
@@ -292,14 +283,20 @@ class _InvoicesPageState extends State<InvoicesPage> {
         ),
       ),
       builder:
-          (_) =>
-          SafeArea(
+          (_) => SafeArea(
             child: Wrap(
               children: [
                 ListTile(
                   leading: const Icon(Icons.receipt_long),
-                  title: Text(invoice.type.name == 'expenseOrder' ||
-                      invoice.type.name == 'incomeOrder' ? "Sipariş Detayı" : 'Fature Detayı'),
+                  title: Text(
+                    invoice.type.name == 'expenseOrder' ||
+                            invoice.type.name == 'incomeOrder'
+                        ? "Sipariş Detayı"
+                        : invoice.type.name == 'incomeWayBill' ||
+                            invoice.type.name == 'expenseWayBill'
+                        ? 'İrsaliye Detayı'
+                        : 'Fatura Detayı',
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     context.push('/invoice-detail/${invoice.id}');
@@ -307,16 +304,21 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 ),
                 invoice.invoiceStatus == "Cancelled"
                     ? ListTile(
-                  leading: const Icon(Icons.undo),
-                  title: const Text('Fatura iptalini geri al'),
-                  onTap: () => _handleReversal(invoice),
-                )
-                    : ListTile(
-                  leading: const Icon(Icons.cancel),
-                  title: Text(invoice.type.name == 'expenseOrder' ||
-                      invoice.type.name == 'incomeOrder' ? 'Siparişi İptal Et' : 'Faturayı İptal Et'),
-                  onTap: () => _handleInvoiceCancel(invoice),
-                ),
+                      leading: const Icon(Icons.undo),
+                      title: const Text('Fatura iptalini geri al'),
+                      onTap: () => _handleReversal(invoice),
+                    )
+                    :  ListTile(
+                      leading: const Icon(Icons.cancel),
+
+                      title: Text(
+                        invoice.type.name == 'expenseOrder' ||
+                                invoice.type.name == 'incomeOrder'
+                            ? 'Siparişi İptal Et'
+                            :  'Faturayı İptal Et',
+                      ),
+                      onTap: () => _handleInvoiceCancel(invoice),
+                    ),
                 if (widget.invoiceType != typeIncomeOrder &&
                     widget.invoiceType != typeExpenseOrder)
                   ListTile(
@@ -391,8 +393,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     return showDialog<bool>(
       context: context,
       builder:
-          (c) =>
-          AlertDialog(
+          (c) => AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
             ),
@@ -427,8 +428,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
     showDialog(
       context: context,
       builder:
-          (c) =>
-          AlertDialog(
+          (c) => AlertDialog(
             title: const Text('E-Fatura Gönder'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -472,12 +472,12 @@ class _InvoicesPageState extends State<InvoicesPage> {
                   try {
                     final response = await _sendEInvoiceService
                         .sendEinvoiceFullResponse(
-                      SendEInvoiceModel(
-                        invoiceId: invoice.id,
-                        email: email,
-                        invoiceNote: noteController.text.trim(),
-                      ),
-                    );
+                          SendEInvoiceModel(
+                            invoiceId: invoice.id,
+                            email: email,
+                            invoiceNote: noteController.text.trim(),
+                          ),
+                        );
 
                     if (!mounted) return;
 
