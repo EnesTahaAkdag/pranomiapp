@@ -82,6 +82,14 @@ class _CustomerAddPageState extends State<CustomerAddPage> {
           (json.decode(districtData) as List)
               .map((e) => District.fromJson(e))
               .toList();
+
+      // 🇹🇷 Türkiye'yi varsayılan olarak seç
+      _selectedCountry = _countries.firstWhere(
+            (c) => c.alpha2.toUpperCase() == 'TR',
+        orElse: () => _countries.first, // TR yoksa ilk ülkeyi seç
+      );
+      _model.countryIso2 = _selectedCountry!.alpha2.toUpperCase();
+
       _isLoading = false;
     });
   }
