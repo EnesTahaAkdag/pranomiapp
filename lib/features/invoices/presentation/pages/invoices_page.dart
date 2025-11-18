@@ -304,6 +304,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
                       title: const Text('Faturayı İptal Et'),
                       onTap: () => _handleInvoiceCancel(invoice),
                     ),
+                if (widget.invoiceType != 3 && widget.invoiceType != 4)
                 ListTile(
                   leading: const Icon(Icons.send),
                   title: const Text('E-Fatura Gönder'),
