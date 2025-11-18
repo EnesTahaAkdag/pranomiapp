@@ -35,13 +35,10 @@ class _InvoicesPageState extends State<InvoicesPage> {
   final List<InvoicesModel> _invoices = [];
 
   final _invoiceService = locator<InvoiceService>();
-
   final _sendEInvoiceService = locator<SendEInvoiceService>();
-
   final _invoiceCancelService = locator<InvoiceCancelService>();
-
   final _invoiceCancellationReversalService =
-      locator<InvoiceCancellationReversalService>();
+  locator<InvoiceCancellationReversalService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -64,6 +61,48 @@ class _InvoicesPageState extends State<InvoicesPage> {
     _searchController.dispose();
     super.dispose();
   }
+
+  // ============================================================================
+  // HELPER METHODS - Belge Tipi Kontrolleri
+  // ============================================================================
+
+  /// Belge sipariş mi?
+  bool _isOrder(String typeName) {
+    return typeName == 'expenseOrder' || typeName == 'incomeOrder';
+  }
+
+  /// Belge irsaliye mi?
+  bool _isWayBill(String typeName) {
+    return typeName == 'incomeWayBill' || typeName == 'expenseWayBill';
+  }
+
+  /// Belge iptal edilebilir mi? (İrsaliyeler iptal edilemez)
+  bool _canCancel(InvoicesModel invoice) {
+    return !_isWayBill(invoice.type.name);
+  }
+
+  /// E-Fatura gönderilebilir mi? (Sipariş ve irsaliyeler gönderilemez)
+  bool _canSendEInvoice(InvoicesModel invoice) {
+    return widget.invoiceType != typeIncomeOrder &&
+        widget.invoiceType != typeExpenseOrder &&
+        !_isWayBill(invoice.type.name);
+  }
+
+  /// Belge başlığını döndürür
+  String _getDocumentTitle(String typeName) {
+    if (_isOrder(typeName)) return "Sipariş Detayı";
+    if (_isWayBill(typeName)) return "İrsaliye Detayı";
+    return "Fatura Detayı";
+  }
+
+  /// İptal buton başlığını döndürür
+  String _getCancelTitle(String typeName) {
+    return _isOrder(typeName) ? 'Siparişi İptal Et' : 'Faturayı İptal Et';
+  }
+
+  // ============================================================================
+  // PAGINATION & SEARCH
+  // ============================================================================
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
@@ -115,11 +154,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
     }
   }
 
-  void _showSnackBar(String message, Color color) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
-  }
+  // ============================================================================
+  // UI BUILDERS
+  // ============================================================================
 
   @override
   Widget build(BuildContext context) {
@@ -128,58 +165,69 @@ class _InvoicesPageState extends State<InvoicesPage> {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(AppConstants.spacingM),
-              child: CustomSearchBar(
-                controller: _searchController,
-                hintText: 'Belge numarası ara...',
-                onClear: _clearSearch,
-                onChanged: (val) => setState(() => _searchText = val),
-                onSubmitted: (_) => _fetchInvoices(reset: true),
-              ),
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => _fetchInvoices(reset: true),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount:
-                      _invoices.isEmpty && !_isLoading
-                          ? 1
-                          : _invoices.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (ctx, idx) {
-                    if (_invoices.isEmpty && !_isLoading) {
-                      return SizedBox(
-                        height:
-                            MediaQuery.of(context).size.height *
-                            AppConstants.screenHeightMultiplierHalf,
-                        child: Center(
-                          child: Text(
-                            'Hiç fatura bulunamadı.',
-                            style: TextStyle(
-                              color: AppTheme.getTextSecondary(context),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-
-                    if (idx < _invoices.length) {
-                      return _buildInvoiceItem(_invoices[idx]);
-                    }
-
-                    return const Padding(
-                      padding: EdgeInsets.all(AppConstants.spacingM),
-                      child: Center(child: AppLoadingIndicator()),
-                    );
-                  },
-                ),
-              ),
-            ),
+            _buildSearchBar(),
+            Expanded(child: _buildInvoiceList()),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(AppConstants.spacingM),
+      child: CustomSearchBar(
+        controller: _searchController,
+        hintText: 'Belge numarası ara...',
+        onClear: _clearSearch,
+        onChanged: (val) => setState(() => _searchText = val),
+        onSubmitted: (_) => _fetchInvoices(reset: true),
+      ),
+    );
+  }
+
+  Widget _buildInvoiceList() {
+    return RefreshIndicator(
+      onRefresh: () => _fetchInvoices(reset: true),
+      child: ListView.builder(
+        controller: _scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount:
+        _invoices.isEmpty && !_isLoading
+            ? 1
+            : _invoices.length + (_isLoading ? 1 : 0),
+        itemBuilder: (ctx, idx) {
+          if (_invoices.isEmpty && !_isLoading) {
+            return _buildEmptyState();
+          }
+
+          if (idx < _invoices.length) {
+            return _buildInvoiceItem(_invoices[idx]);
+          }
+
+          return _buildLoadingIndicator();
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height *
+          AppConstants.screenHeightMultiplierHalf,
+      child: Center(
+        child: Text(
+          'Hiç fatura bulunamadı.',
+          style: TextStyle(color: AppTheme.getTextSecondary(context)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Padding(
+      padding: EdgeInsets.all(AppConstants.spacingM),
+      child: Center(child: AppLoadingIndicator()),
     );
   }
 
@@ -209,63 +257,13 @@ class _InvoicesPageState extends State<InvoicesPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        invoice.documentNumber,
-                        style: TextStyle(
-                          fontSize: AppConstants.fontSizeL,
-                          fontWeight: FontWeight.bold,
-                          decoration:
-                              isCancelled ? TextDecoration.lineThrough : null,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () => _showSimpleBottomSheet(invoice),
-                    ),
-                  ],
-                ),
+                _buildInvoiceHeader(invoice, isCancelled),
                 const SizedBox(height: AppConstants.spacingXs),
-                Text('Müşteri: ${invoice.customerName}'),
-                Text('Tarih: $dateFormatted'),
+                _buildInvoiceInfo(invoice, dateFormatted),
                 const SizedBox(height: AppConstants.spacingS),
-                Text(
-                  'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: AppConstants.fontSizeM,
-                  ),
-                ),
+                _buildInvoiceAmount(invoice),
                 const SizedBox(height: AppConstants.spacingXs),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Row(
-                      children: [
-                        if (invoice.isEInvoiced)
-                          Image.asset(
-                            "lib/assets/icons/pdficon.png",
-                            height: AppConstants.iconSizeXl,
-                            color: Colors.red,
-                          ),
-
-                        Image.network(
-                          eCommerceImageUrl,
-                          height: AppConstants.iconSizeXl,
-                          errorBuilder: (_, __, ___) => const SizedBox(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                _buildInvoiceFooter(invoice, eCommerceImageUrl),
               ],
             ),
           ),
@@ -274,7 +272,80 @@ class _InvoicesPageState extends State<InvoicesPage> {
     );
   }
 
-  void _showSimpleBottomSheet(InvoicesModel invoice) {
+  Widget _buildInvoiceHeader(InvoicesModel invoice, bool isCancelled) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            invoice.documentNumber,
+            style: TextStyle(
+              fontSize: AppConstants.fontSizeL,
+              fontWeight: FontWeight.bold,
+              decoration: isCancelled ? TextDecoration.lineThrough : null,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () => _showBottomSheet(invoice),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInvoiceInfo(InvoicesModel invoice, String dateFormatted) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Müşteri: ${invoice.customerName}'),
+        Text('Tarih: $dateFormatted'),
+      ],
+    );
+  }
+
+  Widget _buildInvoiceAmount(InvoicesModel invoice) {
+    return Text(
+      'Toplam Tutar: ${AppFormatters.currency.format(invoice.totalAmount)} ₺',
+      style: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: AppConstants.fontSizeM,
+      ),
+    );
+  }
+
+  Widget _buildInvoiceFooter(InvoicesModel invoice, String eCommerceImageUrl) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Ödenen Tutar: ${AppFormatters.currency.format(invoice.paidAmount)} ₺',
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        Row(
+          children: [
+            if (invoice.isEInvoiced)
+              Image.asset(
+                "lib/assets/icons/pdficon.png",
+                height: AppConstants.iconSizeXl,
+                color: Colors.red,
+              ),
+            Image.network(
+              eCommerceImageUrl,
+              height: AppConstants.iconSizeXl,
+              errorBuilder: (_, __, ___) => const SizedBox(),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ============================================================================
+  // BOTTOM SHEET & ACTIONS
+  // ============================================================================
+
+  void _showBottomSheet(InvoicesModel invoice) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -282,80 +353,77 @@ class _InvoicesPageState extends State<InvoicesPage> {
           top: Radius.circular(AppConstants.borderRadiusBottomSheet),
         ),
       ),
-      builder:
-          (_) => SafeArea(
-            child: Wrap(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.receipt_long),
-                  title: Text(
-                    invoice.type.name == 'expenseOrder' ||
-                            invoice.type.name == 'incomeOrder'
-                        ? "Sipariş Detayı"
-                        : invoice.type.name == 'incomeWayBill' ||
-                            invoice.type.name == 'expenseWayBill'
-                        ? 'İrsaliye Detayı'
-                        : 'Fatura Detayı',
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push('/invoice-detail/${invoice.id}');
-                  },
-                ),
-                if (invoice.type.name != 'incomeWayBill' &&
-                    invoice.type.name != 'expenseWayBill')
-                  invoice.invoiceStatus == "Cancelled"
-                      ? ListTile(
-                        leading: const Icon(Icons.undo),
-                        title: const Text('Fatura iptalini geri al'),
-                        onTap: () => _handleReversal(invoice),
-                      )
-                      : ListTile(
-                        leading: const Icon(Icons.cancel),
-
-                        title: Text(
-                          invoice.type.name == 'expenseOrder' ||
-                                  invoice.type.name == 'incomeOrder'
-                              ? 'Siparişi İptal Et'
-                              : 'Faturayı İptal Et',
-                        ),
-                        onTap: () => _handleInvoiceCancel(invoice),
-                      ),
-                if (widget.invoiceType != typeIncomeOrder &&
-                    widget.invoiceType != typeExpenseOrder &&
-                    invoice.type.name != 'incomeWayBill' &&
-                    invoice.type.name != 'expenseWayBill')
-                  ListTile(
-                    leading: const Icon(Icons.send),
-                    title: const Text('E-Fatura Gönder'),
-                    onTap: () => _showSendDialog(invoice),
-                  ),
-              ],
-            ),
-          ),
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            _buildDetailTile(invoice),
+            if (_canCancel(invoice)) _buildCancelOrReversalTile(invoice),
+            if (_canSendEInvoice(invoice)) _buildSendEInvoiceTile(invoice),
+          ],
+        ),
+      ),
     );
   }
 
+  Widget _buildDetailTile(InvoicesModel invoice) {
+    return ListTile(
+      leading: const Icon(Icons.receipt_long),
+      title: Text(_getDocumentTitle(invoice.type.name)),
+      onTap: () {
+        Navigator.pop(context);
+        context.push('/invoice-detail/${invoice.id}');
+      },
+    );
+  }
+
+  Widget _buildCancelOrReversalTile(InvoicesModel invoice) {
+    final isCancelled = invoice.invoiceStatus == "Cancelled";
+
+    return isCancelled
+        ? ListTile(
+      leading: const Icon(Icons.undo),
+      title: const Text('İptali Geri Al'),
+      onTap: () => _handleReversal(invoice),
+    )
+        : ListTile(
+      leading: const Icon(Icons.cancel),
+      title: Text(_getCancelTitle(invoice.type.name)),
+      onTap: () => _handleInvoiceCancel(invoice),
+    );
+  }
+
+  Widget _buildSendEInvoiceTile(InvoicesModel invoice) {
+    return ListTile(
+      leading: const Icon(Icons.send),
+      title: const Text('E-Fatura Gönder'),
+      onTap: () => _showSendDialog(invoice),
+    );
+  }
+
+  // ============================================================================
+  // ACTION HANDLERS
+  // ============================================================================
+
   Future<void> _handleInvoiceCancel(InvoicesModel invoice) async {
     Navigator.pop(context);
+
     final confirm = await _showConfirmDialog(
-      title: 'Fatura İptali',
-      content: 'Faturayı iptal etmek istediğinize emin misiniz?',
+      title: 'Belge İptali',
+      content: 'Belgeyi iptal etmek istediğinize emin misiniz?',
     );
+
     if (confirm != true) return;
 
     try {
       final result = await _invoiceCancelService.invoiceCancel(
         InvoiceCancelModel(documentNumber: invoice.documentNumber),
       );
+
       _showSnackBar(
-        result != null
-            ? 'Fatura başarıyla iptal edildi.'
-            : 'Fatura iptal edilemedi.',
-        result != null
-            ? AppTheme.buttonSuccessColor
-            : AppTheme.buttonErrorColor,
+        result != null ? 'Belge başarıyla iptal edildi.' : 'Belge iptal edilemedi.',
+        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
+
       if (result != null) _fetchInvoices(reset: true);
     } catch (e) {
       _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
@@ -364,10 +432,12 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
   Future<void> _handleReversal(InvoicesModel invoice) async {
     Navigator.pop(context);
+
     final confirm = await _showConfirmDialog(
-      title: 'Fatura İptali Geri Alma',
-      content: 'Faturayı iptalini geri almak istediğinize emin misiniz?',
+      title: 'İptal Geri Alma',
+      content: 'Belge iptalini geri almak istediğinize emin misiniz?',
     );
+
     if (confirm != true) return;
 
     try {
@@ -376,19 +446,21 @@ class _InvoicesPageState extends State<InvoicesPage> {
           documentNumber: invoice.documentNumber,
         ),
       );
+
       _showSnackBar(
-        result != null
-            ? 'Fatura iptali geri alındı.'
-            : 'Fatura iptali geri alınamadı.',
-        result != null
-            ? AppTheme.buttonSuccessColor
-            : AppTheme.buttonErrorColor,
+        result != null ? 'İptal geri alındı.' : 'İptal geri alınamadı.',
+        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
+
       if (result != null) _fetchInvoices(reset: true);
     } catch (e) {
       _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
     }
   }
+
+  // ============================================================================
+  // DIALOGS
+  // ============================================================================
 
   Future<bool?> _showConfirmDialog({
     required String title,
@@ -396,32 +468,29 @@ class _InvoicesPageState extends State<InvoicesPage> {
   }) {
     return showDialog<bool>(
       context: context,
-      builder:
-          (c) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
-            ),
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(c, false),
-                child: const Text('İptal'),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.successColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      AppConstants.borderRadiusS,
-                    ),
-                  ),
-                ),
-                onPressed: () => Navigator.pop(c, true),
-                child: const Text('Evet'),
-              ),
-            ],
+      builder: (c) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
+        ),
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: const Text('İptal'),
           ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.successColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppConstants.borderRadiusS),
+              ),
+            ),
+            onPressed: () => Navigator.pop(c, true),
+            child: const Text('Evet'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -431,87 +500,95 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
     showDialog(
       context: context,
-      builder:
-          (c) => AlertDialog(
-            title: const Text('E-Fatura Gönder'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'E-Posta',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: AppConstants.spacingS),
-
-                TextField(
-                  controller: noteController,
-                  decoration: const InputDecoration(
-                    labelText: 'Not',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
-              ],
+      builder: (c) => AlertDialog(
+        title: const Text('E-Fatura Gönder'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'E-Posta',
+                border: OutlineInputBorder(),
+              ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(c),
-                child: const Text('İptal'),
+            const SizedBox(height: AppConstants.spacingS),
+            TextField(
+              controller: noteController,
+              decoration: const InputDecoration(
+                labelText: 'Not',
+                border: OutlineInputBorder(),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  final email = emailController.text.trim();
-                  if (email.isEmpty) {
-                    _showSnackBar(
-                      'Lütfen e-posta girin.',
-                      AppTheme.buttonErrorColor,
-                    );
-                    return;
-                  }
-                  Navigator.pop(c);
-
-                  try {
-                    final response = await _sendEInvoiceService
-                        .sendEinvoiceFullResponse(
-                          SendEInvoiceModel(
-                            invoiceId: invoice.id,
-                            email: email,
-                            invoiceNote: noteController.text.trim(),
-                          ),
-                        );
-
-                    if (!mounted) return;
-
-                    if (response != null) {
-                      for (final msg in response.successMessages) {
-                        _showSnackBar(msg, AppTheme.buttonSuccessColor);
-                      }
-                      for (final msg in response.warningMessages) {
-                        _showSnackBar(msg, AppTheme.buttonWarningColor);
-                      }
-                      for (final msg in response.errorMessages) {
-                        _showSnackBar(msg, AppTheme.buttonErrorColor);
-                      }
-                    } else {
-                      _showSnackBar(
-                        'E-Fatura gönderilemedi.',
-                        AppTheme.buttonErrorColor,
-                      );
-                    }
-                  } catch (e) {
-                    _showSnackBar(
-                      'Gönderim hatası: $e',
-                      AppTheme.buttonErrorColor,
-                    );
-                  }
-                },
-                child: const Text('Gönder'),
-              ),
-            ],
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c),
+            child: const Text('İptal'),
           ),
+          ElevatedButton(
+            onPressed: () => _handleSendEInvoice(
+              c,
+              invoice,
+              emailController,
+              noteController,
+            ),
+            child: const Text('Gönder'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleSendEInvoice(
+      BuildContext dialogContext,
+      InvoicesModel invoice,
+      TextEditingController emailController,
+      TextEditingController noteController,
+      ) async {
+    final email = emailController.text.trim();
+
+    if (email.isEmpty) {
+      _showSnackBar('Lütfen e-posta girin.', AppTheme.buttonErrorColor);
+      return;
+    }
+
+    Navigator.pop(dialogContext);
+
+    try {
+      final response = await _sendEInvoiceService.sendEinvoiceFullResponse(
+        SendEInvoiceModel(
+          invoiceId: invoice.id,
+          email: email,
+          invoiceNote: noteController.text.trim(),
+        ),
+      );
+
+      if (!mounted) return;
+
+      if (response != null) {
+        for (final msg in response.successMessages) {
+          _showSnackBar(msg, AppTheme.buttonSuccessColor);
+        }
+        for (final msg in response.warningMessages) {
+          _showSnackBar(msg, AppTheme.buttonWarningColor);
+        }
+        for (final msg in response.errorMessages) {
+          _showSnackBar(msg, AppTheme.buttonErrorColor);
+        }
+      } else {
+        _showSnackBar('E-Fatura gönderilemedi.', AppTheme.buttonErrorColor);
+      }
+    } catch (e) {
+      _showSnackBar('Gönderim hatası: $e', AppTheme.buttonErrorColor);
+    }
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: color),
     );
   }
 }
