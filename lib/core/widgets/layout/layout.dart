@@ -41,7 +41,10 @@ class _AppLayoutState extends State<AppLayout> {
     final uri = GoRouter.of(context).routeInformationProvider.value.uri.toString();
     setState(() {
       _currentRoute = uri;
-      _currentIndex = RouteIndexMapper.getIndexFromRoute(uri);
+      _currentIndex = RouteIndexMapper.getIndexFromRoute(
+        uri,
+        showIncomeExpense: showIncomeExpense, // ✅ Parametre ekle
+      );
     });
   }
 
@@ -85,7 +88,10 @@ class _AppLayoutState extends State<AppLayout> {
 
   void _onBottomNavTap(int index) {
     setState(() {
-      _currentIndex = RouteIndexMapper.getIndexFromRoute(_currentRoute);
+      _currentIndex = RouteIndexMapper.getIndexFromRoute(
+        _currentRoute,
+        showIncomeExpense: showIncomeExpense, // ✅ Parametre ekle
+      );
     });
   }
 
@@ -119,6 +125,7 @@ class _AppLayoutState extends State<AppLayout> {
         currentRoute: _currentRoute,
         onNavigate: _navigateTo,
         onIndexChanged: _onBottomNavTap,
+        showIncomeExpense: showIncomeExpense,
       ),
     );
   }

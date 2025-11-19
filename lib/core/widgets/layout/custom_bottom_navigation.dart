@@ -12,6 +12,7 @@ class CustomBottomNavigation extends StatelessWidget {
   final String currentRoute;
   final Function(String) onNavigate;
   final Function(int) onIndexChanged;
+  final bool showIncomeExpense;
 
 
   const CustomBottomNavigation({
@@ -20,6 +21,7 @@ class CustomBottomNavigation extends StatelessWidget {
     required this.currentRoute,
     required this.onNavigate,
     required this.onIndexChanged,
+    required this.showIncomeExpense
   });
 
   @override
@@ -40,60 +42,102 @@ class CustomBottomNavigation extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacingM, vertical: AppConstants.spacingXs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              BottomNavItem(
-                icon: Icons.home_rounded,
-                label: 'Ana Sayfa',
-                index: 0,
-                isSelected: currentIndex == 0,
-                onTap: () => onNavigate('/'),
-              ),
-              BottomNavItem(
-                icon: Icons.attach_money_rounded,
-                label: 'Gelirler',
-                index: 1,
-                isSelected: currentIndex == 1,
-                onTap: () async {
-                  await BottomSheetMenus.showIncomeSubMenu(
-                    context,
-                    currentRoute,
-                    onNavigate,
-                  );
-                  onIndexChanged(1);
-                },
-              ),
-              BottomNavItem(
-                icon: Icons.money_off_rounded,
-                label: 'Giderler',
-                index: 2,
-                isSelected: currentIndex == 2,
-                onTap: () async {
-                  await BottomSheetMenus.showExpenseSubMenu(
-                    context,
-                    currentRoute,
-                    onNavigate,
-                  );
-                  onIndexChanged(2);
-                },
-              ),
-              BottomNavItem(
-                icon: Icons.description_rounded,
-                label: 'E-Belgeler',
-                index: 3,
-                isSelected: currentIndex == 3,
-                onTap: () async {
-                  await BottomSheetMenus.showEDocumentsSubMenu(
-                    context,
-                    currentRoute,
-                    onNavigate,
-                  );
-                  onIndexChanged(3);
-                },
-              ),
-            ],
+            children: _buildNavItems(context),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildNavItems(BuildContext context)
+   {
+    if (showIncomeExpense) {
+      return [
+        BottomNavItem(
+          icon: Icons.home_rounded,
+          label: 'Ana Sayfa',
+          index: 0,
+          isSelected: currentIndex == 0,
+          onTap: () => onNavigate('/'),
+        ),
+        BottomNavItem(
+          icon: Icons.attach_money_rounded,
+          label: 'Gelirler',
+          index: 1,
+          isSelected: currentIndex == 1,
+          onTap: () async {
+            await BottomSheetMenus.showIncomeSubMenu(
+              context,
+              currentRoute,
+              onNavigate,
+            );
+            onIndexChanged(1);
+          },
+        ),
+        BottomNavItem(
+          icon: Icons.money_off_rounded,
+          label: 'Giderler',
+          index: 2,
+          isSelected: currentIndex == 2,
+          onTap: () async {
+            await BottomSheetMenus.showExpenseSubMenu(
+              context,
+              currentRoute,
+              onNavigate,
+            );
+            onIndexChanged(2);
+          },
+        ),
+        BottomNavItem(
+          icon: Icons.description_rounded,
+          label: 'E-Belgeler',
+          index: 3,
+          isSelected: currentIndex == 3,
+          onTap: () async {
+            await BottomSheetMenus.showEDocumentsSubMenu(
+              context,
+              currentRoute,
+              onNavigate,
+            );
+            onIndexChanged(3);
+          },
+        ),
+
+      ];
+    } else {
+      return [
+        BottomNavItem(
+          icon: Icons.home_rounded,
+          label: 'Ana Sayfa',
+          index: 0,
+          isSelected: currentIndex == 0,
+          onTap: () => onNavigate('/'),
+        ),
+        BottomNavItem(
+          icon: Icons.account_balance_wallet_rounded,
+          label: 'Kontörlerim',
+          index: 1,
+          isSelected: currentIndex == 1,
+          onTap: () {
+            onNavigate('/Credits');
+            onIndexChanged(1);
+          },
+        ),
+        BottomNavItem(
+          icon: Icons.description_rounded,
+          label: 'E-Belgeler',
+          index: 2,
+          isSelected: currentIndex == 2,
+          onTap: () async {
+            await BottomSheetMenus.showEDocumentsSubMenu(
+              context,
+              currentRoute,
+              onNavigate,
+            );
+            onIndexChanged(2);
+          },
+        ),
+      ];
+    }
   }
 }
