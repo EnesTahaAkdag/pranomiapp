@@ -17,6 +17,7 @@ import '../../data/services/invoice_cancelled_service.dart';
 import '../../data/services/invoice_service.dart';
 import '../../data/services/send_e_invoice_service.dart';
 
+const int typeExpenseInvoice = 2;
 const int typeIncomeOrder = 3;
 const int typeExpenseOrder = 4;
 
@@ -78,15 +79,17 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
   /// Belge iptal edilebilir mi? (İrsaliyeler iptal edilemez)
   bool _canCancel(InvoicesModel invoice) {
-    return !_isWayBill(invoice.type.name);
+    return !_isWayBill(invoice.type.name) && !_isExpenseInvoice;
   }
 
   /// E-Fatura gönderilebilir mi? (Sipariş ve irsaliyeler gönderilemez)
   bool _canSendEInvoice(InvoicesModel invoice) {
     return widget.invoiceType != typeIncomeOrder &&
         widget.invoiceType != typeExpenseOrder &&
-        !_isWayBill(invoice.type.name);
+        !_isWayBill(invoice.type.name) && !invoice.isEInvoiced && !_isExpenseInvoice;
   }
+
+  bool get _isExpenseInvoice => widget.invoiceType == typeExpenseInvoice;
 
   /// Belge başlığını döndürür
   String _getDocumentTitle(String typeName) {
