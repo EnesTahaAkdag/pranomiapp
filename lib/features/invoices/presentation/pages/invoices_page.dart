@@ -324,6 +324,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
         ),
         Row(
           children: [
+            // TODO: E fatura gönderilidiyse Menüde e fatura gönder seçeneği çıkmasın
             if (invoice.isEInvoiced)
               Image.asset(
                 "lib/assets/icons/pdficon.png",

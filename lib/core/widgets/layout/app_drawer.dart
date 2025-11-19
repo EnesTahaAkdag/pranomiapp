@@ -94,6 +94,7 @@ class AppDrawer extends StatelessWidget {
             currentRoute: currentRoute,
             onTap: onNavigate,
           ),
+          if (showIncomeExpense)  ...[
           DrawerMenuItem(
             imagePath: "icon_file_invoice.svg",
             title: "Gelir İrsaliyeleri",
@@ -101,13 +102,14 @@ class AppDrawer extends StatelessWidget {
             currentRoute: currentRoute,
             onTap: onNavigate,
           ),
+
           DrawerMenuItem(
             imagePath: "icon_file_lines.svg",
             title: "Gider İrsaliyeleri",
             route: '/ExpenseWayBill',
             currentRoute: currentRoute,
             onTap: onNavigate,
-          ),
+          ),]
         ],
       ),
       DrawerMenuItem(
@@ -117,13 +119,15 @@ class AppDrawer extends StatelessWidget {
         currentRoute: currentRoute,
         onTap: onNavigate,
       ),
-      DrawerMenuItem(
-        imagePath: "icon_usertie.svg",
-        title: "Çalışanlar",
-        route: '/EmployeAccounts',
-        currentRoute: currentRoute,
-        onTap: onNavigate,
-      ),
+
+      if (showIncomeExpense)
+        DrawerMenuItem(
+          imagePath: "icon_usertie.svg",
+          title: "Çalışanlar",
+          route: '/EmployeAccounts',
+          currentRoute: currentRoute,
+          onTap: onNavigate,
+        ),
       if (showIncomeExpense)
         DrawerExpandableTile(
           imagePath: "icon_caret_square_down.svg",

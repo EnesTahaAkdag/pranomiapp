@@ -51,7 +51,7 @@ class _AppLayoutState extends State<AppLayout> {
     final isEInvoiceActive = prefs.getBool('isEInvoiceActive');
 
     setState(() {
-      if (subscriptionType == 'EInvoice') {
+      if (subscriptionType == 'eInvoice') {
         showIncomeExpense = false;
       }
       if (isEInvoiceActive == false) {
