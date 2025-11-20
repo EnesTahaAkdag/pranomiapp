@@ -50,7 +50,8 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - AppConstants.paginationScrollThreshold) {
+        _scrollController.position.maxScrollExtent -
+            AppConstants.paginationScrollThreshold) {
       if (_hasMore && !_isLoading) {
         _fetchCustomers();
       }
@@ -58,7 +59,9 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   Future<void> _fetchCustomers({bool reset = false}) async {
-    if (_isLoading && !reset) return; // Prevent concurrent fetches unless it's a reset
+    if (_isLoading && !reset) {
+      return; // Prevent concurrent fetches unless it's a reset
+    }
 
     setState(() => _isLoading = true);
 
@@ -104,13 +107,18 @@ class _CustomerPageState extends State<CustomerPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppTheme.accentColor,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: AppConstants.spacing30, color: AppTheme.white),
-        onPressed: () async { // Made onPressed async
+        child: const Icon(
+          Icons.add,
+          size: AppConstants.spacing30,
+          color: AppTheme.white,
+        ),
+        onPressed: () async {
+          // Made onPressed async
           final result = await context.push(
             '/${widget.customerType.name}AddPage',
             // Pass the customerType to CustomerAddPage if it needs it
             // For example, if CustomerAddPage constructor takes customerType:
-            // extra: widget.customerType, 
+            // extra: widget.customerType,
           );
           if (result == 'refresh') {
             _fetchCustomers(reset: true);
@@ -122,8 +130,7 @@ class _CustomerPageState extends State<CustomerPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(AppConstants.spacingM),
-              child:
-              CustomSearchBar(
+              child: CustomSearchBar(
                 controller: _searchController,
                 hintText: 'Cari hesap ara...',
                 onClear: _clearSearch,
@@ -177,9 +184,10 @@ class AccountListView extends StatelessWidget {
       child: ListView.builder(
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: customers.isEmpty && !isLoading
-            ? 1
-            : customers.length + (isLoading ? 1 : 0),
+        itemCount:
+            customers.isEmpty && !isLoading
+                ? 1
+                : customers.length + (isLoading ? 1 : 0),
         itemBuilder: (ctx, idx) {
           if (customers.isEmpty && !isLoading) {
             return SizedBox(
@@ -257,16 +265,15 @@ class CustomerListItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Icon(
-                      Icons.edit,
-                      color: AppTheme.getTextSecondary(context),
-                    ),
+                    Icon(Icons.edit, color: AppTheme.getTextSecondary(context)),
                   ],
                 ),
                 const SizedBox(height: AppConstants.spacingXs),
                 if (customer.customerCode.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: AppConstants.spacingXs),
+                    padding: const EdgeInsets.only(
+                      bottom: AppConstants.spacingXs,
+                    ),
                     child: RichText(
                       text: TextSpan(
                         children: [
@@ -301,13 +308,18 @@ class CustomerListItem extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: '${AppFormatters.formatCurrency(customer.balance)} ₺',
+                        text:
+                            '${AppFormatters.formatCurrency(customer.balance)} ₺',
                         style: TextStyle(
-                          color: customer.balance > 0
-                              ? AppTheme.positiveAmountColor // Green for positive
-                              : customer.balance < 0
-                              ? AppTheme.negativeAmountColor // Red for negative
-                              : AppTheme.getTextPrimary(context), // Theme color for zero
+                          color:
+                              customer.balance > 0
+                                  ? AppTheme
+                                      .positiveAmountColor // Green for positive
+                                  : customer.balance < 0
+                                  ? AppTheme
+                                      .negativeAmountColor // Red for negative
+                                  : AppTheme.getTextPrimary(context),
+                          // Theme color for zero
                           fontSize: AppConstants.fontSizeM,
                           fontWeight: FontWeight.w600,
                         ),
