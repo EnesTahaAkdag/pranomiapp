@@ -48,4 +48,36 @@ class EInvoiceModel {
       recordType: json['RecordType'] ?? '',
     );
   }
+  EInvoiceModel copyWith({
+    String? documentNumber,
+    EInvoiceTypeEnum? type,
+    int? id,
+    String? customerName,
+    DateTime? date,
+    String? uuId,
+    String? status,
+    String? invoiceSales,
+    String? invoiceProfileId,
+    String? resultData,
+    String? taxNumber,
+    String? taxOffice,
+    String? recordType,
+  }) {
+    return EInvoiceModel(
+      documentNumber: documentNumber ?? this.documentNumber,
+      type: type ?? this.type,
+      id: id ?? this.id,
+      customerName: customerName ?? this.customerName,
+      date: date ?? this.date,
+      uuId: uuId ?? this.uuId,
+      status: status ?? this.status,
+      invoiceSales: invoiceSales ?? this.invoiceSales,
+      invoiceProfileId: invoiceProfileId ?? this.invoiceProfileId,
+      resultData: resultData ?? this.resultData,
+      taxNumber: taxNumber ?? this.taxNumber,
+      taxOffice: taxOffice ?? this.taxOffice,
+      recordType: recordType ?? this.recordType,
+    );
+  }
+
 }

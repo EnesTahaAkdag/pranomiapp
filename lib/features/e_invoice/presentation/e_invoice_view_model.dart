@@ -166,30 +166,56 @@ class EInvoiceViewModel extends ChangeNotifier {
   Future<bool> cancelInvoice(EInvoiceModel invoice, String reason) async {
     _setActionLoading(true);
     try {
-      final result = await _eInvoiceCancelService.invoiceCancel(
+      // Call the service
+      await _eInvoiceCancelService.invoiceCancel(
         EInvoiceCancelModel(
           uuId: invoice.uuId,
           rejectedNote: reason,
-          answerCode: invoice.status, // Consider if this is always correct
+          answerCode: invoice.status,
           documentNumber: invoice.documentNumber,
         ),
       );
 
-      if (result != null) { // Assuming result indicates success
-        _showSnackBar('Fatura başarıyla iptal edildi.', AppTheme.successColor);
-        fetchEInvoices(reset: true); // Refresh list
-        return true;
-      } else {
-        _showSnackBar('Fatura iptal edilemedi.', AppTheme.errorColor);
-        return false;
+      // If we reach here without exception, assume success
+      // Find and update the cancelled invoice in the local list
+      final index = _eInvoices.indexWhere((inv) => inv.uuId == invoice.uuId);
+      // returns -1 if an element not found with that id
+      if (index != -1) {
+        _eInvoices[index] = _eInvoices[index].copyWith(status: 'Canceled');
+        notifyListeners(); // Update only the changed item
       }
+
+      _showSnackBar('Fatura başarıyla iptal edildi.', AppTheme.successColor);
+      return true;
+
     } catch (e) {
-      _showSnackBar('Fatura iptal edilirken hata: \$e', AppTheme.errorColor);
+      // Only show error if there was an exception
+      _showSnackBar('Fatura iptal edilirken hata: $e', AppTheme.errorColor);
       return false;
     } finally {
       _setActionLoading(false);
     }
   }
+
+// Helper method to create updated invoice
+  EInvoiceModel _createUpdatedInvoice(EInvoiceModel original, String newStatus) {
+    return EInvoiceModel(
+      documentNumber: original.documentNumber,
+      type: original.type,
+      id: original.id,
+      customerName: original.customerName,
+      date: original.date,
+      uuId: original.uuId,
+      status: newStatus,
+      invoiceSales: original.invoiceSales,
+      invoiceProfileId: original.invoiceProfileId,
+      resultData: original.resultData,
+      taxNumber: original.taxNumber,
+      taxOffice: original.taxOffice,
+      recordType: original.recordType,
+    );
+  }
+
 
   @override
   void dispose() {
