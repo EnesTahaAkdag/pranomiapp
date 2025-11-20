@@ -428,7 +428,10 @@ class _InvoicesPageState extends State<InvoicesPage> {
         result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
 
-      if (result != null) _fetchInvoices(reset: true);
+      // ✅ UPDATE: Only update the specific invoice locally
+      if (result != null) {
+        _updateInvoiceStatusLocally(invoice.id, 'Cancelled');
+      }
     } catch (e) {
       _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
     }
@@ -456,12 +459,68 @@ class _InvoicesPageState extends State<InvoicesPage> {
         result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
 
-      if (result != null) _fetchInvoices(reset: true);
+      // ✅ UPDATE: Only update the specific invoice locally
+      if (result != null) {
+        _updateInvoiceStatusLocally(invoice.id, 'Active'); // veya backend'den gelen doğru status
+      }
     } catch (e) {
       _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
     }
   }
 
+// ✅ NEW METHOD: Update only the specific invoice in the list
+  void _updateInvoiceStatusLocally(int invoiceId, String newStatus) {
+    setState(() {
+      final index = _invoices.indexWhere((inv) => inv.id == invoiceId);
+      if (index != -1) {
+        // InvoicesModel immutable olduğu için yeni bir instance oluşturuyoruz
+        // Not: InvoicesModel'de copyWith methodu yoksa, onu da eklemen gerekebilir
+        _invoices[index] = InvoicesModel(
+          documentNumber: _invoices[index].documentNumber,
+          customerName: _invoices[index].customerName,
+          date: _invoices[index].date,
+          type: _invoices[index].type,
+          id: _invoices[index].id,
+          invoiceStatus: newStatus, // ← Only this changes
+          eCommerceCode: _invoices[index].eCommerceCode,
+          currencyCode: _invoices[index].currencyCode,
+          paidAmount: _invoices[index].paidAmount,
+          totalAmount: _invoices[index].totalAmount,
+          isInvoiced: _invoices[index].isInvoiced,
+          isEInvoiced: _invoices[index].isEInvoiced,
+        );
+      }
+    });
+  }
+
+ /** Future<void> _handleReversal(InvoicesModel invoice) async {
+    Navigator.pop(context);
+
+    final confirm = await _showConfirmDialog(
+      title: 'İptal Geri Alma',
+      content: 'Belge iptalini geri almak istediğinize emin misiniz?',
+    );
+
+    if (confirm != true) return;
+
+    try {
+      final result = await _invoiceCancellationReversalService.invoiceCancel(
+        InvoiceCancellationReversalModel(
+          documentNumber: invoice.documentNumber,
+        ),
+      );
+
+      _showSnackBar(
+        result != null ? 'İptal geri alındı.' : 'İptal geri alınamadı.',
+        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
+      );
+
+      if (result != null) _fetchInvoices(reset: true);
+    } catch (e) {
+      _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
+    }
+  }
+*/
   // ============================================================================
   // DIALOGS
   // ============================================================================
