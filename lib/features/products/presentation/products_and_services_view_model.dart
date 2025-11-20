@@ -8,8 +8,7 @@ import '../domain/product_model.dart';
 import '../domain/product_stock_update_model.dart';
 
 class ProductsAndServicesViewModel extends ChangeNotifier {
-  final ProductService _productsService =
-      locator<ProductService>();
+  final ProductService _productsService = locator<ProductService>();
   final ProductStockUpdateService _stockUpdateService =
       locator<ProductStockUpdateService>();
 
@@ -126,20 +125,21 @@ class ProductsAndServicesViewModel extends ChangeNotifier {
   ) async {
     _setUpdating(true);
     try {
-      final result = await _stockUpdateService.updateStock(
+      await _stockUpdateService.updateStock(
         ProductStockUpdateModel(
           productId: product.productId,
           stockAmount: newStock,
           description: description,
         ),
       );
-
-      if (result != null) {
-        _showSnackBar('Stok güncellendi.', AppTheme.successColor);
-        fetchProducts(reset: true);
-      } else {
-        _showSnackBar('Stok güncelleme başarısız.', AppTheme.errorColor);
+      final index = _products.indexWhere(
+        (prod) => prod.productId == product.productId,
+      );
+      if (index != -1) {
+        _products[index] = _products[index].copyWtih(stockAmount: newStock);
+        notifyListeners();
       }
+      _showSnackBar('Stok güncellendi.', AppTheme.successColor);
     } catch (e) {
       _showSnackBar('Stok güncellenirken hata oluştu: $e', AppTheme.errorColor);
     } finally {

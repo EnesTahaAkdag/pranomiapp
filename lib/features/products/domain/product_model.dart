@@ -31,6 +31,28 @@ class ProductResponseModel {
       currencyCode: json['CurrencyCode'] ?? '',
     );
   }
+
+  ProductResponseModel copyWtih({
+    final int? productId,
+    final String? productName,
+    final String? imageUrl,
+    final String? stockCode,
+    final double? stockAmount,
+    final double? price,
+    final double? vatRate,
+    final String? currencyCode,
+}) {
+    return ProductResponseModel(
+      productId: productId ?? this.productId,
+      productName: productName ?? this.productName,
+      imageUrl: imageUrl ?? this.imageUrl,
+      stockCode: stockCode ?? this.stockCode,
+      stockAmount: stockAmount ?? this.stockAmount,
+      price: price ?? this.price,
+      vatRate: vatRate ?? this.vatRate,
+      currencyCode: currencyCode ?? this.currencyCode,
+    );
+  }
 }
 
 class ProductStockUpdateResponseModel {
@@ -60,4 +82,5 @@ class ProductStockUpdateResponseModel {
       warningMessages: json['WarningMessages'] ?? '',
     );
   }
+
 }
