@@ -273,9 +273,13 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     final isCancelled = invoice.status.toLowerCase() == "canceled";
     final textDecoration =
         isCancelled ? TextDecoration.lineThrough : TextDecoration.none;
-    final linkTextDecoration = isCancelled ? TextDecoration.lineThrough : TextDecoration.underline;
+    final linkTextDecoration =
+        isCancelled ? TextDecoration.lineThrough : TextDecoration.underline;
     final baseTextStyle = TextStyle(decoration: textDecoration);
-    final linkTextStyle = TextStyle(decoration: linkTextDecoration,decorationThickness: 1.2);
+    final linkTextStyle = TextStyle(
+      decoration: linkTextDecoration,
+      decorationThickness: 1.2,
+    );
     final boldTitleStyle = baseTextStyle.copyWith(
       fontSize: AppConstants.fontSizeL,
       fontWeight: FontWeight.bold,
@@ -406,7 +410,10 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
                     }
                   },
                 ),
-                if (invoice.status.toLowerCase() != "canceled" && invoice.type.name != "eInvoice")
+
+                if (invoice.status.toLowerCase() != "canceled" &&
+                    invoice.type.name != "eInvoice" &&
+                    invoice.type.name != "eDespacth")
                   ListTile(
                     leading: const Icon(Icons.cancel),
                     title: const Text('Faturayı İptal Et'),
@@ -531,11 +538,11 @@ class _EInvoiceViewState extends State<_EInvoiceView> {
     return selectedTime == null
         ? selectedDate
         : DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
   }
 }
