@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:pranomiapp/core/di/injection.dart';
 import 'package:pranomiapp/core/router/app_router.dart';
 import 'package:pranomiapp/core/services/auth_service.dart';
+import 'package:pranomiapp/core/services/notification_permission_service.dart';
 import 'package:pranomiapp/core/services/theme_service.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 
@@ -25,8 +26,8 @@ void main() async {
   // Initialize with your OneSignal App ID
   OneSignal.initialize("e387ed1b-302a-4c3f-a2b2-f768d2b0ade4");
 
-  // Request notification permission
-  OneSignal.Notifications.requestPermission(true);
+  // Handle notification permission request on first launch
+  await _handleNotificationPermission();
 
   // Initialize Turkish locale for date formatting
   await initializeDateFormatting('tr_TR', null);
@@ -44,6 +45,28 @@ void main() async {
   runApp(const PranomiApp());
 }
 
+/// Handles notification permission request on first app launch
+/// Only asks once - respects user's choice permanently
+Future<void> _handleNotificationPermission() async {
+  try {
+    // Check if we should request permission (first time only)
+    final shouldRequest = await NotificationPermissionService.shouldRequestPermission();
+
+    if (shouldRequest) {
+      debugPrint('📱 First app launch - requesting notification permission');
+      final granted = await NotificationPermissionService.requestPermission();
+
+      if (!granted) {
+        debugPrint('ℹ️ User denied notification permission - will not ask again');
+      }
+    } else {
+      debugPrint('ℹ️ Notification permission already asked before');
+    }
+  } catch (e) {
+    debugPrint('❌ Error handling notification permission: $e');
+  }
+}
+
 class PranomiApp extends StatefulWidget {
   const PranomiApp({super.key});
 
@@ -52,6 +75,47 @@ class PranomiApp extends StatefulWidget {
 }
 
 class _PranomiAppState extends State<PranomiApp> {
+  // Global key for scaffold messenger to show snackbar from anywhere
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Check permission status after app is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowPermissionMessage();
+    });
+  }
+
+  /// Check permission status and show message if denied
+  /// Only shows once when user first denies permission
+  Future<void> _checkAndShowPermissionMessage() async {
+    // Check if we should show the denial message
+    final shouldShow = await NotificationPermissionService.shouldShowDenialMessage();
+
+    if (shouldShow) {
+      // Mark message as shown before displaying
+      await NotificationPermissionService.markDenialMessageShown();
+
+      // Show the snackbar
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Bildirimlere izin vermediniz. Ayarlardan dilediğiniz zaman bildirim izni verebilirsiniz.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: AppTheme.accentColor,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'Tamam',
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Get ThemeService instance
@@ -83,6 +147,7 @@ class _PranomiAppState extends State<PranomiApp> {
             return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'Pranomi',
+              scaffoldMessengerKey: _scaffoldMessengerKey,
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: themeService.themeMode,

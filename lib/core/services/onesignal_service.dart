@@ -1,17 +1,32 @@
 import 'package:flutter/foundation.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
+import 'notification_permission_service.dart';
+
 /// Service for managing OneSignal user identification
 /// This service handles login/logout operations to associate push notifications
 /// with specific users using external_id
+/// Only logs in if user has granted notification permission
 class OneSignalService {
   /// Login to OneSignal with user ID
   /// This sets the external_id which allows targeting specific users
   /// with push notifications from your backend
   ///
   /// [userId] - The user's ID from your backend system
+  ///
+  /// IMPORTANT: Only logs in if user has granted notification permission
+  /// If permission was denied, this method will skip login and return early
   static Future<void> login(int userId) async {
     try {
+      // Check if notification permission was granted
+      final isPermissionGranted = await NotificationPermissionService.isPermissionGranted();
+
+      if (!isPermissionGranted) {
+        debugPrint('⏭️ OneSignal: Skipping login - notification permission denied by user');
+        debugPrint('ℹ️ User can enable notifications from app settings');
+        return;
+      }
+
       // Convert userId to string as OneSignal expects string external_id
       final externalId = userId.toString();
 
