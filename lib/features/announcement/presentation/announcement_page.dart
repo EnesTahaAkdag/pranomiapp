@@ -261,7 +261,6 @@ IconData _getIconForType(AnnouncementType type) {
     case AnnouncementType.changelog:
       return Icons.alt_route;
     case AnnouncementType.unknown:
-    default:
       return Icons.info_outline;
   }
 }

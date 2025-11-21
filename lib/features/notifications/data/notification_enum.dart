@@ -60,12 +60,10 @@ String getNotificationNameFromType(NotificationListTypeEnum type) {
       return "İptal Sipariş";
     case NotificationListTypeEnum.ClaimNew:
       return "Yeni İade";
-
     case NotificationListTypeEnum.StockChange:
       return "Stok Değişimi";
     case NotificationListTypeEnum.OrderInvoiceOrWaybillAdd:
       return "Sipariş Fatura veya İrsaliye Ekleme";
-
     case NotificationListTypeEnum.OrderInvoiceOrWaybillUpdate:
       return "Sipariş Fatura veya İrsaliye Güncelleme";
     case NotificationListTypeEnum.OrderInvoiceOrWaybillDelete:
@@ -74,14 +72,11 @@ String getNotificationNameFromType(NotificationListTypeEnum type) {
       return "Sipariş Fatura veya İrsaliye İptal";
     case NotificationListTypeEnum.OrderInvoiceOrWaybillError:
       return "Sipariş Fatura veya İrsaliye Hatası";
-
     case NotificationListTypeEnum.EArchiceInvoiceCancel:
       return "E-Arşiv Fatura İptali";
     case NotificationListTypeEnum.EDocumentError:
       return "E-Belge Hatası";
     case NotificationListTypeEnum.TransactionDelete:
       return "Hareket Silme";
-    default:
-      throw ArgumentError('Invalid type: $type');
   }
 }

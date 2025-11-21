@@ -12,7 +12,7 @@ class CustomSearchBar extends StatelessWidget {
   final BorderRadius borderRadius;
 
   const CustomSearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     this.hintText = 'Ara...',
     this.onClear,
@@ -20,7 +20,7 @@ class CustomSearchBar extends StatelessWidget {
     this.onChanged,
     this.prefixIcon = Icons.search,
     this.borderRadius = const BorderRadius.all(Radius.circular(AppConstants.borderRadiusBottomSheet)),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

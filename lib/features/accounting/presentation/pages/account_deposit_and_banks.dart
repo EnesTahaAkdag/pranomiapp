@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/di/injection.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../data/models/account_models.dart';
 import '../../data/services/account_service.dart';
-import '../widgets/account_list_view.dart'; // Assuming locator is setup for AccountService
+import '../widgets/account_list_view.dart';
 
 class AccountDepositAndBanksPage extends StatefulWidget {
   const AccountDepositAndBanksPage({super.key});

@@ -295,7 +295,7 @@ class ProductListItem extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
                   child:
-                      (product.imageUrl != null && product.imageUrl.isNotEmpty)
+                      product.imageUrl.isNotEmpty
                           ? CachedNetworkImage(
                             imageUrl: product.imageUrl,
                             fit: BoxFit.cover,

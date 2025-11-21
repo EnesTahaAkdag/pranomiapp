@@ -14,7 +14,7 @@ class SmsVerificationStrategy implements AuthenticationStrategy {
   }) async {
     final item = response.item;
 
-    if (item == null || item.userId == null || item.gsmNumber == null) {
+    if (item == null) {
       return AuthenticationResult(
         success: false,
         errorMessage: "Kullanıcı bilgileri eksik.",

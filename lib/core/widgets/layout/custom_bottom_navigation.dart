@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pranomiapp/core/theme/app_theme.dart';
 import 'package:pranomiapp/core/utils/app_constants.dart';
-import 'package:pranomiapp/features/customers/domain/customer_type_enum.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../di/injection.dart';
 import 'bottom_nav_item.dart';
 import 'bottom_sheet_menus.dart';
 

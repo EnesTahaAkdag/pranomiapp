@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +40,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
   final _sendEInvoiceService = locator<SendEInvoiceService>();
   final _invoiceCancelService = locator<InvoiceCancelService>();
   final _invoiceCancellationReversalService =
-  locator<InvoiceCancellationReversalService>();
+      locator<InvoiceCancellationReversalService>();
 
   bool _isLoading = false;
   bool _hasMore = true;
@@ -86,7 +87,9 @@ class _InvoicesPageState extends State<InvoicesPage> {
   bool _canSendEInvoice(InvoicesModel invoice) {
     return widget.invoiceType != typeIncomeOrder &&
         widget.invoiceType != typeExpenseOrder &&
-        !_isWayBill(invoice.type.name) && !invoice.isEInvoiced && !_isExpenseInvoice;
+        !_isWayBill(invoice.type.name) &&
+        !invoice.isEInvoiced &&
+        !_isExpenseInvoice;
   }
 
   bool get _isExpenseInvoice => widget.invoiceType == typeExpenseInvoice;
@@ -167,10 +170,7 @@ class _InvoicesPageState extends State<InvoicesPage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
-          children: [
-            _buildSearchBar(),
-            Expanded(child: _buildInvoiceList()),
-          ],
+          children: [_buildSearchBar(), Expanded(child: _buildInvoiceList())],
         ),
       ),
     );
@@ -196,16 +196,16 @@ class _InvoicesPageState extends State<InvoicesPage> {
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount:
-        _invoices.isEmpty && !_isLoading
-            ? 1
-            : _invoices.length + (_isLoading ? 1 : 0),
+            _invoices.isEmpty && !_isLoading
+                ? 1
+                : _invoices.length + (_isLoading ? 1 : 0),
         itemBuilder: (ctx, idx) {
           if (_invoices.isEmpty && !_isLoading) {
             return _buildEmptyState();
           }
 
           if (idx < _invoices.length) {
-            return _buildInvoiceItem(_invoices[idx]);
+            return RepaintBoundary(child: _buildInvoiceItem(_invoices[idx]));
           }
 
           return _buildLoadingIndicator();
@@ -216,7 +216,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
   Widget _buildEmptyState() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height *
+      height:
+          MediaQuery.of(context).size.height *
           AppConstants.screenHeightMultiplierHalf,
       child: Center(
         child: Text(
@@ -334,10 +335,10 @@ class _InvoicesPageState extends State<InvoicesPage> {
                 height: AppConstants.iconSizeXl,
                 color: Colors.red,
               ),
-            Image.network(
-              eCommerceImageUrl,
+            CachedNetworkImage(
+              imageUrl: eCommerceImageUrl,
               height: AppConstants.iconSizeXl,
-              errorBuilder: (_, __, ___) => const SizedBox(),
+              errorWidget: (_, __, ___) => const SizedBox(),
             ),
           ],
         ),
@@ -357,15 +358,16 @@ class _InvoicesPageState extends State<InvoicesPage> {
           top: Radius.circular(AppConstants.borderRadiusBottomSheet),
         ),
       ),
-      builder: (_) => SafeArea(
-        child: Wrap(
-          children: [
-            _buildDetailTile(invoice),
-            if (_canCancel(invoice)) _buildCancelOrReversalTile(invoice),
-            if (_canSendEInvoice(invoice)) _buildSendEInvoiceTile(invoice),
-          ],
-        ),
-      ),
+      builder:
+          (_) => SafeArea(
+            child: Wrap(
+              children: [
+                _buildDetailTile(invoice),
+                if (_canCancel(invoice)) _buildCancelOrReversalTile(invoice),
+                if (_canSendEInvoice(invoice)) _buildSendEInvoiceTile(invoice),
+              ],
+            ),
+          ),
     );
   }
 
@@ -385,15 +387,15 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
     return isCancelled
         ? ListTile(
-      leading: const Icon(Icons.undo),
-      title: const Text('İptali Geri Al'),
-      onTap: () => _handleReversal(invoice),
-    )
+          leading: const Icon(Icons.undo),
+          title: const Text('İptali Geri Al'),
+          onTap: () => _handleReversal(invoice),
+        )
         : ListTile(
-      leading: const Icon(Icons.cancel),
-      title: Text(_getCancelTitle(invoice.type.name)),
-      onTap: () => _handleInvoiceCancel(invoice),
-    );
+          leading: const Icon(Icons.cancel),
+          title: Text(_getCancelTitle(invoice.type.name)),
+          onTap: () => _handleInvoiceCancel(invoice),
+        );
   }
 
   Widget _buildSendEInvoiceTile(InvoicesModel invoice) {
@@ -424,8 +426,12 @@ class _InvoicesPageState extends State<InvoicesPage> {
       );
 
       _showSnackBar(
-        result != null ? 'Belge başarıyla iptal edildi.' : 'Belge iptal edilemedi.',
-        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
+        result != null
+            ? 'Belge başarıyla iptal edildi.'
+            : 'Belge iptal edilemedi.',
+        result != null
+            ? AppTheme.buttonSuccessColor
+            : AppTheme.buttonErrorColor,
       );
 
       // ✅ UPDATE: Only update the specific invoice locally
@@ -456,19 +462,24 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
       _showSnackBar(
         result != null ? 'İptal geri alındı.' : 'İptal geri alınamadı.',
-        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
+        result != null
+            ? AppTheme.buttonSuccessColor
+            : AppTheme.buttonErrorColor,
       );
 
       // ✅ UPDATE: Only update the specific invoice locally
       if (result != null) {
-        _updateInvoiceStatusLocally(invoice.id, 'Active'); // veya backend'den gelen doğru status
+        _updateInvoiceStatusLocally(
+          invoice.id,
+          'Active',
+        ); // veya backend'den gelen doğru status
       }
     } catch (e) {
       _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
     }
   }
 
-// ✅ NEW METHOD: Update only the specific invoice in the list
+  // ✅ NEW METHOD: Update only the specific invoice in the list
   void _updateInvoiceStatusLocally(int invoiceId, String newStatus) {
     setState(() {
       final index = _invoices.indexWhere((inv) => inv.id == invoiceId);
@@ -481,7 +492,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
           date: _invoices[index].date,
           type: _invoices[index].type,
           id: _invoices[index].id,
-          invoiceStatus: newStatus, // ← Only this changes
+          invoiceStatus: newStatus,
+          // ← Only this changes
           eCommerceCode: _invoices[index].eCommerceCode,
           currencyCode: _invoices[index].currencyCode,
           paidAmount: _invoices[index].paidAmount,
@@ -493,34 +505,34 @@ class _InvoicesPageState extends State<InvoicesPage> {
     });
   }
 
- /** Future<void> _handleReversal(InvoicesModel invoice) async {
-    Navigator.pop(context);
+  /** Future<void> _handleReversal(InvoicesModel invoice) async {
+      Navigator.pop(context);
 
-    final confirm = await _showConfirmDialog(
+      final confirm = await _showConfirmDialog(
       title: 'İptal Geri Alma',
       content: 'Belge iptalini geri almak istediğinize emin misiniz?',
-    );
+      );
 
-    if (confirm != true) return;
+      if (confirm != true) return;
 
-    try {
+      try {
       final result = await _invoiceCancellationReversalService.invoiceCancel(
-        InvoiceCancellationReversalModel(
-          documentNumber: invoice.documentNumber,
-        ),
+      InvoiceCancellationReversalModel(
+      documentNumber: invoice.documentNumber,
+      ),
       );
 
       _showSnackBar(
-        result != null ? 'İptal geri alındı.' : 'İptal geri alınamadı.',
-        result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
+      result != null ? 'İptal geri alındı.' : 'İptal geri alınamadı.',
+      result != null ? AppTheme.buttonSuccessColor : AppTheme.buttonErrorColor,
       );
 
       if (result != null) _fetchInvoices(reset: true);
-    } catch (e) {
+      } catch (e) {
       _showSnackBar('Hata oluştu: $e', AppTheme.buttonErrorColor);
-    }
-  }
-*/
+      }
+      }
+   */
   // ============================================================================
   // DIALOGS
   // ============================================================================
@@ -531,29 +543,32 @@ class _InvoicesPageState extends State<InvoicesPage> {
   }) {
     return showDialog<bool>(
       context: context,
-      builder: (c) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
-        ),
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(c, false),
-            child: const Text('İptal'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.successColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppConstants.borderRadiusS),
-              ),
+      builder:
+          (c) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppConstants.borderRadiusL),
             ),
-            onPressed: () => Navigator.pop(c, true),
-            child: const Text('Evet'),
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(c, false),
+                child: const Text('İptal'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.successColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      AppConstants.borderRadiusS,
+                    ),
+                  ),
+                ),
+                onPressed: () => Navigator.pop(c, true),
+                child: const Text('Evet'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -563,54 +578,56 @@ class _InvoicesPageState extends State<InvoicesPage> {
 
     showDialog(
       context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('E-Fatura Gönder'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-Posta',
-                border: OutlineInputBorder(),
+      builder:
+          (c) => AlertDialog(
+            title: const Text('E-Fatura Gönder'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'E-Posta',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: AppConstants.spacingS),
+                TextField(
+                  controller: noteController,
+                  decoration: const InputDecoration(
+                    labelText: 'Not',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(c),
+                child: const Text('İptal'),
               ),
-            ),
-            const SizedBox(height: AppConstants.spacingS),
-            TextField(
-              controller: noteController,
-              decoration: const InputDecoration(
-                labelText: 'Not',
-                border: OutlineInputBorder(),
+              ElevatedButton(
+                onPressed:
+                    () => _handleSendEInvoice(
+                      c,
+                      invoice,
+                      emailController,
+                      noteController,
+                    ),
+                child: const Text('Gönder'),
               ),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(c),
-            child: const Text('İptal'),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => _handleSendEInvoice(
-              c,
-              invoice,
-              emailController,
-              noteController,
-            ),
-            child: const Text('Gönder'),
-          ),
-        ],
-      ),
     );
   }
 
   Future<void> _handleSendEInvoice(
-      BuildContext dialogContext,
-      InvoicesModel invoice,
-      TextEditingController emailController,
-      TextEditingController noteController,
-      ) async {
+    BuildContext dialogContext,
+    InvoicesModel invoice,
+    TextEditingController emailController,
+    TextEditingController noteController,
+  ) async {
     final email = emailController.text.trim();
 
     if (email.isEmpty) {
@@ -650,8 +667,8 @@ class _InvoicesPageState extends State<InvoicesPage> {
   }
 
   void _showSnackBar(String message, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: color),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
   }
 }

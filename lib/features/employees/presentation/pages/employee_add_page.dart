@@ -253,11 +253,11 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   }
 
   Widget _countryDropdown() => DropdownSearch<Country>(
-    popupProps: PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
-    dropdownDecoratorProps: DropDownDecoratorProps(
+    popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+    dropdownDecoratorProps: const DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Ülke *',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
       ),
     ),
     items: _countries,
@@ -277,11 +277,11 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   );
 
   Widget _cityDropdown() => DropdownSearch<City>(
-    popupProps: PopupProps.menu(showSearchBox: true),
-    dropdownDecoratorProps: DropDownDecoratorProps(
+    popupProps: const PopupProps.menu(showSearchBox: true),
+    dropdownDecoratorProps: const DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'Şehir',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
       ),
     ),
     items: _cities,
@@ -298,11 +298,11 @@ class _EmployeeAddPageState extends State<EmployeeAddPage> {
   );
 
   Widget _districtDropdown() => DropdownSearch<District>(
-    popupProps: PopupProps.menu(showSearchBox: true),
-    dropdownDecoratorProps: DropDownDecoratorProps(
+    popupProps: const PopupProps.menu(showSearchBox: true),
+    dropdownDecoratorProps: const DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
         labelText: 'İlçe',
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
       ),
     ),
     items: _districts.where((d) => d.cityId == _selectedCity!.id).toList(),

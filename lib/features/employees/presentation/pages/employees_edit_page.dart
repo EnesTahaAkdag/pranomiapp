@@ -347,7 +347,7 @@ class _EmployeesEditPageState extends State<EmployeesEditPage> {
       title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
       value: value,
       onChanged: onChanged,
-      activeColor: AppTheme.accentColor,
+      activeTrackColor: AppTheme.accentColor,
     );
   }
 

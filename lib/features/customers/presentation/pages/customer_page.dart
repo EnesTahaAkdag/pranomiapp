@@ -203,10 +203,12 @@ class AccountListView extends StatelessWidget {
 
           if (idx < customers.length) {
             final customer = customers[idx];
-            return CustomerListItem(
-              key: ValueKey(customer.customerId),
-              customer: customer,
-              onTap: () => onTapCustomer(customer),
+            return RepaintBoundary(
+              child: CustomerListItem(
+                key: ValueKey(customer.customerId),
+                customer: customer,
+                onTap: () => onTapCustomer(customer),
+              ),
             );
           }
           return const Padding(

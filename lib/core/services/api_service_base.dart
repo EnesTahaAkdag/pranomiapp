@@ -10,9 +10,9 @@ abstract class ApiServiceBase {
   static final Dio dioInstance = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
-      connectTimeout: Duration(seconds: ApiConstants.connectionTimeoutSeconds),
-      receiveTimeout: Duration(seconds: ApiConstants.receiveTimeoutSeconds),
-      headers: {ApiConstants.headerContentType: ApiConstants.contentTypeJson},
+      connectTimeout: const Duration(seconds: ApiConstants.connectionTimeoutSeconds),
+      receiveTimeout: const Duration(seconds: ApiConstants.receiveTimeoutSeconds),
+      headers: const {ApiConstants.headerContentType: ApiConstants.contentTypeJson},
     ),
   );
 

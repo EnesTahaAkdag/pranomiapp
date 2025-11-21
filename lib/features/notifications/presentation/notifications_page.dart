@@ -533,13 +533,8 @@ class _NotificationListItem extends StatelessWidget {
         return AppTheme.notificationInvoiceError;
       case NotificationListTypeEnum.EDocumentError:
         return AppTheme.notificationEDocumentError;
-
-    // Gri tonları - Silme ve nötr durumlar
       case NotificationListTypeEnum.TransactionDelete:
         return AppTheme.notificationTransactionDelete;
-
-      default:
-        return AppTheme.notificationDefault;
     }
   }
 }

@@ -39,13 +39,19 @@ class _AppLayoutState extends State<AppLayout> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final uri = GoRouter.of(context).routeInformationProvider.value.uri.toString();
-    setState(() {
-      _currentRoute = uri;
-      _currentIndex = RouteIndexMapper.getIndexFromRoute(
+    // Only update if route actually changed to avoid unnecessary rebuilds
+    if (uri != _currentRoute) {
+      final newIndex = RouteIndexMapper.getIndexFromRoute(
         uri,
-        showIncomeExpense: showIncomeExpense, // ✅ Parametre ekle
+        showIncomeExpense: showIncomeExpense,
       );
-    });
+      if (newIndex != _currentIndex || uri != _currentRoute) {
+        setState(() {
+          _currentRoute = uri;
+          _currentIndex = newIndex;
+        });
+      }
+    }
   }
 
   Future<void> _loadMenuVisibility() async {
@@ -87,12 +93,8 @@ class _AppLayoutState extends State<AppLayout> {
   }
 
   void _onBottomNavTap(int index) {
-    setState(() {
-      _currentIndex = RouteIndexMapper.getIndexFromRoute(
-        _currentRoute,
-        showIncomeExpense: showIncomeExpense, // ✅ Parametre ekle
-      );
-    });
+    // No need for setState here as index is already managed by navigation
+    // This method can be used for additional logic if needed
   }
 
   @override
