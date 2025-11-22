@@ -101,7 +101,7 @@ class _PranomiAppState extends State<PranomiApp> {
       _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(
           content: const Text(
-            'Bildirimlere izin vermediniz. Ayarlardan dilediğiniz zaman bildirim izni verebilirsiniz.',
+            'Bildirimlere izin vermediniz. Ayarlardan istediğiniz zaman bildirim izni verebilirsiniz.',
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: AppTheme.accentColor,
