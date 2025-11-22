@@ -86,7 +86,7 @@ class _AppLayoutState extends State<AppLayout> {
       }
       setState(() {
         _currentRoute = route;
-        _currentIndex = RouteIndexMapper.getIndexFromRoute(route);
+        _currentIndex = RouteIndexMapper.getIndexFromRoute(route,showIncomeExpense: showIncomeExpense);
       });
       context.go(route);
     }
